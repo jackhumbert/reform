@@ -645,13 +645,19 @@ void handle_commands() {
       }
       else if (remote_cmd == 'c' && cmd_number>=0 && cmd_number<=7) {
         // get cell status
-        int n = cmd_number;
-        sprintf(uartBuffer,"%c%c%c%c\r\n",
-                missing_bits      &(1<<n)?'m':'.',
-                undervoltage_bits &(1<<n)?'u':'.',
-                overvoltage_bits  &(1<<n)?'o':'.',
-                discharge_bits    &(1<<n)?'d':'.');
+        uint16_t n = (uint16_t)cmd_number;
+        sprintf(uartBuffer,"%d%c%c%c%c",
+                n,
+                (missing_bits      &(1<<n))?'m':'.',
+                (undervoltage_bits &(1<<n))?'u':'.',
+                (overvoltage_bits  &(1<<n))?'o':'.',
+                (discharge_bits    &(1<<n))?'d':'.');
 
+        uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+        if (n==7) {
+          sprintf(uartBuffer,"m%d u%du o%d",num_missing_cells,num_undervolted_cells,num_overvolted_cells);
+        }
+        sprintf(uartBuffer,"\r\n");
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
       else if (remote_cmd == 'S') {
@@ -763,9 +769,9 @@ int main(void)
 
       if (num_missing_cells > 0) {
         missing_reason = missing_bits;
-        state = ST_MISSING;
         // if cells were unplugged, we don't know the capacity anymore.
         reached_full_charge = 0;
+        state = ST_MISSING;
         cycles_in_state = 0;
       }
       else if (num_undervolted_cells > 0) {
@@ -816,9 +822,9 @@ int main(void)
     else if (state == ST_OVERVOLTED) {
       if (num_missing_cells > 0) {
         missing_reason = missing_bits;
-        state = ST_MISSING;
         // if cells were unplugged, we don't know the capacity anymore.
         reached_full_charge = 0;
+        state = ST_MISSING;
         cycles_in_state = 0;
       } else {
         discharge_overvolted_cells();
