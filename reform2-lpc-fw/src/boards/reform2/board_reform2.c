@@ -36,7 +36,7 @@
 #define REFORM_MBREV_R2 12
 
 // don't forget to set this!
-#define REFORM_MOTHERBOARD_REV REFORM_MBREV_D4
+#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
 //#define REF2_DEBUG 1
 #define FW_REV "R2 "
 
@@ -781,12 +781,14 @@ int main(void)
           cycles_in_state = 0;
         }
       }
-      else if (num_overvolted_cells < 8 && num_fully_charged_cells >= 8) {
-        // when transitioning to fully charged, we assume that we're at max capacity
-        capacity_accu_ampsecs = capacity_max_ampsecs;
-        state = ST_FULLY_CHARGED;
-        reached_full_charge = 1;
-        cycles_in_state = 0;
+      else if (current < 0 && current > -0.25 && num_fully_charged_cells > 4) {
+        if (cycles_in_state > 5) {
+          // when transitioning to fully charged, we assume that we're at max capacity
+          capacity_accu_ampsecs = capacity_max_ampsecs;
+          state = ST_FULLY_CHARGED;
+          reached_full_charge = 1;
+          cycles_in_state = 0;
+        }
       }
       else if (num_overvolted_cells > 0) {
         if (cycles_in_state > 5) {
