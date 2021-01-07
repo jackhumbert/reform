@@ -193,8 +193,13 @@ void gfx_poke(uint8_t x, uint8_t y, uint8_t c) {
 void gfx_poke_str(uint8_t x, uint8_t y, char* str) {
   int len = strlen(str);
   if (len>21) len = 21;
+  // clip
+  if (y<0 || y>3) return;
+  
   for (int xx=x; xx<x+len && xx<21; xx++) {
-    display.display[y][xx] = (uint8_t)str[xx-x];
+    if (xx>=0 && xx<21) {
+      display.display[y][xx] = (uint8_t)str[xx-x];
+    }
   }
 }
 
@@ -245,6 +250,21 @@ void iota_gfx_clear_screen(void) {
   matrix_clear(&display);
 }
 
+void gfx_clear_invert(void) {
+  for (int y=0;y<4;y++) {
+    for (int x=0;x<21;x++) {
+      display.invert[y][x] = 0;
+    }
+  }
+}
+
+void gfx_invert_row(uint8_t y) {
+  if (y<0 || y>3) return;
+  for (int x=0;x<21;x++) {
+    display.invert[y][x] = 1;
+  }
+}
+
 void matrix_render(struct CharacterMatrix *matrix) {
   iota_gfx_on();
 
@@ -263,9 +283,11 @@ void matrix_render(struct CharacterMatrix *matrix) {
   for (uint8_t row = 0; row < MatrixRows; ++row) {
     for (uint8_t col = 0; col < MatrixCols; ++col) {
       const uint8_t *glyph = font + (matrix->display[row][col] * FontWidth);
+      const uint8_t invert = matrix->invert[row][col];
 
       for (uint8_t glyphCol = 0; glyphCol < FontWidth; ++glyphCol) {
         uint8_t colBits = pgm_read_byte(glyph + glyphCol);
+        if (invert) colBits = ~colBits;
         i2c_master_write(colBits);
       }
     }

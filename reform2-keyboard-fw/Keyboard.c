@@ -410,6 +410,122 @@ void remote_turn_off_som(void) {
   //remote_receive_string();
 }
 
+int current_menu_y = 0;
+int current_scroll_y = 0;
+int active_meta_mode = 0;
+
+void render_menu(int y) {
+  char str[32];
+  int i=0;
+  gfx_clear();
+  gfx_clear_invert();
+  gfx_invert_row(current_menu_y-y);
+  sprintf(str, "Exit Menu      ESC");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Power On         1");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Power Off        0");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Reset            r");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Battery Status   b");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Keys Backlight- F1");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Keys Backlight+ F2");
+  gfx_poke_str(0,(i++)-y,str);
+
+  iota_gfx_on();
+  iota_gfx_flush();
+  gfx_clear_invert();
+}
+
+int execute_menu_function(int y) {
+  if (y==1) return execute_meta_function(KEY_1);
+  if (y==2) return execute_meta_function(KEY_0);
+  if (y==3) return execute_meta_function(KEY_R);
+  if (y==4) return execute_meta_function(KEY_B);
+  if (y==5) return execute_meta_function(KEY_F1);
+  if (y==6) return execute_meta_function(KEY_F2);
+  
+  return execute_meta_function(KEY_ESCAPE);
+}
+
+// returns 1 for navigation function (stay in meta mode), 0 for terminal function
+int execute_meta_function(int keycode) {
+  if (keycode == KEY_0) {
+    remote_turn_off_som();
+  }
+  else if (keycode == KEY_1) {
+    remote_turn_on_som();
+  }
+  else if (keycode == KEY_V) {
+    remote_get_voltages();
+  }
+  else if (keycode == KEY_B) {
+    remote_get_cells();
+  }
+  else if (keycode == KEY_S) {
+    remote_get_status();
+  }
+  else if (keycode == KEY_Y) {
+    remote_get_sys_voltage();
+  }
+  else if (keycode == KEY_2) {
+    iota_gfx_off();
+  }
+  else if (keycode == KEY_3) {
+    iota_gfx_on();
+  }
+  else if (keycode == KEY_F1) {
+    kbd_brightness_dec();
+    gfx_clear();
+    iota_gfx_flush();
+  }
+  else if (keycode == KEY_F2) {
+    kbd_brightness_inc();
+    gfx_clear();
+    iota_gfx_flush();
+  }
+  else if (keycode == KEY_F3) {
+    oled_brightness_dec();
+    gfx_clear();
+    iota_gfx_flush();
+  }
+  else if (keycode == KEY_F4) {
+    oled_brightness_inc();
+    gfx_clear();
+    iota_gfx_flush();
+  }
+  else if (keycode == HID_KEYBOARD_SC_UP_ARROW) {
+    current_menu_y--;
+    if (current_menu_y<0) current_menu_y = 0;
+    if (current_menu_y<=current_scroll_y) current_scroll_y--;
+    if (current_scroll_y<0) current_scroll_y = 0;
+    render_menu(current_scroll_y);
+    return 1;
+  }
+  else if (keycode == HID_KEYBOARD_SC_DOWN_ARROW) {
+    current_menu_y++;
+    if (current_menu_y>6) current_menu_y = 6;
+    if (current_menu_y>=current_scroll_y+3) current_scroll_y++;
+    render_menu(current_scroll_y);
+    return 1;
+  }
+  else if (keycode == KEY_M) {
+    render_menu(current_scroll_y);
+    return 1;
+  }
+  else if (keycode == KEY_ENTER) {
+    return execute_menu_function(current_menu_y);
+  }
+  else if (keycode == KEY_ESCAPE) {
+    gfx_clear();
+    iota_gfx_flush();
+  }
+
+  return 0;
+}
 
 char metaPressed = 0;
 uint8_t lastMetaKey = 0;
@@ -470,51 +586,29 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
 
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
           metaPressedNow = 1;
-        } else {
-          // 6 keys is a hard limit in the HID descriptor :/
-          if (usb_report_mode && KeyboardReport && !metaPressed && usedKeyCodes<6) {
-            KeyboardReport->KeyCode[usedKeyCodes++] = keycode;
+          if (!active_meta_mode) {
+            active_meta_mode = 1;
+            execute_meta_function(KEY_M);
           }
-
+        } else {
           if (metaPressed && lastMetaKey!=keycode) {
-            if (keycode == KEY_0) {
-              remote_turn_off_som();
-            }
-            else if (keycode == KEY_1) {
-              remote_turn_on_som();
-            }
-            else if (keycode == KEY_V) {
-              remote_get_voltages();
-            }
-            else if (keycode == KEY_C) {
-              remote_get_cells();
-            }
-            else if (keycode == KEY_S) {
-              remote_get_status();
-            }
-            else if (keycode == KEY_Y) {
-              remote_get_sys_voltage();
-            }
-            else if (keycode == KEY_2) {
-              iota_gfx_off();
-            }
-            else if (keycode == KEY_3) {
-              iota_gfx_on();
-            }
-            else if (keycode == KEY_F1) {
-              kbd_brightness_dec();
-            }
-            else if (keycode == KEY_F2) {
-              kbd_brightness_inc();
-            }
-            else if (keycode == KEY_F3) {
-              oled_brightness_dec();
-            }
-            else if (keycode == KEY_F4) {
-              oled_brightness_inc();
-            }
-          
+            // hyper/circle/menu functions
+            int stay_meta = execute_meta_function(keycode);
             lastMetaKey = keycode;
+
+            if (!stay_meta) {
+              active_meta_mode = 0;
+              lastMetaKey = 0;
+            }
+
+            // FIXME
+            matrix_debounce[loc] = 0;
+          } else {
+            // report keypress via USB
+            // 6 keys is a hard limit in the HID descriptor :/
+            if (usb_report_mode && KeyboardReport && !metaPressed && usedKeyCodes<6) {
+              KeyboardReport->KeyCode[usedKeyCodes++] = keycode;
+            }
           }
         }
       }
@@ -530,8 +624,8 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     }
   }
 
-  metaPressed = metaPressedNow;
-  if (totalPressed<2) lastMetaKey = 0;
+  metaPressed = active_meta_mode; // metaPressedNow;
+  if (totalPressed<1) lastMetaKey = 0;
 }
 
 int main(void)
@@ -575,12 +669,12 @@ void SetupHardware()
   MCUCR |=(1<<JTD);
   MCUCR |=(1<<JTD);
 
+  kbd_brightness_init();  
   iota_gfx_init(false);
 
   anim_hello();
   
   Serial_Init(57600, false);
-  kbd_brightness_init();  
   USB_Init();
 }
 

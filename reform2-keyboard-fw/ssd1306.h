@@ -61,6 +61,7 @@ enum ssd1306_cmds {
 
 struct CharacterMatrix {
   uint8_t display[MatrixRows][MatrixCols];
+  uint8_t invert[MatrixRows][MatrixCols];
   uint8_t *cursor;
   bool dirty;
 };
