@@ -168,12 +168,12 @@ uint16_t missing_reason = 0;
 uint8_t spir[64];
 
 #define OVERVOLTAGE_START_VALUE 3.61
-#define OVERVOLTAGE_STOP_VALUE 3.4
+#define OVERVOLTAGE_STOP_VALUE 3.5
 #define UNDERVOLTAGE_VALUE 2.45
 #define UNDERVOLTAGE_CRITICAL_VALUE 2.3
 #define MISSING_VALUE_HI 4.3
 #define MISSING_VALUE_LO 0.2
-#define FULLY_CHARGED_VOLTAGE 3.4
+#define FULLY_CHARGED_VOLTAGE 3.5
 #define WALLPOWER_DETECT_VOLTAGE 24
 
 void set_discharge_bits(uint16_t bits) {
@@ -389,17 +389,6 @@ void turn_som_power_on(void) {
 
   LPC_GPIO->SET[1] = (1 << 28); // release reset
 }
-
-// TODO: power leak into USB_5V when turned off (~1.5V)
-// try to desolder:
-// - R152 (spkvdd)
-// - R43/R44 (hdmi i2c pullups) -> disappeared!
-// - FB15 (BL_VCC, unlikely)
-// - R61 (USB_VBUS of TUSB, unlikely)
-
-// power leak of 0.5V into AUX_3V3
-// - FB1
-// no, power is leaking through pullups of OVERCUR pins
 
 void turn_som_power_off(void) {
   LPC_GPIO->CLR[1] = (1 << 28); // hold in reset
@@ -646,16 +635,28 @@ void handle_commands() {
       else if (remote_cmd == 'c' && cmd_number>=0 && cmd_number<=7) {
         // get cell status
         uint16_t n = (uint16_t)cmd_number;
-        sprintf(uartBuffer,"%d%c%c%c%c",
-                n,
-                (missing_bits      &(1<<n))?'m':'.',
-                (undervoltage_bits &(1<<n))?'u':'.',
-                (overvoltage_bits  &(1<<n))?'o':'.',
-                (discharge_bits    &(1<<n))?'d':'.');
-
-        uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-        if (n==7) {
-          sprintf(uartBuffer,"m%d u%du o%d",num_missing_cells,num_undervolted_cells,num_overvolted_cells);
+        if (n==0) {
+          sprintf(uartBuffer,"%2d%c%2d%c%2d%c%2d%c%2d%c%2d%c%2d%c%2d%c I%4dM%dU%dO%dC%dS%d",
+                  (int)(cells_v[0]*10),
+                  (discharge_bits    &(1<<0))?'!':' ',
+                  (int)(cells_v[1]*10),
+                  (discharge_bits    &(1<<1))?'!':' ',
+                  (int)(cells_v[2]*10),
+                  (discharge_bits    &(1<<2))?'!':' ',
+                  (int)(cells_v[3]*10),
+                  (discharge_bits    &(1<<3))?'!':' ',
+                  (int)(cells_v[4]*10),
+                  (discharge_bits    &(1<<4))?'!':' ',
+                  (int)(cells_v[5]*10),
+                  (discharge_bits    &(1<<5))?'!':' ',
+                  (int)(cells_v[6]*10),
+                  (discharge_bits    &(1<<6))?'!':' ',
+                  (int)(cells_v[7]*10),
+                  (discharge_bits    &(1<<7))?'!':' ',
+                  (int)(current*1000.0),
+                  num_missing_cells,num_undervolted_cells,num_overvolted_cells,cycles_in_state,state
+                  );
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
         }
         sprintf(uartBuffer,"\r\n");
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
@@ -787,7 +788,7 @@ int main(void)
           cycles_in_state = 0;
         }
       }
-      else if (current < 0 && current > -0.25 && num_fully_charged_cells > 4) {
+      else if (current < 0.01 && current > -0.6 && num_fully_charged_cells >= 8) {
         if (cycles_in_state > 5) {
           // when transitioning to fully charged, we assume that we're at max capacity
           capacity_accu_ampsecs = capacity_max_ampsecs;
@@ -830,7 +831,7 @@ int main(void)
         discharge_overvolted_cells();
 
         // discharge
-        if (cycles_in_state > 5 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
+        if (cycles_in_state > 1 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
           reset_discharge_bits();
 
           state = ST_CHARGE;
