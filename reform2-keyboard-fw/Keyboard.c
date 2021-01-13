@@ -222,42 +222,48 @@ void remote_get_voltages(void) {
   float bat_amps = 0;
   char bat_gauge[5] = {0,0,0,0,0};
 
-  Serial_SendByte('V');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(0);
-  bat_volts = ((float)atoi(response))/1000.0;
-
-  Serial_SendByte('a');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(0);
-  bat_amps = ((float)atoi(response))/1000.0;
-
   Serial_SendByte('g');
   Serial_SendByte('\r');
   Delay_MS(1);
   remote_receive_string(0);
   strncpy(bat_gauge, response, 4);
 
+  Serial_SendByte('0');
+  Serial_SendByte('c');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  remote_receive_string(0);
+  bat_volts = ((float)atoi(response))/1000.0;
+
+  //Serial_SendByte('a');
+  //Serial_SendByte('\r');
+  //Delay_MS(1);
+  //remote_receive_string(0);
+  //bat_amps = ((float)atoi(response))/1000.0;
+
   float sum_volts = 0;
 
   for (int i=0; i<8; i++) {
     // progress anim
-    gfx_poke(0,0,32*4+((2*i)%10));
-    gfx_poke(1,0,32*4+1+((2*i)%10));
-    iota_gfx_flush();
+    //gfx_poke(0,0,32*4+((2*i)%10));
+    //gfx_poke(1,0,32*4+1+((2*i)%10));
+    //iota_gfx_flush();
 
-    Serial_SendByte('0'+i);
-    Serial_SendByte('v');
-    Serial_SendByte('\r');
-    Delay_MS(1);
-    remote_receive_string(0);
+    //Serial_SendByte('0'+i);
+    //Serial_SendByte('v');
+    //Serial_SendByte('\r');
+    //Delay_MS(1);
+    //remote_receive_string(0);
 
-    voltages[i] = ((float)atoi(response))/1000.0;
-    if (voltages[i]<0 || voltages[i]>=5) voltages[i]=0;
+    voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
+    //if (voltages[i]<0 || voltages[i]>=5) voltages[i]=0;
     sum_volts += voltages[i];
   }
+
+  int amps_offset = 3*8+2;
+  // cut off string
+  response[amps_offset+4]=0;
+  bat_amps = ((float)atoi(&response[amps_offset]))/1000.0;
 
   //plot voltages
   gfx_clear();
