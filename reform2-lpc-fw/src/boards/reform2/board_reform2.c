@@ -632,33 +632,40 @@ void handle_commands() {
         }
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
-      else if (remote_cmd == 'c' && cmd_number>=0 && cmd_number<=7) {
-        // get cell status
-        uint16_t n = (uint16_t)cmd_number;
-        if (n==0) {
-          sprintf(uartBuffer,"%2d%c%2d%c%2d%c%2d%c%2d%c%2d%c%2d%c%2d%c I%4dM%dU%dO%dC%dS%d",
-                  (int)(cells_v[0]*10),
-                  (discharge_bits    &(1<<0))?'!':' ',
-                  (int)(cells_v[1]*10),
-                  (discharge_bits    &(1<<1))?'!':' ',
-                  (int)(cells_v[2]*10),
-                  (discharge_bits    &(1<<2))?'!':' ',
-                  (int)(cells_v[3]*10),
-                  (discharge_bits    &(1<<3))?'!':' ',
-                  (int)(cells_v[4]*10),
-                  (discharge_bits    &(1<<4))?'!':' ',
-                  (int)(cells_v[5]*10),
-                  (discharge_bits    &(1<<5))?'!':' ',
-                  (int)(cells_v[6]*10),
-                  (discharge_bits    &(1<<6))?'!':' ',
-                  (int)(cells_v[7]*10),
-                  (discharge_bits    &(1<<7))?'!':' ',
-                  (int)(current*1000.0),
-                  num_missing_cells,num_undervolted_cells,num_overvolted_cells,cycles_in_state,state
-                  );
-          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+      else if (remote_cmd == 'c') {
+        // get status of cells, current, voltage, fuel gauge
+
+        char gauge[5] = {0,0,0,0,0};
+
+        // get fuel gauge (percent)
+        if (reached_full_charge > 0) {
+          sprintf(gauge,"%3d%%", capacity_percentage);
+        } else {
+          // if we never reached full charge,
+          // we don't really know where we are.
+          sprintf(gauge,"???%%");
         }
-        sprintf(uartBuffer,"\r\n");
+
+        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%04dmV%05d %s\r\n",
+                (int)(cells_v[0]*10),
+                (discharge_bits    &(1<<0))?'!':' ',
+                (int)(cells_v[1]*10),
+                (discharge_bits    &(1<<1))?'!':' ',
+                (int)(cells_v[2]*10),
+                (discharge_bits    &(1<<2))?'!':' ',
+                (int)(cells_v[3]*10),
+                (discharge_bits    &(1<<3))?'!':' ',
+                (int)(cells_v[4]*10),
+                (discharge_bits    &(1<<4))?'!':' ',
+                (int)(cells_v[5]*10),
+                (discharge_bits    &(1<<5))?'!':' ',
+                (int)(cells_v[6]*10),
+                (discharge_bits    &(1<<6))?'!':' ',
+                (int)(cells_v[7]*10),
+                (discharge_bits    &(1<<7))?'!':' ',
+                (int)(current*1000.0),
+                (int)(volts*1000.0),
+                gauge);
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
       else if (remote_cmd == 'S') {
@@ -673,19 +680,6 @@ void handle_commands() {
                 (int)(capacity_min_ampsecs/3.6),
                 (int)(capacity_max_ampsecs/3.6));
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-      }
-      else if (remote_cmd == 'g') {
-        // get fuel gauge (percent)
-        if (reached_full_charge > 0) {
-          sprintf(uartBuffer,"%d%%\r\n", capacity_percentage);
-          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-        } else {
-          // if we never reached full charge,
-          // we don't really know where we are.
-
-          sprintf(uartBuffer,"? %%\r\n");
-          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-        }
       }
       else if (remote_cmd == 'e') {
         // toggle serial echo
