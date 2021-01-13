@@ -1,7 +1,7 @@
 /*
   MNT Reform v2 Keyboard Firmware
   Copyright 2019  Lukas F. Hartmann / MNT Research GmbH, Berlin
-  lukas@mntmn.com  
+  lukas@mntmn.com
 */
 /*
              LUFA Library
@@ -71,15 +71,15 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
 
 const uint8_t matrix[15*6] = {
   KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, HID_KEYBOARD_SC_EXSEL, HID_KEYBOARD_SC_EXSEL,
-  
+
   KEY_GRAVE_ACCENT_AND_TILDE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS_AND_UNDERSCORE, KEY_EQUAL_AND_PLUS, KEY_BACKSPACE, 0,
-  
+
   KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_OPENING_BRACKET_AND_OPENING_BRACE, KEY_CLOSING_BRACKET_AND_CLOSING_BRACE, KEY_BACKSLASH_AND_PIPE, 0,
-  
+
   HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_APPLICATION, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON_AND_COLON, KEY_APOSTROPHE_AND_QUOTE, KEY_ENTER, 0,
-  
+
   HID_KEYBOARD_SC_LEFT_SHIFT, KEY_DELETE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT, 0,
-  
+
   HID_KEYBOARD_SC_EXSEL, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_LEFT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0,0,0
 };
 
@@ -117,7 +117,7 @@ int remote_receive_string(int print) {
   int32_t clock = 0;
   int res_x = 0;
   response[0] = 0;
-  
+
   while (!done) {
     int16_t chr = -1;
     clock = 0;
@@ -214,14 +214,14 @@ void insert_bat_icon(char* str, int x, float v) {
 
 void remote_get_voltages(void) {
   empty_serial();
-  
+
   term_x = 0;
   term_y = 0;
 
   float bat_volts = 0;
   float bat_amps = 0;
   char bat_gauge[5] = {0,0,0,0,0};
-  
+
   Serial_SendByte('V');
   Serial_SendByte('\r');
   Delay_MS(1);
@@ -233,7 +233,7 @@ void remote_get_voltages(void) {
   Delay_MS(1);
   remote_receive_string(0);
   bat_amps = ((float)atoi(response))/1000.0;
-  
+
   Serial_SendByte('g');
   Serial_SendByte('\r');
   Delay_MS(1);
@@ -247,7 +247,7 @@ void remote_get_voltages(void) {
     gfx_poke(0,0,32*4+((2*i)%10));
     gfx_poke(1,0,32*4+1+((2*i)%10));
     iota_gfx_flush();
-    
+
     Serial_SendByte('0'+i);
     Serial_SendByte('v');
     Serial_SendByte('\r');
@@ -262,22 +262,22 @@ void remote_get_voltages(void) {
   //plot voltages
   gfx_clear();
   char str[32];
-  
+
   sprintf(str,"[] %.1f  [] %.1f %s",voltages[0],voltages[4],bat_gauge);
   insert_bat_icon(str,0,voltages[0]);
   insert_bat_icon(str,8,voltages[4]);
   gfx_poke_str(0,0,str);
-  
+
   sprintf(str,"[] %.1f  [] %.1f  ",voltages[1],voltages[5]);
   insert_bat_icon(str,0,voltages[1]);
   insert_bat_icon(str,8,voltages[5]);
   gfx_poke_str(0,1,str);
-  
+
   sprintf(str,"[] %.1f  [] %.1f  %.2fA",voltages[2],voltages[6],-bat_amps);
   insert_bat_icon(str,0,voltages[2]);
   insert_bat_icon(str,8,voltages[6]);
   gfx_poke_str(0,2,str);
-  
+
   sprintf(str,"[] %.1f  [] %.1f  %.1fV",voltages[3],voltages[7],bat_volts);
   insert_bat_icon(str,0,voltages[3]);
   insert_bat_icon(str,8,voltages[7]);
@@ -288,7 +288,7 @@ void remote_get_voltages(void) {
 void remote_get_status(void) {
   gfx_clear();
   empty_serial();
-  
+
   term_x = 0;
   term_y = 0;
 
@@ -301,7 +301,7 @@ void remote_get_status(void) {
 void remote_get_cells(void) {
   gfx_clear();
   empty_serial();
-  
+
   term_x = 0;
   term_y = 0;
 
@@ -317,7 +317,7 @@ void remote_get_cells(void) {
 void remote_get_sys_voltage(void) {
   gfx_clear();
   empty_serial();
-  
+
   term_x = 0;
   term_y = 0;
 
@@ -325,7 +325,7 @@ void remote_get_sys_voltage(void) {
   Serial_SendByte('\r');
   Delay_MS(1);
   remote_receive_string(1);
-  
+
   Serial_SendByte('a');
   Serial_SendByte('\r');
   Delay_MS(1);
@@ -354,7 +354,7 @@ int16_t pwmval = 8;
 void kbd_brightness_init(void) {
   // initial brightness
   OCR0A = pwmval;
-  
+
   // clear/set, WGM1:0 set (Phase correct PWM)
   TCCR0A = (1 << 7) | (0 << 6) | (0<<1) | 1;
 
@@ -414,6 +414,8 @@ int current_menu_y = 0;
 int current_scroll_y = 0;
 int active_meta_mode = 0;
 
+int execute_meta_function(int keycode);
+
 void render_menu(int y) {
   char str[32];
   int i=0;
@@ -447,7 +449,7 @@ int execute_menu_function(int y) {
   if (y==4) return execute_meta_function(KEY_B);
   if (y==5) return execute_meta_function(KEY_F1);
   if (y==6) return execute_meta_function(KEY_F2);
-  
+
   return execute_meta_function(KEY_ESCAPE);
 }
 
@@ -527,15 +529,13 @@ int execute_meta_function(int keycode) {
   return 0;
 }
 
-char metaPressed = 0;
-uint8_t lastMetaKey = 0;
 #define DEBOUNCE_CYCLES 5
+uint8_t last_meta_key = 0;
 
 void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardReport) {
-  uint8_t metaPressedNow = 0;
   // how many keys are pressed this round
-  uint8_t usedKeyCodes = 0;
-  uint8_t totalPressed = 0;
+  uint8_t total_pressed = 0;
+  uint8_t used_key_codes = 0;
 
   // pull ROWs low one after the other
   for (int y=0; y<6; y++) {
@@ -582,32 +582,34 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
         } else if (pressed) {
           matrix_debounce[loc] = DEBOUNCE_CYCLES;
         }
-        totalPressed++;
+        total_pressed++;
 
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
-          metaPressedNow = 1;
           if (!active_meta_mode) {
+            current_scroll_y = 0;
+            current_menu_y = 0;
             active_meta_mode = 1;
+            // render menu
             execute_meta_function(KEY_M);
           }
         } else {
-          if (metaPressed && lastMetaKey!=keycode) {
-            // hyper/circle/menu functions
-            int stay_meta = execute_meta_function(keycode);
-            lastMetaKey = keycode;
+          if (active_meta_mode) {
+            if (last_meta_key!=keycode) {
+              // hyper/circle/menu functions
+              int stay_meta = execute_meta_function(keycode);
+              // don't repeat action while key is held down
+              last_meta_key = keycode;
 
-            if (!stay_meta) {
-              active_meta_mode = 0;
-              lastMetaKey = 0;
+              // exit meta mode
+              if (!stay_meta) {
+                active_meta_mode = 0;
+              }
             }
-
-            // FIXME
-            matrix_debounce[loc] = 0;
           } else {
             // report keypress via USB
             // 6 keys is a hard limit in the HID descriptor :/
-            if (usb_report_mode && KeyboardReport && !metaPressed && usedKeyCodes<6) {
-              KeyboardReport->KeyCode[usedKeyCodes++] = keycode;
+            if (usb_report_mode && KeyboardReport && used_key_codes<6) {
+              KeyboardReport->KeyCode[used_key_codes++] = keycode;
             }
           }
         }
@@ -624,8 +626,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     }
   }
 
-  metaPressed = active_meta_mode; // metaPressedNow;
-  if (totalPressed<1) lastMetaKey = 0;
+  if (total_pressed<1) last_meta_key = 0;
 }
 
 int main(void)
@@ -664,16 +665,16 @@ void SetupHardware()
   PORTD = 0b00100000;
   PORTE = 0b01000000;
   PORTF = 0b11111111;
-  
+
   // disable JTAG
   MCUCR |=(1<<JTD);
   MCUCR |=(1<<JTD);
 
-  kbd_brightness_init();  
+  kbd_brightness_init();
   iota_gfx_init(false);
 
   anim_hello();
-  
+
   Serial_Init(57600, false);
   USB_Init();
 }
@@ -730,7 +731,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
 
   process_keyboard(1, KeyboardReport);
-  
+
   *ReportSize = sizeof(USB_KeyboardReport_Data_t);
   return false;
 }
@@ -750,4 +751,3 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const uint16_t ReportSize)
 {
 }
-

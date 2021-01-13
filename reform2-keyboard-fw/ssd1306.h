@@ -70,6 +70,8 @@ struct CharacterMatrix display;
 
 void gfx_poke(uint8_t x, uint8_t y, uint8_t c);
 void gfx_poke_str(uint8_t x, uint8_t y, char* str);
+void gfx_clear_invert(void);
+void gfx_invert_row(uint8_t y);
 bool iota_gfx_init(bool rotate);
 void iota_gfx_task(void);
 bool iota_gfx_off(void);
