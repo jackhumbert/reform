@@ -233,7 +233,7 @@ void remote_get_voltages(void) {
   Serial_SendByte('\r');
   Delay_MS(1);
   remote_receive_string(0);
-  bat_volts = ((float)atoi(response))/1000.0;
+  //bat_volts = ((float)atoi(response))/1000.0;
 
   //Serial_SendByte('a');
   //Serial_SendByte('\r');
