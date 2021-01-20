@@ -222,50 +222,31 @@ void remote_get_voltages(void) {
   float bat_amps = 0;
   char bat_gauge[5] = {0,0,0,0,0};
 
-  Serial_SendByte('g');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(0);
-  strncpy(bat_gauge, response, 4);
-
-  Serial_SendByte('0');
   Serial_SendByte('c');
   Serial_SendByte('\r');
   Delay_MS(1);
   remote_receive_string(0);
-  //bat_volts = ((float)atoi(response))/1000.0;
-
-  //Serial_SendByte('a');
-  //Serial_SendByte('\r');
-  //Delay_MS(1);
-  //remote_receive_string(0);
-  //bat_amps = ((float)atoi(response))/1000.0;
 
   float sum_volts = 0;
 
   for (int i=0; i<8; i++) {
-    // progress anim
-    //gfx_poke(0,0,32*4+((2*i)%10));
-    //gfx_poke(1,0,32*4+1+((2*i)%10));
-    //iota_gfx_flush();
-
-    //Serial_SendByte('0'+i);
-    //Serial_SendByte('v');
-    //Serial_SendByte('\r');
-    //Delay_MS(1);
-    //remote_receive_string(0);
-
     voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
-    //if (voltages[i]<0 || voltages[i]>=5) voltages[i]=0;
+    if (voltages[i]<0) voltages[i]=0;
+    if (voltages[i]>=10) voltages[i]=9.9;
     sum_volts += voltages[i];
   }
 
-  int amps_offset = 3*8+2;
+  int amps_offset = 3*8+3;
   // cut off string
   response[amps_offset+4]=0;
   bat_amps = ((float)atoi(&response[amps_offset]))/1000.0;
+  int volts_offset = amps_offset+4+1;
+  response[volts_offset+5]=0;
+  bat_volts = ((float)atoi(&response[volts_offset]))/1000.0;
+  int gauge_offset = volts_offset+5+1;
+  strncpy(bat_gauge, &response[gauge_offset], 4);
 
-  //plot voltages
+  // plot
   gfx_clear();
   char str[32];
 
@@ -467,10 +448,10 @@ int execute_meta_function(int keycode) {
   else if (keycode == KEY_1) {
     remote_turn_on_som();
   }
-  else if (keycode == KEY_V) {
+  else if (keycode == KEY_B) {
     remote_get_voltages();
   }
-  else if (keycode == KEY_B) {
+  else if (keycode == KEY_V) {
     remote_get_cells();
   }
   else if (keycode == KEY_S) {
@@ -611,7 +592,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
                 active_meta_mode = 0;
               }
             }
-          } else {
+          } else if (!last_meta_key) {
             // report keypress via USB
             // 6 keys is a hard limit in the HID descriptor :/
             if (usb_report_mode && KeyboardReport && used_key_codes<6) {
