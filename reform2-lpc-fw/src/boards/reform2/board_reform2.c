@@ -840,8 +840,6 @@ int main(void)
         if (num_missing_cells < 1) {
           state = ST_CHARGE;
           cycles_in_state = 0;
-        } else if (volts < WALLPOWER_DETECT_VOLTAGE) {
-          turn_som_power_off();
         }
       }
     }
