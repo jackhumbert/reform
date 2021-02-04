@@ -367,6 +367,26 @@ void remote_reset_som(void) {
   empty_serial();
 }
 
+void remote_turn_off_aux(void) {
+  empty_serial();
+
+  Serial_SendByte('3');
+  Serial_SendByte('p');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_turn_on_aux(void) {
+  empty_serial();
+
+  Serial_SendByte('4');
+  Serial_SendByte('p');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
 int current_menu_y = 0;
 int current_scroll_y = 0;
 int active_meta_mode = 0;
@@ -393,6 +413,10 @@ void render_menu(int y) {
   gfx_poke_str(0,(i++)-y,str);
   sprintf(str, "Keys Backlight+ F2");
   gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Aux Power On     x");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Aux Power Off    v");
+  gfx_poke_str(0,(i++)-y,str);
 
   iota_gfx_on();
   iota_gfx_flush();
@@ -406,6 +430,8 @@ int execute_menu_function(int y) {
   if (y==4) return execute_meta_function(KEY_B);
   if (y==5) return execute_meta_function(KEY_F1);
   if (y==6) return execute_meta_function(KEY_F2);
+  if (y==7) return execute_meta_function(KEY_X);
+  if (y==8) return execute_meta_function(KEY_V);
 
   return execute_meta_function(KEY_ESCAPE);
 }
@@ -422,6 +448,12 @@ int execute_meta_function(int keycode) {
   else if (keycode == KEY_R) {
     // TODO: are you sure?
     remote_reset_som();
+  }
+  else if (keycode == KEY_X) {
+    remote_turn_on_aux();
+  }
+  else if (keycode == KEY_V) {
+    remote_turn_off_aux();
   }
   else if (keycode == KEY_B) {
     remote_get_voltages();

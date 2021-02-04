@@ -407,10 +407,25 @@ void turn_som_power_off(void) {
   LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
 }
 
-void turn_periph_power_on(void) {
+// just a reset pulse to IMX, no power toggling
+void reset_som(void) {
+  LPC_GPIO->CLR[1] = (1 << 28); // hold reset
+  delay(1);
+  LPC_GPIO->SET[1] = (1 << 28); // release reset
 }
 
-void turn_periph_power_off(void) {
+void turn_aux_power_on(void) {
+  LPC_GPIO->SET[1] = (1 << 19); // 1v2 on
+  LPC_GPIO->SET[1] = (1 << 31); // USB 5v on (R1+)
+  LPC_GPIO->SET[0] = (1 << 7);  // AUX 3v3 on (R1+)
+}
+
+void turn_aux_power_off(void) {
+  LPC_GPIO->CLR[1] = (1 << 19); // 1v2 off
+  LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
+  LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
+
+  // TODO: 1v8?
 }
 
 void brownout_setup(void) {
@@ -589,10 +604,22 @@ void handle_commands() {
 
       // execute
       if (remote_cmd == 'p') {
-        // toggle system 5V power
+        // toggle system power and/or reset imx
         if (cmd_number == 0) {
           turn_som_power_off();
           sprintf(uartBuffer,"system: off\r\n");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+        } else if (cmd_number == 2) {
+          reset_som();
+          sprintf(uartBuffer,"system: reset\r\n");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+        } else if (cmd_number == 3) {
+          turn_aux_power_off();
+          sprintf(uartBuffer,"system: auxpwr off\r\n");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+        } else if (cmd_number == 4) {
+          turn_aux_power_on();
+          sprintf(uartBuffer,"system: auxpwr on\r\n");
           uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
         } else {
           turn_som_power_on();
