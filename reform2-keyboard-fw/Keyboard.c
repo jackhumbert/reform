@@ -354,7 +354,6 @@ void remote_turn_off_som(void) {
 }
 
 void remote_reset_som(void) {
-  anim_goodbye();
   empty_serial();
 
   term_x = 0;
@@ -362,6 +361,24 @@ void remote_reset_som(void) {
 
   Serial_SendByte('2');
   Serial_SendByte('p');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_wake_som(void) {
+  empty_serial();
+
+  term_x = 0;
+  term_y = 0;
+
+  Serial_SendByte('1');
+  Serial_SendByte('w');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+  Serial_SendByte('0');
+  Serial_SendByte('w');
   Serial_SendByte('\r');
   Delay_MS(1);
   empty_serial();
@@ -387,6 +404,37 @@ void remote_turn_on_aux(void) {
   empty_serial();
 }
 
+void remote_report_voltages(void) {
+  empty_serial();
+
+  Serial_SendByte('0');
+  Serial_SendByte('c');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_enable_som_uart(void) {
+  empty_serial();
+
+  Serial_SendByte('1');
+  Serial_SendByte('u');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_disable_som_uart(void) {
+  empty_serial();
+
+  Serial_SendByte('0');
+  Serial_SendByte('u');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+#define MENU_NUM_ITEMS 8
 int current_menu_y = 0;
 int current_scroll_y = 0;
 int active_meta_mode = 0;
@@ -449,6 +497,9 @@ int execute_meta_function(int keycode) {
     // TODO: are you sure?
     remote_reset_som();
   }
+  else if (keycode == KEY_SPACE) {
+    remote_wake_som();
+  }
   else if (keycode == KEY_X) {
     remote_turn_on_aux();
   }
@@ -479,7 +530,7 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == HID_KEYBOARD_SC_DOWN_ARROW) {
     current_menu_y++;
-    if (current_menu_y>6) current_menu_y = 6;
+    if (current_menu_y>MENU_NUM_ITEMS) current_menu_y = MENU_NUM_ITEMS;
     if (current_menu_y>=current_scroll_y+3) current_scroll_y++;
     render_menu(current_scroll_y);
     return 1;
@@ -495,6 +546,9 @@ int execute_meta_function(int keycode) {
     gfx_clear();
     iota_gfx_flush();
   }
+
+  gfx_clear();
+  iota_gfx_flush();
 
   return 0;
 }
@@ -727,17 +781,35 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const uint16_t ReportSize)
 {
   uint8_t* data = (uint8_t*)ReportData;
-  iota_gfx_on();
-  for (int y=0; y<4; y++) {
-    for (int x=0; x<21; x++) {
-      gfx_poke(x,y,data[y*21+x]);
-    }
-  }
-  iota_gfx_flush();
+  if (ReportSize<4) return;
 
-  // TODO: process requests like:
-  // - shutdown
-  // - partial shutdown
-  // - power rails
-  // - change matrix?
+  if (data[0]=='O' && data[1]=='L' && data[2]=='E' && data[3]=='D') {
+    iota_gfx_on();
+    for (int y=0; y<4; y++) {
+      for (int x=0; x<21; x++) {
+        gfx_poke(x,y,data[4+y*21+x]);
+      }
+    }
+    iota_gfx_flush();
+  }
+  else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='0') {
+    // shutdown (turn off power rails)
+    execute_meta_function(KEY_0);
+  }
+  else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='3') {
+    // aux power off
+    execute_meta_function(KEY_V);
+  }
+  else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='4') {
+    // aux power on
+    execute_meta_function(KEY_X);
+  }
+  else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='1') {
+    // UART reporting on
+    execute_meta_function(KEY_V);
+  }
+  else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='0') {
+    // UART reporting off
+    execute_meta_function(KEY_X);
+  }
 }
