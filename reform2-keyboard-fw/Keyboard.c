@@ -261,12 +261,12 @@ void remote_get_voltages(void) {
   insert_bat_icon(str,8,voltages[5]);
   gfx_poke_str(0,1,str);
 
-  sprintf(str,"[] %.1f  [] %.1f %.2fA",voltages[2],voltages[6],bat_amps);
+  sprintf(str,"[] %.1f  [] %.1f %2.2fA",voltages[2],voltages[6],bat_amps);
   insert_bat_icon(str,0,voltages[2]);
   insert_bat_icon(str,8,voltages[6]);
   gfx_poke_str(0,2,str);
 
-  sprintf(str,"[] %.1f  [] %.1f  %.1fV",voltages[3],voltages[7],bat_volts);
+  sprintf(str,"[] %.1f  [] %.1f %2.2fV",voltages[3],voltages[7],bat_volts);
   insert_bat_icon(str,0,voltages[3]);
   insert_bat_icon(str,8,voltages[7]);
   gfx_poke_str(0,3,str);
@@ -447,22 +447,22 @@ void render_menu(int y) {
   gfx_clear();
   gfx_clear_invert();
   gfx_invert_row(current_menu_y-y);
-  sprintf(str, "Exit Menu      ESC");
+  sprintf(str, "Exit Menu         ESC");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Power On         1");
+  sprintf(str, "Power On            1");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Power Off        0");
+  sprintf(str, "Power Off           0");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Reset            r");
+  sprintf(str, "Reset               r");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Battery Status   b");
+  sprintf(str, "Battery Status      b");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Key Backlight-  F1");
+  sprintf(str, "Key Backlight-     F1");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Key Backlight+  F2");
+  sprintf(str, "Key Backlight+     F2");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Wake           SPC");
-  //gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Wake              SPC");
+  gfx_poke_str(0,(i++)-y,str);
   //sprintf(str, "Aux Power On     x");
   //gfx_poke_str(0,(i++)-y,str);
   //sprintf(str, "Aux Power Off    v");
