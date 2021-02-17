@@ -261,7 +261,7 @@ void remote_get_voltages(void) {
   insert_bat_icon(str,8,voltages[5]);
   gfx_poke_str(0,1,str);
 
-  sprintf(str,"[] %.1f  [] %.1f  %.2fA",voltages[2],voltages[6],-bat_amps);
+  sprintf(str,"[] %.1f  [] %.1f %.2fA",voltages[2],voltages[6],bat_amps);
   insert_bat_icon(str,0,voltages[2]);
   insert_bat_icon(str,8,voltages[6]);
   gfx_poke_str(0,2,str);
@@ -434,7 +434,7 @@ void remote_disable_som_uart(void) {
   empty_serial();
 }
 
-#define MENU_NUM_ITEMS 8
+#define MENU_NUM_ITEMS 7
 int current_menu_y = 0;
 int current_scroll_y = 0;
 int active_meta_mode = 0;
@@ -457,14 +457,16 @@ void render_menu(int y) {
   gfx_poke_str(0,(i++)-y,str);
   sprintf(str, "Battery Status   b");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Keys Backlight- F1");
+  sprintf(str, "Key Backlight-  F1");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Keys Backlight+ F2");
+  sprintf(str, "Key Backlight+  F2");
   gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Aux Power On     x");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Aux Power Off    v");
-  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Wake           SPC");
+  //gfx_poke_str(0,(i++)-y,str);
+  //sprintf(str, "Aux Power On     x");
+  //gfx_poke_str(0,(i++)-y,str);
+  //sprintf(str, "Aux Power Off    v");
+  //gfx_poke_str(0,(i++)-y,str);
 
   iota_gfx_on();
   iota_gfx_flush();
@@ -478,8 +480,7 @@ int execute_menu_function(int y) {
   if (y==4) return execute_meta_function(KEY_B);
   if (y==5) return execute_meta_function(KEY_F1);
   if (y==6) return execute_meta_function(KEY_F2);
-  if (y==7) return execute_meta_function(KEY_X);
-  if (y==8) return execute_meta_function(KEY_V);
+  if (y==7) return execute_meta_function(KEY_SPACE);
 
   return execute_meta_function(KEY_ESCAPE);
 }
@@ -500,17 +501,19 @@ int execute_meta_function(int keycode) {
   else if (keycode == KEY_SPACE) {
     remote_wake_som();
   }
-  else if (keycode == KEY_X) {
+  /*else if (keycode == KEY_X) {
     remote_turn_on_aux();
   }
   else if (keycode == KEY_V) {
     remote_turn_off_aux();
-  }
+  }*/
   else if (keycode == KEY_B) {
     remote_get_voltages();
+    return 0;
   }
   else if (keycode == KEY_S) {
     remote_get_status();
+    return 0;
   }
   else if (keycode == KEY_F1) {
     kbd_brightness_dec();
@@ -794,22 +797,26 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='0') {
     // shutdown (turn off power rails)
-    execute_meta_function(KEY_0);
+    remote_turn_off_som();
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='3') {
     // aux power off
-    execute_meta_function(KEY_V);
+    remote_turn_off_aux();
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='4') {
     // aux power on
-    execute_meta_function(KEY_X);
+    remote_turn_on_aux();
   }
   else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='1') {
     // UART reporting on
-    execute_meta_function(KEY_V);
+    remote_enable_som_uart();
   }
   else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='0') {
     // UART reporting off
-    execute_meta_function(KEY_X);
+    remote_disable_som_uart();
+  }
+  else if (data[0]=='R' && data[1]=='P' && data[2]=='R' && data[3]=='T') {
+    // Report power stats to UART
+    remote_report_voltages();
   }
 }
