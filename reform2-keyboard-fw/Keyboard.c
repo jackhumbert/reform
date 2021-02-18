@@ -40,7 +40,7 @@
 #include "scancodes.h"
 #include <stdlib.h>
 
-#define KBD_FW_REV "MNT Reform Keyboard R-1 20210218"
+#define KBD_FW_REV "MNT Reform Keyboard R1 20210218"
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
@@ -279,10 +279,10 @@ void remote_get_status(void) {
   gfx_clear();
   empty_serial();
 
-  gfx_poke_str(0, 0, KBD_FW_REV);
+  gfx_poke_str(0, 3, KBD_FW_REV);
 
   term_x = 0;
-  term_y = 2;
+  term_y = 0;
 
   Serial_SendByte('s');
   Serial_SendByte('\r');
