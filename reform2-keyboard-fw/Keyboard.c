@@ -40,6 +40,8 @@
 #include "scancodes.h"
 #include <stdlib.h>
 
+#define KBD_FW_REV "MNT Reform Keyboard R-1 20210218"
+
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
 
@@ -80,7 +82,7 @@ const uint8_t matrix[15*6] = {
 
   HID_KEYBOARD_SC_LEFT_SHIFT, KEY_DELETE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT, 0,
 
-  HID_KEYBOARD_SC_EXSEL, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_LEFT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0,0,0
+  HID_KEYBOARD_SC_RIGHT_GUI, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_RIGHT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0,0,0
 };
 
 uint8_t matrix_debounce[15*6];
@@ -153,33 +155,33 @@ timeout:
   if (!done && print) gfx_poke(20,0,'T');
   empty_serial();
   if (print) {
-    iota_gfx_flush();
+    gfx_flush();
   }
   return done;
 }
 
 void anim_hello(void) {
   gfx_clear();
-  iota_gfx_on();
+  gfx_on();
   for (int y=0; y<3; y++) {
     for (int x=0; x<12; x++) {
       gfx_poke(x+4,y+1,(5+y)*32+x);
-      iota_gfx_flush();
+      gfx_flush();
     }
   }
   for (int y=0; y<0xff; y++) {
-    iota_gfx_contrast(y);
+    gfx_contrast(y);
     Delay_MS(2);
   }
   for (int y=0; y<0xff; y++) {
-    iota_gfx_contrast(0xff-y);
+    gfx_contrast(0xff-y);
     Delay_MS(2);
   }
 }
 
 void anim_goodbye(void) {
   gfx_clear();
-  iota_gfx_on();
+  gfx_on();
   for (int y=0; y<3; y++) {
     for (int x=0; x<12; x++) {
       gfx_poke(x+4,y+1,(5+y)*32+x);
@@ -188,10 +190,10 @@ void anim_goodbye(void) {
   for (int y=0; y<3; y++) {
     for (int x=0; x<12; x++) {
       gfx_poke(x+4,y+1,' ');
-      iota_gfx_flush();
+      gfx_flush();
     }
   }
-  iota_gfx_off();
+  gfx_off();
 }
 
 float voltages[8];
@@ -270,15 +272,17 @@ void remote_get_voltages(void) {
   insert_bat_icon(str,0,voltages[3]);
   insert_bat_icon(str,8,voltages[7]);
   gfx_poke_str(0,3,str);
-  iota_gfx_flush();
+  gfx_flush();
 }
 
 void remote_get_status(void) {
   gfx_clear();
   empty_serial();
 
+  gfx_poke_str(0, 0, KBD_FW_REV);
+
   term_x = 0;
-  term_y = 0;
+  term_y = 2;
 
   Serial_SendByte('s');
   Serial_SendByte('\r');
@@ -290,12 +294,12 @@ int oledbrt=0;
 void oled_brightness_inc(void) {
   oledbrt+=10;
   if (oledbrt>=0xff) oledbrt = 0xff;
-  iota_gfx_contrast(oledbrt);
+  gfx_contrast(oledbrt);
 }
 void oled_brightness_dec(void) {
   oledbrt-=10;
   if (oledbrt<0) oledbrt = 0;
-  iota_gfx_contrast(oledbrt);
+  gfx_contrast(oledbrt);
 }
 
 int16_t pwmval = 8;
@@ -434,7 +438,7 @@ void remote_disable_som_uart(void) {
   empty_serial();
 }
 
-#define MENU_NUM_ITEMS 7
+#define MENU_NUM_ITEMS 8
 int current_menu_y = 0;
 int current_scroll_y = 0;
 int active_meta_mode = 0;
@@ -463,13 +467,15 @@ void render_menu(int y) {
   gfx_poke_str(0,(i++)-y,str);
   sprintf(str, "Wake              SPC");
   gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "System Status       s");
+  gfx_poke_str(0,(i++)-y,str);
   //sprintf(str, "Aux Power On     x");
   //gfx_poke_str(0,(i++)-y,str);
   //sprintf(str, "Aux Power Off    v");
   //gfx_poke_str(0,(i++)-y,str);
 
-  iota_gfx_on();
-  iota_gfx_flush();
+  gfx_on();
+  gfx_flush();
   gfx_clear_invert();
 }
 
@@ -481,6 +487,7 @@ int execute_menu_function(int y) {
   if (y==5) return execute_meta_function(KEY_F1);
   if (y==6) return execute_meta_function(KEY_F2);
   if (y==7) return execute_meta_function(KEY_SPACE);
+  if (y==8) return execute_meta_function(KEY_S);
 
   return execute_meta_function(KEY_ESCAPE);
 }
@@ -547,11 +554,11 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == KEY_ESCAPE) {
     gfx_clear();
-    iota_gfx_flush();
+    gfx_flush();
   }
 
   gfx_clear();
-  iota_gfx_flush();
+  gfx_flush();
 
   return 0;
 }
@@ -704,7 +711,7 @@ void SetupHardware()
   MCUCR |=(1<<JTD);
 
   kbd_brightness_init();
-  iota_gfx_init(false);
+  gfx_init(false);
 
   anim_hello();
 
@@ -787,36 +794,42 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
   if (ReportSize<4) return;
 
   if (data[0]=='O' && data[1]=='L' && data[2]=='E' && data[3]=='D') {
-    iota_gfx_on();
+    // OLED: write characters on display
+    gfx_on();
     for (int y=0; y<4; y++) {
       for (int x=0; x<21; x++) {
         gfx_poke(x,y,data[4+y*21+x]);
       }
     }
-    iota_gfx_flush();
+    gfx_flush();
+    gfx_clear_invert();
+  }
+  if (data[0]=='O' && data[1]=='I' && data[2]=='N' && data[3]=='V') {
+    gfx_clear_invert();
+    gfx_invert_row(data[4]-'0');
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='0') {
-    // shutdown (turn off power rails)
+    // PWR0: shutdown (turn off power rails)
     remote_turn_off_som();
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='3') {
-    // aux power off
+    // PWR3: aux power off
     remote_turn_off_aux();
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='4') {
-    // aux power on
+    // PWR4: aux power on
     remote_turn_on_aux();
   }
   else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='1') {
-    // UART reporting on
+    // UAR1: UART reporting on
     remote_enable_som_uart();
   }
   else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='0') {
-    // UART reporting off
+    // UAR0: UART reporting off
     remote_disable_som_uart();
   }
   else if (data[0]=='R' && data[1]=='P' && data[2]=='R' && data[3]=='T') {
-    // Report power stats to UART
+    // RPRT: Report power stats to UART
     remote_report_voltages();
   }
 }
