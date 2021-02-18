@@ -38,7 +38,7 @@
 // don't forget to set this!
 #define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
 //#define REF2_DEBUG 1
-#define FW_REV "R2 "
+#define FW_REV "MNT Reform LPC R-2 20210218"
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -415,17 +415,17 @@ void reset_som(void) {
 }
 
 void turn_aux_power_on(void) {
+  LPC_GPIO->SET[0] = (1 << 20); // PCIe on
   LPC_GPIO->SET[1] = (1 << 19); // 1v2 on
   LPC_GPIO->SET[1] = (1 << 31); // USB 5v on (R1+)
-  LPC_GPIO->SET[0] = (1 << 7);  // AUX 3v3 on (R1+)
+  //LPC_GPIO->SET[0] = (1 << 7);  // AUX 3v3 on (R1+)
 }
 
 void turn_aux_power_off(void) {
+  LPC_GPIO->CLR[0] = (1 << 20); // PCIe off
   LPC_GPIO->CLR[1] = (1 << 19); // 1v2 off
   LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
-  LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
-
-  // TODO: 1v8?
+  //LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
 }
 
 void brownout_setup(void) {
@@ -512,7 +512,7 @@ void boardInit(void)
   LPC_GPIO->DIR[1] |= (1 << 23);
   LPC_GPIO->SET[1] =  (1 << 23); // active low
 
-  // UART connected to i.MX8M ttymxc2 REFORM
+  // UART connected to i.MX8M ttymxc2
   /* Set 0.14 UART RXD */
   // this disrupts keyboard communication when main power turned off
   //LPC_IOCON->PIO1_14 &= ~0x07;
@@ -521,7 +521,6 @@ void boardInit(void)
   // only send to reform, don't receive from it
   /* Set 0.13 UART TXD */
   LPC_IOCON->PIO1_13 &= ~0x07;
-  LPC_IOCON->PIO1_13 |= 0x3;
 
 #ifdef REF2_DEBUG
   sprintf(uartBuffer, "\r\nMNT Reform 2.0 MCU initialized.\r\n");
@@ -645,23 +644,47 @@ void handle_commands() {
       else if (remote_cmd == 's') {
         // get charger system state
         if (state == ST_CHARGE) {
-          sprintf(uartBuffer,FW_REV"idle/charging [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" idle/charging [%d]\r",cycles_in_state);
         } else if (state == ST_OVERVOLTED) {
-          sprintf(uartBuffer,FW_REV"balancing [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" balancing [%d]\r",cycles_in_state);
         } else if (state == ST_UNDERVOLTED) {
-          sprintf(uartBuffer,FW_REV"undervoltage [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" undervoltage [%d]\r",cycles_in_state);
         } else if (state == ST_MISSING) {
-          sprintf(uartBuffer,FW_REV"missing cells (%d)(%x)[%d]\r",num_missing_cells,missing_reason,cycles_in_state);
+          sprintf(uartBuffer,FW_REV" missing cells (%d) [%d]\r",num_missing_cells,cycles_in_state);
         } else if (state == ST_FULLY_CHARGED) {
-          sprintf(uartBuffer,FW_REV"fully charged [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" fully charged [%d]\r",cycles_in_state);
         } else {
-          sprintf(uartBuffer,FW_REV"unknown %d [%d]\r",state,cycles_in_state);
+          sprintf(uartBuffer,FW_REV" unknown %d [%d]\r",state,cycles_in_state);
         }
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
+      else if (remote_cmd == 'u') {
+        // turn reporting to i.MX on or off
+        if (cmd_number>0) {
+          // turn i.MX UART output on
+          LPC_IOCON->PIO1_13 |= 0x3;
+        } else {
+          // turn i.MX UART output off
+          LPC_IOCON->PIO1_13 &= ~0x07;
+        }
+      }
+      else if (remote_cmd == 'w') {
+        // wake i.MX
+        if (cmd_number>0) {
+          // send a string via UART
+          LPC_IOCON->PIO1_13 |= 0x3;
+          sprintf(uartBuffer,"wake!\r");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          LPC_IOCON->PIO1_13 &= ~0x07;
+        } else {
+          // pulse wake GPIO
+          LPC_GPIO->SET[1] = (1 << 24);
+          delay(100);
+          LPC_GPIO->CLR[1] = (1 << 24);
+        }
+      }
       else if (remote_cmd == 'c') {
         // get status of cells, current, voltage, fuel gauge
-
         char gauge[5] = {0,0,0,0,0};
 
         // get fuel gauge (percent)
