@@ -61,6 +61,7 @@ enum ssd1306_cmds {
 
 struct CharacterMatrix {
   uint8_t display[MatrixRows][MatrixCols];
+  uint8_t invert[MatrixRows][MatrixCols];
   uint8_t *cursor;
   bool dirty;
 };
@@ -69,18 +70,20 @@ struct CharacterMatrix display;
 
 void gfx_poke(uint8_t x, uint8_t y, uint8_t c);
 void gfx_poke_str(uint8_t x, uint8_t y, char* str);
-bool iota_gfx_init(bool rotate);
-void iota_gfx_task(void);
-bool iota_gfx_off(void);
-bool iota_gfx_on(void);
-void iota_gfx_flush(void);
-void iota_gfx_write_char(uint8_t c);
-void iota_gfx_write(const char *data);
-void iota_gfx_write_P(const char *data);
-void iota_gfx_clear_screen(void);
-void iota_gfx_contrast(int c);
+void gfx_clear_invert(void);
+void gfx_invert_row(uint8_t y);
+bool gfx_init(bool rotate);
+void gfx_task(void);
+bool gfx_off(void);
+bool gfx_on(void);
+void gfx_flush(void);
+void gfx_write_char(uint8_t c);
+void gfx_write(const char *data);
+void gfx_write_P(const char *data);
+void gfx_clear_screen(void);
+void gfx_contrast(int c);
 
-void iota_gfx_task_user(void);
+void gfx_task_user(void);
 
 void matrix_clear(struct CharacterMatrix *matrix);
 void matrix_write_char_inner(struct CharacterMatrix *matrix, uint8_t c);

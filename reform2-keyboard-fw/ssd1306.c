@@ -82,7 +82,7 @@ done:
   i2c_master_stop();
 }
 
-bool iota_gfx_init(bool rotate) {
+bool gfx_init(bool rotate) {
   bool success = false;
 	rotate = false; // FIXME
 
@@ -122,13 +122,13 @@ bool iota_gfx_init(bool rotate) {
 
   success = true;
 
-  iota_gfx_flush();
+  gfx_flush();
 
 done:
   return success;
 }
 
-bool iota_gfx_off(void) {
+bool gfx_off(void) {
   bool success = false;
 
   //send_cmd1(InvertDisplay);
@@ -139,7 +139,7 @@ done:
   return success;
 }
 
-bool iota_gfx_on(void) {
+bool gfx_on(void) {
   bool success = false;
 
   send_cmd1(NormalDisplay);
@@ -150,7 +150,7 @@ done:
   return success;
 }
 
-void iota_gfx_contrast(int c) {
+void gfx_contrast(int c) {
   send_cmd2(SetContrast, c);
 done:
   return;
@@ -193,12 +193,17 @@ void gfx_poke(uint8_t x, uint8_t y, uint8_t c) {
 void gfx_poke_str(uint8_t x, uint8_t y, char* str) {
   int len = strlen(str);
   if (len>21) len = 21;
+  // clip
+  if (y<0 || y>3) return;
+
   for (int xx=x; xx<x+len && xx<21; xx++) {
-    display.display[y][xx] = (uint8_t)str[xx-x];
+    if (xx>=0 && xx<21) {
+      display.display[y][xx] = (uint8_t)str[xx-x];
+    }
   }
 }
 
-void iota_gfx_write_char(uint8_t c) {
+void gfx_write_char(uint8_t c) {
   matrix_write_char(&display, c);
 }
 
@@ -216,7 +221,7 @@ void matrix_write_ln(struct CharacterMatrix *matrix, const char *data) {
   matrix_write(matrix, data_ln);
 }
 
-void iota_gfx_write(const char *data) {
+void gfx_write(const char *data) {
   matrix_write(&display, data);
 }
 
@@ -231,7 +236,7 @@ void matrix_write_P(struct CharacterMatrix *matrix, const char *data) {
   }
 }
 
-void iota_gfx_write_P(const char *data) {
+void gfx_write_P(const char *data) {
   matrix_write_P(&display, data);
 }
 
@@ -241,12 +246,27 @@ void matrix_clear(struct CharacterMatrix *matrix) {
   matrix->dirty = true;
 }
 
-void iota_gfx_clear_screen(void) {
+void gfx_clear_screen(void) {
   matrix_clear(&display);
 }
 
+void gfx_clear_invert(void) {
+  for (int y=0;y<4;y++) {
+    for (int x=0;x<21;x++) {
+      display.invert[y][x] = 0;
+    }
+  }
+}
+
+void gfx_invert_row(uint8_t y) {
+  if (y<0 || y>3) return;
+  for (int x=0;x<21;x++) {
+    display.invert[y][x] = 1;
+  }
+}
+
 void matrix_render(struct CharacterMatrix *matrix) {
-  iota_gfx_on();
+  gfx_on();
 
   // Move to the home position
   send_cmd3(PageAddr, 0, MatrixRows - 1);
@@ -263,9 +283,11 @@ void matrix_render(struct CharacterMatrix *matrix) {
   for (uint8_t row = 0; row < MatrixRows; ++row) {
     for (uint8_t col = 0; col < MatrixCols; ++col) {
       const uint8_t *glyph = font + (matrix->display[row][col] * FontWidth);
+      const uint8_t invert = matrix->invert[row][col];
 
       for (uint8_t glyphCol = 0; glyphCol < FontWidth; ++glyphCol) {
         uint8_t colBits = pgm_read_byte(glyph + glyphCol);
+        if (invert) colBits = ~colBits;
         i2c_master_write(colBits);
       }
     }
@@ -277,6 +299,6 @@ done:
   i2c_master_stop();
 }
 
-void iota_gfx_flush(void) {
+void gfx_flush(void) {
   matrix_render(&display);
 }

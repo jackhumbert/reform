@@ -1,4 +1,9 @@
 /*
+  MNT Reform 2.0 Trackball Firmware
+  Copyright 2019-2021  Lukas F. Hartmann / MNT Research GmbH, Berlin
+  lukas@mntre.com
+*/
+/*
              LUFA Library
      Copyright (C) Dean Camera, 2018.
 
@@ -93,7 +98,6 @@
 uint8_t adns_init_complete=0;
 volatile int xydat[2];
 
-//#include "PWM3360DM_srom_0x04.c"
 #include "Mouse.h"
 
 /** Buffer to hold the previously generated Mouse HID report, for comparison purposes inside the HID class driver. */
@@ -119,7 +123,6 @@ USB_ClassInfo_HID_Device_t Mouse_HID_Interface =
 			},
 	};
 
-
 void led_error(void) {
   DDRC = 0b11110100;
 }
@@ -128,6 +131,9 @@ void led_ok(void) {
   DDRC = 0;
 }
 
+void led_set(uint8_t bits) {
+  DDRC = ((bits&0b11110)<<3)|((bits&1)<<2);
+}
 
 // FIXME QUESTIONABLE
 int convTwosComp(int b) {
@@ -166,16 +172,11 @@ void SetupHardware(void)
   output_high(PORTD, 2); // enable input pullup for RMB
   output_high(PORTD, 3); // enable input pullup for RMB
   output_high(PORTD, 4); // enable input pullup for RMB
-  
-  //output_high(PORTC, 5);
-  
+    
   // no jtag plox
   //MCUCR |=(1<<JTD);
   //MCUCR |=(1<<JTD);
   
-  //SPI_Init(SPI_SPEED_FCPU_DIV_2 | SPI_ORDER_MSB_FIRST | SPI_SCK_LEAD_FALLING |
-  //       SPI_SAMPLE_TRAILING | SPI_MODE_MASTER);
-
   i2c_init();
   
   USB_Init();
@@ -267,9 +268,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
     ny = i2c_readNak();
     i2c_stop();
   }
-  
-  led_ok();
-  
+    
   USB_WheelMouseReport_Data_t* MouseReport = (USB_WheelMouseReport_Data_t*)ReportData;
 
   if (!(PIND&(1<<4))) {
@@ -290,7 +289,6 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   if (!(PIND&1) || !(PIND&(1<<2))) {
     // wheel
     MouseReport->Wheel = -ny;
-    led_error();
   } else {
     MouseReport->X = 2*abs(nx)*nx;
     MouseReport->Y = 2*abs(ny)*ny;
@@ -315,9 +313,13 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const void* ReportData,
                                           const uint16_t ReportSize)
 {
-	// Unused (but mandatory for the HID class driver) in this demo, since there are no Host->Device reports
+  if (ReportSize<4) return;
+  char* d = (char*)ReportData; 
+  if (d[0]=='L' && d[1]=='E' && d[2]=='D' && d[3]=='S') {
+    uint8_t bits = ((d[4]=='1')<<4)|((d[5]=='1')<<3)|((d[6]=='1')<<2)|((d[7]=='1')<<1)|(d[8]=='1');
+    led_set(bits);
+  }
 }
-
 
 int main(void)
 {

@@ -36,9 +36,9 @@
 #define REFORM_MBREV_R2 12
 
 // don't forget to set this!
-#define REFORM_MOTHERBOARD_REV REFORM_MBREV_D4
+#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
 //#define REF2_DEBUG 1
-#define FW_REV "R2 "
+#define FW_REV "MNT Reform LPC R-2 20210218"
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -168,12 +168,12 @@ uint16_t missing_reason = 0;
 uint8_t spir[64];
 
 #define OVERVOLTAGE_START_VALUE 3.61
-#define OVERVOLTAGE_STOP_VALUE 3.4
+#define OVERVOLTAGE_STOP_VALUE 3.5
 #define UNDERVOLTAGE_VALUE 2.45
 #define UNDERVOLTAGE_CRITICAL_VALUE 2.3
 #define MISSING_VALUE_HI 4.3
 #define MISSING_VALUE_LO 0.2
-#define FULLY_CHARGED_VOLTAGE 3.4
+#define FULLY_CHARGED_VOLTAGE 3.5
 #define WALLPOWER_DETECT_VOLTAGE 24
 
 void set_discharge_bits(uint16_t bits) {
@@ -390,17 +390,6 @@ void turn_som_power_on(void) {
   LPC_GPIO->SET[1] = (1 << 28); // release reset
 }
 
-// TODO: power leak into USB_5V when turned off (~1.5V)
-// try to desolder:
-// - R152 (spkvdd)
-// - R43/R44 (hdmi i2c pullups) -> disappeared!
-// - FB15 (BL_VCC, unlikely)
-// - R61 (USB_VBUS of TUSB, unlikely)
-
-// power leak of 0.5V into AUX_3V3
-// - FB1
-// no, power is leaking through pullups of OVERCUR pins
-
 void turn_som_power_off(void) {
   LPC_GPIO->CLR[1] = (1 << 28); // hold in reset
 
@@ -418,10 +407,25 @@ void turn_som_power_off(void) {
   LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
 }
 
-void turn_periph_power_on(void) {
+// just a reset pulse to IMX, no power toggling
+void reset_som(void) {
+  LPC_GPIO->CLR[1] = (1 << 28); // hold reset
+  delay(1);
+  LPC_GPIO->SET[1] = (1 << 28); // release reset
 }
 
-void turn_periph_power_off(void) {
+void turn_aux_power_on(void) {
+  LPC_GPIO->SET[0] = (1 << 20); // PCIe on
+  LPC_GPIO->SET[1] = (1 << 19); // 1v2 on
+  LPC_GPIO->SET[1] = (1 << 31); // USB 5v on (R1+)
+  //LPC_GPIO->SET[0] = (1 << 7);  // AUX 3v3 on (R1+)
+}
+
+void turn_aux_power_off(void) {
+  LPC_GPIO->CLR[0] = (1 << 20); // PCIe off
+  LPC_GPIO->CLR[1] = (1 << 19); // 1v2 off
+  LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
+  //LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
 }
 
 void brownout_setup(void) {
@@ -508,7 +512,7 @@ void boardInit(void)
   LPC_GPIO->DIR[1] |= (1 << 23);
   LPC_GPIO->SET[1] =  (1 << 23); // active low
 
-  // UART connected to i.MX8M ttymxc2 REFORM
+  // UART connected to i.MX8M ttymxc2
   /* Set 0.14 UART RXD */
   // this disrupts keyboard communication when main power turned off
   //LPC_IOCON->PIO1_14 &= ~0x07;
@@ -517,7 +521,6 @@ void boardInit(void)
   // only send to reform, don't receive from it
   /* Set 0.13 UART TXD */
   LPC_IOCON->PIO1_13 &= ~0x07;
-  LPC_IOCON->PIO1_13 |= 0x3;
 
 #ifdef REF2_DEBUG
   sprintf(uartBuffer, "\r\nMNT Reform 2.0 MCU initialized.\r\n");
@@ -600,10 +603,22 @@ void handle_commands() {
 
       // execute
       if (remote_cmd == 'p') {
-        // toggle system 5V power
+        // toggle system power and/or reset imx
         if (cmd_number == 0) {
           turn_som_power_off();
           sprintf(uartBuffer,"system: off\r\n");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+        } else if (cmd_number == 2) {
+          reset_som();
+          sprintf(uartBuffer,"system: reset\r\n");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+        } else if (cmd_number == 3) {
+          turn_aux_power_off();
+          sprintf(uartBuffer,"system: auxpwr off\r\n");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+        } else if (cmd_number == 4) {
+          turn_aux_power_on();
+          sprintf(uartBuffer,"system: auxpwr on\r\n");
           uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
         } else {
           turn_som_power_on();
@@ -629,29 +644,78 @@ void handle_commands() {
       else if (remote_cmd == 's') {
         // get charger system state
         if (state == ST_CHARGE) {
-          sprintf(uartBuffer,FW_REV"idle/charging [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" idle/charging [%d]\r",cycles_in_state);
         } else if (state == ST_OVERVOLTED) {
-          sprintf(uartBuffer,FW_REV"balancing [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" balancing [%d]\r",cycles_in_state);
         } else if (state == ST_UNDERVOLTED) {
-          sprintf(uartBuffer,FW_REV"undervoltage [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" undervoltage [%d]\r",cycles_in_state);
         } else if (state == ST_MISSING) {
-          sprintf(uartBuffer,FW_REV"missing cells (%d)(%x)[%d]\r",num_missing_cells,missing_reason,cycles_in_state);
+          sprintf(uartBuffer,FW_REV" missing cells (%d) [%d]\r",num_missing_cells,cycles_in_state);
         } else if (state == ST_FULLY_CHARGED) {
-          sprintf(uartBuffer,FW_REV"fully charged [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV" fully charged [%d]\r",cycles_in_state);
         } else {
-          sprintf(uartBuffer,FW_REV"unknown %d [%d]\r",state,cycles_in_state);
+          sprintf(uartBuffer,FW_REV" unknown %d [%d]\r",state,cycles_in_state);
         }
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
-      else if (remote_cmd == 'c' && cmd_number>=0 && cmd_number<=7) {
-        // get cell status
-        int n = cmd_number;
-        sprintf(uartBuffer,"%c%c%c%c\r\n",
-                missing_bits      &(1<<n)?'m':'.',
-                undervoltage_bits &(1<<n)?'u':'.',
-                overvoltage_bits  &(1<<n)?'o':'.',
-                discharge_bits    &(1<<n)?'d':'.');
+      else if (remote_cmd == 'u') {
+        // turn reporting to i.MX on or off
+        if (cmd_number>0) {
+          // turn i.MX UART output on
+          LPC_IOCON->PIO1_13 |= 0x3;
+        } else {
+          // turn i.MX UART output off
+          LPC_IOCON->PIO1_13 &= ~0x07;
+        }
+      }
+      else if (remote_cmd == 'w') {
+        // wake i.MX
+        if (cmd_number>0) {
+          // send a string via UART
+          LPC_IOCON->PIO1_13 |= 0x3;
+          sprintf(uartBuffer,"wake!\r");
+          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          LPC_IOCON->PIO1_13 &= ~0x07;
+        } else {
+          // pulse wake GPIO
+          LPC_GPIO->SET[1] = (1 << 24);
+          delay(100);
+          LPC_GPIO->CLR[1] = (1 << 24);
+        }
+      }
+      else if (remote_cmd == 'c') {
+        // get status of cells, current, voltage, fuel gauge
+        char gauge[5] = {0,0,0,0,0};
 
+        // get fuel gauge (percent)
+        if (reached_full_charge > 0) {
+          sprintf(gauge,"%3d%%", capacity_percentage);
+        } else {
+          // if we never reached full charge,
+          // we don't really know where we are.
+          sprintf(gauge,"???%%");
+        }
+
+        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%04dmV%05d %s\r\n",
+                (int)(cells_v[0]*10),
+                (discharge_bits    &(1<<0))?'!':' ',
+                (int)(cells_v[1]*10),
+                (discharge_bits    &(1<<1))?'!':' ',
+                (int)(cells_v[2]*10),
+                (discharge_bits    &(1<<2))?'!':' ',
+                (int)(cells_v[3]*10),
+                (discharge_bits    &(1<<3))?'!':' ',
+                (int)(cells_v[4]*10),
+                (discharge_bits    &(1<<4))?'!':' ',
+                (int)(cells_v[5]*10),
+                (discharge_bits    &(1<<5))?'!':' ',
+                (int)(cells_v[6]*10),
+                (discharge_bits    &(1<<6))?'!':' ',
+                (int)(cells_v[7]*10),
+                (discharge_bits    &(1<<7))?'!':' ',
+                (int)(current*1000.0),
+                (int)(volts*1000.0),
+                gauge);
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
       else if (remote_cmd == 'S') {
@@ -666,19 +730,6 @@ void handle_commands() {
                 (int)(capacity_min_ampsecs/3.6),
                 (int)(capacity_max_ampsecs/3.6));
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-      }
-      else if (remote_cmd == 'g') {
-        // get fuel gauge (percent)
-        if (reached_full_charge > 0) {
-          sprintf(uartBuffer,"%d%%\r\n", capacity_percentage);
-          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-        } else {
-          // if we never reached full charge,
-          // we don't really know where we are.
-
-          sprintf(uartBuffer,"? %%\r\n");
-          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-        }
       }
       else if (remote_cmd == 'e') {
         // toggle serial echo
@@ -763,9 +814,9 @@ int main(void)
 
       if (num_missing_cells > 0) {
         missing_reason = missing_bits;
-        state = ST_MISSING;
         // if cells were unplugged, we don't know the capacity anymore.
         reached_full_charge = 0;
+        state = ST_MISSING;
         cycles_in_state = 0;
       }
       else if (num_undervolted_cells > 0) {
@@ -781,12 +832,14 @@ int main(void)
           cycles_in_state = 0;
         }
       }
-      else if (num_overvolted_cells < 8 && num_fully_charged_cells >= 8) {
-        // when transitioning to fully charged, we assume that we're at max capacity
-        capacity_accu_ampsecs = capacity_max_ampsecs;
-        state = ST_FULLY_CHARGED;
-        reached_full_charge = 1;
-        cycles_in_state = 0;
+      else if (current < 0.01 && current > -0.6 && num_fully_charged_cells >= 8) {
+        if (cycles_in_state > 5) {
+          // when transitioning to fully charged, we assume that we're at max capacity
+          capacity_accu_ampsecs = capacity_max_ampsecs;
+          state = ST_FULLY_CHARGED;
+          reached_full_charge = 1;
+          cycles_in_state = 0;
+        }
       }
       else if (num_overvolted_cells > 0) {
         if (cycles_in_state > 5) {
@@ -814,15 +867,15 @@ int main(void)
     else if (state == ST_OVERVOLTED) {
       if (num_missing_cells > 0) {
         missing_reason = missing_bits;
-        state = ST_MISSING;
         // if cells were unplugged, we don't know the capacity anymore.
         reached_full_charge = 0;
+        state = ST_MISSING;
         cycles_in_state = 0;
       } else {
         discharge_overvolted_cells();
 
         // discharge
-        if (cycles_in_state > 5 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
+        if (cycles_in_state > 1 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
           reset_discharge_bits();
 
           state = ST_CHARGE;
@@ -837,8 +890,6 @@ int main(void)
         if (num_missing_cells < 1) {
           state = ST_CHARGE;
           cycles_in_state = 0;
-        } else if (volts < WALLPOWER_DETECT_VOLTAGE) {
-          turn_som_power_off();
         }
       }
     }

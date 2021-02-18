@@ -1,7 +1,7 @@
 /*
-  MNT Reform v2 Keyboard Firmware
-  Copyright 2019  Lukas F. Hartmann / MNT Research GmbH, Berlin
-  lukas@mntmn.com  
+  MNT Reform 2.0 Keyboard Firmware
+  Copyright 2019-2021  Lukas F. Hartmann / MNT Research GmbH, Berlin
+  lukas@mntre.com
 */
 /*
              LUFA Library
@@ -40,6 +40,8 @@
 #include "scancodes.h"
 #include <stdlib.h>
 
+#define KBD_FW_REV "R1 20210218"
+
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
 
@@ -71,19 +73,20 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
 
 const uint8_t matrix[15*6] = {
   KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, HID_KEYBOARD_SC_EXSEL, HID_KEYBOARD_SC_EXSEL,
-  
+
   KEY_GRAVE_ACCENT_AND_TILDE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS_AND_UNDERSCORE, KEY_EQUAL_AND_PLUS, KEY_BACKSPACE, 0,
-  
+
   KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_OPENING_BRACKET_AND_OPENING_BRACE, KEY_CLOSING_BRACKET_AND_CLOSING_BRACE, KEY_BACKSLASH_AND_PIPE, 0,
-  
+
   HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_APPLICATION, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON_AND_COLON, KEY_APOSTROPHE_AND_QUOTE, KEY_ENTER, 0,
-  
+
   HID_KEYBOARD_SC_LEFT_SHIFT, KEY_DELETE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT, 0,
-  
-  HID_KEYBOARD_SC_EXSEL, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_LEFT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0,0,0
+
+  HID_KEYBOARD_SC_RIGHT_GUI, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_RIGHT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0,0,0
 };
 
 uint8_t matrix_debounce[15*6];
+uint8_t matrix_state[15*6];
 
 // f8 = sleep
 // 49 = mute
@@ -117,7 +120,7 @@ int remote_receive_string(int print) {
   int32_t clock = 0;
   int res_x = 0;
   response[0] = 0;
-  
+
   while (!done) {
     int16_t chr = -1;
     clock = 0;
@@ -152,33 +155,33 @@ timeout:
   if (!done && print) gfx_poke(20,0,'T');
   empty_serial();
   if (print) {
-    iota_gfx_flush();
+    gfx_flush();
   }
   return done;
 }
 
 void anim_hello(void) {
   gfx_clear();
-  iota_gfx_on();
+  gfx_on();
   for (int y=0; y<3; y++) {
     for (int x=0; x<12; x++) {
       gfx_poke(x+4,y+1,(5+y)*32+x);
-      iota_gfx_flush();
+      gfx_flush();
     }
   }
   for (int y=0; y<0xff; y++) {
-    iota_gfx_contrast(y);
+    gfx_contrast(y);
     Delay_MS(2);
   }
   for (int y=0; y<0xff; y++) {
-    iota_gfx_contrast(0xff-y);
+    gfx_contrast(0xff-y);
     Delay_MS(2);
   }
 }
 
 void anim_goodbye(void) {
   gfx_clear();
-  iota_gfx_on();
+  gfx_on();
   for (int y=0; y<3; y++) {
     for (int x=0; x<12; x++) {
       gfx_poke(x+4,y+1,(5+y)*32+x);
@@ -187,10 +190,10 @@ void anim_goodbye(void) {
   for (int y=0; y<3; y++) {
     for (int x=0; x<12; x++) {
       gfx_poke(x+4,y+1,' ');
-      iota_gfx_flush();
+      gfx_flush();
     }
   }
-  iota_gfx_off();
+  gfx_off();
 }
 
 float voltages[8];
@@ -214,81 +217,71 @@ void insert_bat_icon(char* str, int x, float v) {
 
 void remote_get_voltages(void) {
   empty_serial();
-  
+
   term_x = 0;
   term_y = 0;
 
   float bat_volts = 0;
   float bat_amps = 0;
   char bat_gauge[5] = {0,0,0,0,0};
-  
-  Serial_SendByte('V');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(0);
-  bat_volts = ((float)atoi(response))/1000.0;
 
-  Serial_SendByte('a');
+  Serial_SendByte('c');
   Serial_SendByte('\r');
   Delay_MS(1);
   remote_receive_string(0);
-  bat_amps = ((float)atoi(response))/1000.0;
-  
-  Serial_SendByte('g');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(0);
-  strncpy(bat_gauge, response, 4);
 
   float sum_volts = 0;
 
   for (int i=0; i<8; i++) {
-    // progress anim
-    gfx_poke(0,0,32*4+((2*i)%10));
-    gfx_poke(1,0,32*4+1+((2*i)%10));
-    iota_gfx_flush();
-    
-    Serial_SendByte('0'+i);
-    Serial_SendByte('v');
-    Serial_SendByte('\r');
-    Delay_MS(1);
-    remote_receive_string(0);
-
-    voltages[i] = ((float)atoi(response))/1000.0;
-    if (voltages[i]<0 || voltages[i]>=5) voltages[i]=0;
+    voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
+    if (voltages[i]<0) voltages[i]=0;
+    if (voltages[i]>=10) voltages[i]=9.9;
     sum_volts += voltages[i];
   }
 
-  //plot voltages
+  int amps_offset = 3*8+3;
+  // cut off string
+  response[amps_offset+4]=0;
+  bat_amps = ((float)atoi(&response[amps_offset]))/1000.0;
+  int volts_offset = amps_offset+4+1;
+  response[volts_offset+5]=0;
+  bat_volts = ((float)atoi(&response[volts_offset]))/1000.0;
+  int gauge_offset = volts_offset+5+1;
+  strncpy(bat_gauge, &response[gauge_offset], 4);
+
+  // plot
   gfx_clear();
   char str[32];
-  
+
   sprintf(str,"[] %.1f  [] %.1f %s",voltages[0],voltages[4],bat_gauge);
   insert_bat_icon(str,0,voltages[0]);
   insert_bat_icon(str,8,voltages[4]);
   gfx_poke_str(0,0,str);
-  
+
   sprintf(str,"[] %.1f  [] %.1f  ",voltages[1],voltages[5]);
   insert_bat_icon(str,0,voltages[1]);
   insert_bat_icon(str,8,voltages[5]);
   gfx_poke_str(0,1,str);
-  
-  sprintf(str,"[] %.1f  [] %.1f  %.2fA",voltages[2],voltages[6],-bat_amps);
+
+  sprintf(str,"[] %.1f  [] %.1f %2.2fA",voltages[2],voltages[6],bat_amps);
   insert_bat_icon(str,0,voltages[2]);
   insert_bat_icon(str,8,voltages[6]);
   gfx_poke_str(0,2,str);
-  
-  sprintf(str,"[] %.1f  [] %.1f  %.1fV",voltages[3],voltages[7],bat_volts);
+
+  sprintf(str,"[] %.1f  [] %.1f %2.2fV",voltages[3],voltages[7],bat_volts);
   insert_bat_icon(str,0,voltages[3]);
   insert_bat_icon(str,8,voltages[7]);
   gfx_poke_str(0,3,str);
-  iota_gfx_flush();
+  gfx_flush();
 }
 
 void remote_get_status(void) {
   gfx_clear();
   empty_serial();
-  
+
+  gfx_poke_str(0, 2, "MNT Reform Keyboard");
+  gfx_poke_str(0, 3, KBD_FW_REV);
+
   term_x = 0;
   term_y = 0;
 
@@ -298,55 +291,16 @@ void remote_get_status(void) {
   remote_receive_string(1);
 }
 
-void remote_get_cells(void) {
-  gfx_clear();
-  empty_serial();
-  
-  term_x = 0;
-  term_y = 0;
-
-  for (int i=0; i<8; i++) {
-    Serial_SendByte('0'+i);
-    Serial_SendByte('c');
-    Serial_SendByte('\r');
-    Delay_MS(1);
-    remote_receive_string(1);
-  }
-}
-
-void remote_get_sys_voltage(void) {
-  gfx_clear();
-  empty_serial();
-  
-  term_x = 0;
-  term_y = 0;
-
-  Serial_SendByte('V');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(1);
-  
-  Serial_SendByte('a');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(1);
-
-  Serial_SendByte('C');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(1);
-}
-
 int oledbrt=0;
 void oled_brightness_inc(void) {
   oledbrt+=10;
   if (oledbrt>=0xff) oledbrt = 0xff;
-  iota_gfx_contrast(oledbrt);
+  gfx_contrast(oledbrt);
 }
 void oled_brightness_dec(void) {
   oledbrt-=10;
   if (oledbrt<0) oledbrt = 0;
-  iota_gfx_contrast(oledbrt);
+  gfx_contrast(oledbrt);
 }
 
 int16_t pwmval = 8;
@@ -354,7 +308,7 @@ int16_t pwmval = 8;
 void kbd_brightness_init(void) {
   // initial brightness
   OCR0A = pwmval;
-  
+
   // clear/set, WGM1:0 set (Phase correct PWM)
   TCCR0A = (1 << 7) | (0 << 6) | (0<<1) | 1;
 
@@ -366,16 +320,19 @@ void kbd_brightness_inc(void) {
   pwmval+=2;
   if (pwmval>=10) pwmval = 10;
   OCR0A = pwmval;
-  gfx_poke(0,4,'0'+pwmval/2);
-  iota_gfx_flush();
 }
 
 void kbd_brightness_dec(void) {
   pwmval-=2;
   if (pwmval<0) pwmval = 0;
   OCR0A = pwmval;
-  gfx_poke(0,4,'0'+pwmval/2);
-  iota_gfx_flush();
+}
+
+void kbd_brightness_set(int brite) {
+  pwmval=brite;
+  if (pwmval<0) pwmval = 0;
+  if (pwmval>=10) pwmval = 10;
+  OCR0A = pwmval;
 }
 
 void remote_turn_on_som(void) {
@@ -390,7 +347,6 @@ void remote_turn_on_som(void) {
   Serial_SendByte('\r');
   Delay_MS(1);
   empty_serial();
-  //remote_receive_string();
   anim_hello();
   kbd_brightness_init();
 }
@@ -407,19 +363,221 @@ void remote_turn_off_som(void) {
   Serial_SendByte('\r');
   Delay_MS(1);
   empty_serial();
-  //remote_receive_string();
 }
 
+void remote_reset_som(void) {
+  empty_serial();
 
-char metaPressed = 0;
-uint8_t lastMetaKey = 0;
-#define DEBOUNCE_CYCLES 5
+  term_x = 0;
+  term_y = 0;
+
+  Serial_SendByte('2');
+  Serial_SendByte('p');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_wake_som(void) {
+  empty_serial();
+
+  term_x = 0;
+  term_y = 0;
+
+  Serial_SendByte('1');
+  Serial_SendByte('w');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+  Serial_SendByte('0');
+  Serial_SendByte('w');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_turn_off_aux(void) {
+  empty_serial();
+
+  Serial_SendByte('3');
+  Serial_SendByte('p');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_turn_on_aux(void) {
+  empty_serial();
+
+  Serial_SendByte('4');
+  Serial_SendByte('p');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_report_voltages(void) {
+  empty_serial();
+
+  Serial_SendByte('0');
+  Serial_SendByte('c');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_enable_som_uart(void) {
+  empty_serial();
+
+  Serial_SendByte('1');
+  Serial_SendByte('u');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+void remote_disable_som_uart(void) {
+  empty_serial();
+
+  Serial_SendByte('0');
+  Serial_SendByte('u');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  empty_serial();
+}
+
+#define MENU_NUM_ITEMS 8
+int current_menu_y = 0;
+int current_scroll_y = 0;
+int active_meta_mode = 0;
+
+int execute_meta_function(int keycode);
+
+void render_menu(int y) {
+  char str[32];
+  int i=0;
+  gfx_clear();
+  gfx_clear_invert();
+  gfx_invert_row(current_menu_y-y);
+  sprintf(str, "Exit Menu         ESC");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Power On            1");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Power Off           0");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Reset               r");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Battery Status      b");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Key Backlight-     F1");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Key Backlight+     F2");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "Wake              SPC");
+  gfx_poke_str(0,(i++)-y,str);
+  sprintf(str, "System Status       s");
+  gfx_poke_str(0,(i++)-y,str);
+  //sprintf(str, "Aux Power On     x");
+  //gfx_poke_str(0,(i++)-y,str);
+  //sprintf(str, "Aux Power Off    v");
+  //gfx_poke_str(0,(i++)-y,str);
+
+  gfx_on();
+  gfx_flush();
+  gfx_clear_invert();
+}
+
+int execute_menu_function(int y) {
+  if (y==1) return execute_meta_function(KEY_1);
+  if (y==2) return execute_meta_function(KEY_0);
+  if (y==3) return execute_meta_function(KEY_R);
+  if (y==4) return execute_meta_function(KEY_B);
+  if (y==5) return execute_meta_function(KEY_F1);
+  if (y==6) return execute_meta_function(KEY_F2);
+  if (y==7) return execute_meta_function(KEY_SPACE);
+  if (y==8) return execute_meta_function(KEY_S);
+
+  return execute_meta_function(KEY_ESCAPE);
+}
+
+// returns 1 for navigation function (stay in meta mode), 0 for terminal function
+int execute_meta_function(int keycode) {
+  if (keycode == KEY_0) {
+    // TODO: are you sure?
+    remote_turn_off_som();
+  }
+  else if (keycode == KEY_1) {
+    remote_turn_on_som();
+    return 0;
+  }
+  else if (keycode == KEY_R) {
+    // TODO: are you sure?
+    remote_reset_som();
+  }
+  else if (keycode == KEY_SPACE) {
+    remote_wake_som();
+  }
+  /*else if (keycode == KEY_X) {
+    remote_turn_on_aux();
+  }
+  else if (keycode == KEY_V) {
+    remote_turn_off_aux();
+  }*/
+  else if (keycode == KEY_B) {
+    remote_get_voltages();
+    return 0;
+  }
+  else if (keycode == KEY_S) {
+    remote_get_status();
+    return 0;
+  }
+  else if (keycode == KEY_F1) {
+    kbd_brightness_dec();
+    return 1;
+  }
+  else if (keycode == KEY_F2) {
+    kbd_brightness_inc();
+    return 1;
+  }
+  else if (keycode == HID_KEYBOARD_SC_UP_ARROW) {
+    current_menu_y--;
+    if (current_menu_y<0) current_menu_y = 0;
+    if (current_menu_y<=current_scroll_y) current_scroll_y--;
+    if (current_scroll_y<0) current_scroll_y = 0;
+    render_menu(current_scroll_y);
+    return 1;
+  }
+  else if (keycode == HID_KEYBOARD_SC_DOWN_ARROW) {
+    current_menu_y++;
+    if (current_menu_y>MENU_NUM_ITEMS) current_menu_y = MENU_NUM_ITEMS;
+    if (current_menu_y>=current_scroll_y+3) current_scroll_y++;
+    render_menu(current_scroll_y);
+    return 1;
+  }
+  else if (keycode == KEY_M) {
+    render_menu(current_scroll_y);
+    return 1;
+  }
+  else if (keycode == KEY_ENTER) {
+    return execute_menu_function(current_menu_y);
+  }
+  else if (keycode == KEY_ESCAPE) {
+    gfx_clear();
+    gfx_flush();
+  }
+
+  gfx_clear();
+  gfx_flush();
+
+  return 0;
+}
+
+uint8_t last_meta_key = 0;
 
 void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardReport) {
-  uint8_t metaPressedNow = 0;
   // how many keys are pressed this round
-  uint8_t usedKeyCodes = 0;
-  uint8_t totalPressed = 0;
+  uint8_t total_pressed = 0;
+  uint8_t used_key_codes = 0;
 
   // pull ROWs low one after the other
   for (int y=0; y<6; y++) {
@@ -434,6 +592,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     }
 
     // wait for signal to stabilize
+    // TODO maybe not necessary
     _delay_us(10);
 
      // check input COLs
@@ -441,6 +600,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
       uint16_t loc = y*15+x;
       uint16_t keycode = matrix[loc];
       uint8_t  pressed = 0;
+      uint8_t  debounced_pressed = 0;
 
       // column pins are all over the place
       switch (x) {
@@ -460,61 +620,47 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
       case 13: pressed = !(PINC&(1<<6)); break;
       }
 
-      if (pressed || matrix_debounce[loc] > 0) {
-        if (matrix_debounce[loc] > 0) {
-          matrix_debounce[loc]--;
-        } else if (pressed) {
-          matrix_debounce[loc] = DEBOUNCE_CYCLES;
-        }
-        totalPressed++;
+      // shift new state as bit into debounce "register"
+      matrix_debounce[loc] = (matrix_debounce[loc]<<1)|pressed;
+
+      // if unclear state, we need to keep the last state of the key
+      if (matrix_debounce[loc] == 0x00) {
+        matrix_state[loc] = 0;
+      } else if (matrix_debounce[loc] == 0x01) {
+        matrix_state[loc] = 1;
+      }
+      debounced_pressed = matrix_state[loc];
+
+      if (debounced_pressed) {
+        total_pressed++;
 
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
-          metaPressedNow = 1;
-        } else {
-          // 6 keys is a hard limit in the HID descriptor :/
-          if (usb_report_mode && KeyboardReport && !metaPressed && usedKeyCodes<6) {
-            KeyboardReport->KeyCode[usedKeyCodes++] = keycode;
+          if (!active_meta_mode) {
+            current_scroll_y = 0;
+            current_menu_y = 0;
+            active_meta_mode = 1;
+            // render menu
+            execute_meta_function(KEY_M);
           }
+        } else {
+          if (active_meta_mode) {
+            if (last_meta_key!=keycode) {
+              // hyper/circle/menu functions
+              int stay_meta = execute_meta_function(keycode);
+              // don't repeat action while key is held down
+              last_meta_key = keycode;
 
-          if (metaPressed && lastMetaKey!=keycode) {
-            if (keycode == KEY_0) {
-              remote_turn_off_som();
+              // exit meta mode
+              if (!stay_meta) {
+                active_meta_mode = 0;
+              }
             }
-            else if (keycode == KEY_1) {
-              remote_turn_on_som();
+          } else if (!last_meta_key) {
+            // report keypress via USB
+            // 6 keys is a hard limit in the HID descriptor :/
+            if (usb_report_mode && KeyboardReport && used_key_codes<6) {
+              KeyboardReport->KeyCode[used_key_codes++] = keycode;
             }
-            else if (keycode == KEY_V) {
-              remote_get_voltages();
-            }
-            else if (keycode == KEY_C) {
-              remote_get_cells();
-            }
-            else if (keycode == KEY_S) {
-              remote_get_status();
-            }
-            else if (keycode == KEY_Y) {
-              remote_get_sys_voltage();
-            }
-            else if (keycode == KEY_2) {
-              iota_gfx_off();
-            }
-            else if (keycode == KEY_3) {
-              iota_gfx_on();
-            }
-            else if (keycode == KEY_F1) {
-              kbd_brightness_dec();
-            }
-            else if (keycode == KEY_F2) {
-              kbd_brightness_inc();
-            }
-            else if (keycode == KEY_F3) {
-              oled_brightness_dec();
-            }
-            else if (keycode == KEY_F4) {
-              oled_brightness_inc();
-            }
-          
-            lastMetaKey = keycode;
           }
         }
       }
@@ -530,8 +676,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     }
   }
 
-  metaPressed = metaPressedNow;
-  if (totalPressed<2) lastMetaKey = 0;
+  if (total_pressed<1) last_meta_key = 0;
 }
 
 int main(void)
@@ -547,7 +692,6 @@ int main(void)
   }
 }
 
-/** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware()
 {
   // Disable watchdog if enabled by bootloader/fuses
@@ -570,17 +714,17 @@ void SetupHardware()
   PORTD = 0b00100000;
   PORTE = 0b01000000;
   PORTF = 0b11111111;
-  
+
   // disable JTAG
   MCUCR |=(1<<JTD);
   MCUCR |=(1<<JTD);
 
-  iota_gfx_init(false);
+  kbd_brightness_init();
+  gfx_init(false);
 
   anim_hello();
-  
+
   Serial_Init(57600, false);
-  kbd_brightness_init();  
   USB_Init();
 }
 
@@ -636,7 +780,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
 
   process_keyboard(1, KeyboardReport);
-  
+
   *ReportSize = sizeof(USB_KeyboardReport_Data_t);
   return false;
 }
@@ -655,5 +799,53 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const void* ReportData,
                                           const uint16_t ReportSize)
 {
-}
+  uint8_t* data = (uint8_t*)ReportData;
+  if (ReportSize<4) return;
 
+  if (data[0]=='O' && data[1]=='L' && data[2]=='E' && data[3]=='D') {
+    // OLED: write characters on display
+    gfx_on();
+    for (int y=0; y<4; y++) {
+      for (int x=0; x<21; x++) {
+        gfx_poke(x,y,data[4+y*21+x]);
+      }
+    }
+    gfx_flush();
+    gfx_clear_invert();
+  }
+  if (data[0]=='O' && data[1]=='I' && data[2]=='N' && data[3]=='V') {
+    gfx_clear_invert();
+    gfx_invert_row(data[4]-'0');
+  }
+  else if (data[0]=='L' && data[1]=='I' && data[2]=='T' && data[3]=='E') {
+    char brite = data[4]-'0';
+    brite++;
+    if (brite<=1) brite=0;
+    if (brite>9) brite=9;
+    kbd_brightness_set(brite);
+  }
+  else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='0') {
+    // PWR0: shutdown (turn off power rails)
+    remote_turn_off_som();
+  }
+  else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='3') {
+    // PWR3: aux power off
+    remote_turn_off_aux();
+  }
+  else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='4') {
+    // PWR4: aux power on
+    remote_turn_on_aux();
+  }
+  else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='1') {
+    // UAR1: UART reporting on
+    remote_enable_som_uart();
+  }
+  else if (data[0]=='U' && data[1]=='A' && data[2]=='R' && data[3]=='0') {
+    // UAR0: UART reporting off
+    remote_disable_som_uart();
+  }
+  else if (data[0]=='R' && data[1]=='P' && data[2]=='R' && data[3]=='T') {
+    // RPRT: Report power stats to UART
+    remote_report_voltages();
+  }
+}
