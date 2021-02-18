@@ -328,6 +328,13 @@ void kbd_brightness_dec(void) {
   OCR0A = pwmval;
 }
 
+void kbd_brightness_set(int brite) {
+  pwmval=brite;
+  if (pwmval<0) pwmval = 0;
+  if (pwmval>=10) pwmval = 10;
+  OCR0A = pwmval;
+}
+
 void remote_turn_on_som(void) {
   gfx_clear();
   empty_serial();
@@ -809,6 +816,13 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
   if (data[0]=='O' && data[1]=='I' && data[2]=='N' && data[3]=='V') {
     gfx_clear_invert();
     gfx_invert_row(data[4]-'0');
+  }
+  else if (data[0]=='L' && data[1]=='I' && data[2]=='T' && data[3]=='E') {
+    char brite = data[4]-'0';
+    brite++;
+    if (brite<=1) brite=0;
+    if (brite>9) brite=9;
+    kbd_brightness_set(brite);
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='0') {
     // PWR0: shutdown (turn off power rails)
