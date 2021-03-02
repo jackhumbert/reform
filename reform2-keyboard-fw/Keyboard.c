@@ -41,6 +41,7 @@
 #include <stdlib.h>
 
 #define KBD_FW_REV "R1 20210218"
+#define KBD_VARIANT_STANDALONE 0
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
@@ -100,11 +101,12 @@ void gfx_clear(void) {
       gfx_poke(x,y,' ');
     }
   }
+  gfx_clear_invert();
 }
 
 void empty_serial(void) {
   int clock = 0;
-  while (Serial_ReceiveByte()>=0 && clock<1000) {
+  while (Serial_ReceiveByte()>=0 && clock<100) {
     // flush serial
     clock++;
   }
@@ -273,6 +275,41 @@ void remote_get_voltages(void) {
   insert_bat_icon(str,8,voltages[7]);
   gfx_poke_str(0,3,str);
   gfx_flush();
+}
+
+int low_battery_alert = 0;
+
+void remote_check_for_low_battery(void) {
+  char bat_gauge[5] = {0,0,0,0,0};
+ 
+  low_battery_alert = 0;
+  empty_serial();
+
+  Serial_SendByte('c');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  remote_receive_string(0);
+
+  for (int i=0; i<8; i++) {
+    voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
+    if (voltages[i]<0) voltages[i]=0;
+    if (voltages[i]>=10) voltages[i]=9.9;
+    if (voltages[i]<3.0) {
+      low_battery_alert = 1;
+    }
+  }
+
+  int gauge_offset = 3*8+3+4+1+5+1;
+  strncpy(bat_gauge, &response[gauge_offset], 4);
+  
+  if (bat_gauge[0] == '?') {
+    // battery charge level unknown
+  } else {
+    int percent = atoi(bat_gauge);
+    if (percent<10) {
+      low_battery_alert = 1;
+    }
+  }
 }
 
 void remote_get_status(void) {
@@ -457,7 +494,6 @@ void render_menu(int y) {
   char str[32];
   int i=0;
   gfx_clear();
-  gfx_clear_invert();
   gfx_invert_row(current_menu_y-y);
   sprintf(str, "Exit Menu         ESC");
   gfx_poke_str(0,(i++)-y,str);
@@ -484,7 +520,6 @@ void render_menu(int y) {
 
   gfx_on();
   gfx_flush();
-  gfx_clear_invert();
 }
 
 int execute_menu_function(int y) {
@@ -679,16 +714,45 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
   if (total_pressed<1) last_meta_key = 0;
 }
 
+int blink = 0;
+
+void process_alerts(void) {
+  if (low_battery_alert) {
+    gfx_on();
+    for (int x=8;x<=11;x++) {
+      gfx_poke( x,0,' ');
+    }
+    if (blink) {
+      gfx_poke( 9,0,4*32+2);
+      gfx_poke(10,0,4*32+3);
+    }
+    gfx_flush();
+  }
+  blink = 1-blink;
+}
+
 int main(void)
 {
   SetupHardware();
   GlobalInterruptEnable();
 
+  int counter = 0;
+  
   for (;;)
   {
     process_keyboard(0, NULL);
     HID_Device_USBTask(&Keyboard_HID_Interface);
     USB_USBTask();
+    counter++;
+    if (!KBD_VARIANT_STANDALONE) {
+      if (counter>=30000) {
+        remote_check_for_low_battery();
+        counter = 0;
+      }
+      if (counter%750 == 0) {
+        process_alerts();
+      }
+    }
   }
 }
 
@@ -811,7 +875,6 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
       }
     }
     gfx_flush();
-    gfx_clear_invert();
   }
   if (data[0]=='O' && data[1]=='I' && data[2]=='N' && data[3]=='V') {
     gfx_clear_invert();
