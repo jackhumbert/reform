@@ -589,10 +589,6 @@ int execute_meta_function(int keycode) {
     render_menu(current_scroll_y);
     return 1;
   }
-  else if (keycode == KEY_M) {
-    render_menu(current_scroll_y);
-    return 1;
-  }
   else if (keycode == KEY_ENTER) {
     return execute_menu_function(current_menu_y);
   }
@@ -669,16 +665,18 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
       if (debounced_pressed) {
         total_pressed++;
 
+        // circle key?
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
-          if (!active_meta_mode) {
+          if (!active_meta_mode && !last_meta_key) {
             current_scroll_y = 0;
             current_menu_y = 0;
             active_meta_mode = 1;
             // render menu
-            execute_meta_function(KEY_M);
+            render_menu(current_scroll_y);
           }
         } else {
           if (active_meta_mode) {
+            // not holding the same key?
             if (last_meta_key!=keycode) {
               // hyper/circle/menu functions
               int stay_meta = execute_meta_function(keycode);
@@ -691,7 +689,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
               }
             }
           } else if (!last_meta_key) {
-            // report keypress via USB
+            // not meta mode, regular key: report keypress via USB
             // 6 keys is a hard limit in the HID descriptor :/
             if (usb_report_mode && KeyboardReport && used_key_codes<6) {
               KeyboardReport->KeyCode[used_key_codes++] = keycode;
@@ -711,6 +709,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     }
   }
 
+  // if no more keys are held down, allow a new meta command
   if (total_pressed<1) last_meta_key = 0;
 }
 
