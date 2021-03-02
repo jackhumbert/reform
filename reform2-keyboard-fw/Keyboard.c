@@ -40,7 +40,7 @@
 #include "scancodes.h"
 #include <stdlib.h>
 
-#define KBD_FW_REV "R1 20210218"
+#define KBD_FW_REV "R1 20210302"
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
