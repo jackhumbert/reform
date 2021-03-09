@@ -281,7 +281,7 @@ int low_battery_alert = 0;
 
 void remote_check_for_low_battery(void) {
   char bat_gauge[5] = {0,0,0,0,0};
- 
+
   low_battery_alert = 0;
   empty_serial();
 
@@ -301,7 +301,7 @@ void remote_check_for_low_battery(void) {
 
   int gauge_offset = 3*8+3+4+1+5+1;
   strncpy(bat_gauge, &response[gauge_offset], 4);
-  
+
   if (bat_gauge[0] == '?') {
     // battery charge level unknown
   } else {
@@ -736,7 +736,7 @@ int main(void)
   GlobalInterruptEnable();
 
   int counter = 0;
-  
+
   for (;;)
   {
     process_keyboard(0, NULL);

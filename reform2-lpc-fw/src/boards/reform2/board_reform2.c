@@ -38,7 +38,7 @@
 // don't forget to set this!
 #define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
 //#define REF2_DEBUG 1
-#define FW_REV "MNT Reform LPC R-2 20210309"
+#define FW_REV "MREF2LPC R2 20210309"
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -416,15 +416,15 @@ void reset_som(void) {
 
 void turn_aux_power_on(void) {
   LPC_GPIO->SET[0] = (1 << 20); // PCIe on
-  LPC_GPIO->SET[1] = (1 << 19); // 1v2 on
-  LPC_GPIO->SET[1] = (1 << 31); // USB 5v on (R1+)
+  //LPC_GPIO->SET[1] = (1 << 19); // 1v2 on
+  //LPC_GPIO->SET[1] = (1 << 31); // USB 5v on (R1+)
   //LPC_GPIO->SET[0] = (1 << 7);  // AUX 3v3 on (R1+)
 }
 
 void turn_aux_power_off(void) {
   LPC_GPIO->CLR[0] = (1 << 20); // PCIe off
-  LPC_GPIO->CLR[1] = (1 << 19); // 1v2 off
-  LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
+  //LPC_GPIO->CLR[1] = (1 << 19); // 1v2 off
+  //LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
   //LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
 }
 
@@ -644,17 +644,17 @@ void handle_commands() {
       else if (remote_cmd == 's') {
         // get charger system state
         if (state == ST_CHARGE) {
-          sprintf(uartBuffer,FW_REV" idle/charging [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"normal [%d]\r",cycles_in_state);
         } else if (state == ST_OVERVOLTED) {
-          sprintf(uartBuffer,FW_REV" balancing [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"balancing [%d]\r",cycles_in_state);
         } else if (state == ST_UNDERVOLTED) {
-          sprintf(uartBuffer,FW_REV" undervoltage [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"undervolted [%d]\r",cycles_in_state);
         } else if (state == ST_MISSING) {
-          sprintf(uartBuffer,FW_REV" missing cells (%d) [%d]\r",num_missing_cells,cycles_in_state);
+          sprintf(uartBuffer,FW_REV"cell missing [%d]\r",cycles_in_state);
         } else if (state == ST_FULLY_CHARGED) {
-          sprintf(uartBuffer,FW_REV" fully charged [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"full charge [%d]\r",cycles_in_state);
         } else {
-          sprintf(uartBuffer,FW_REV" unknown %d [%d]\r",state,cycles_in_state);
+          sprintf(uartBuffer,FW_REV"unknown %d [%d]\r",state,cycles_in_state);
         }
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
