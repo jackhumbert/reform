@@ -232,6 +232,12 @@ void remote_get_voltages(void) {
   Delay_MS(1);
   remote_receive_string(0);
 
+  // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???%
+  //             |  |  |  |  |  |  |  |  | |      |     |
+  //             0  3  6  9  12 15 18 21 24|      |     |
+  //                                       26     33    39
+  //                                       |
+  //                                       `- can be a minus
   float sum_volts = 0;
 
   for (int i=0; i<8; i++) {
@@ -241,11 +247,11 @@ void remote_get_voltages(void) {
     sum_volts += voltages[i];
   }
 
-  int amps_offset = 3*8+3;
+  int amps_offset = 3*8+2;
   // cut off string
   response[amps_offset+5]=0;
   bat_amps = ((float)atoi(&response[amps_offset]))/1000.0;
-  int volts_offset = amps_offset+6+1;
+  int volts_offset = amps_offset+5+2;
   response[volts_offset+5]=0;
   bat_volts = ((float)atoi(&response[volts_offset]))/1000.0;
   int gauge_offset = volts_offset+5+1;
