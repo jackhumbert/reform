@@ -38,7 +38,7 @@
 // don't forget to set this!
 #define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
 //#define REF2_DEBUG 1
-#define FW_REV "MNT Reform LPC R-2 20210218"
+#define FW_REV "MNT Reform LPC R-2 20210309"
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -696,7 +696,15 @@ void handle_commands() {
           sprintf(gauge,"???%%");
         }
 
-        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%04dmV%05d %s\r\n",
+        int mA = (int)(current*1000.0);
+        char mA_sign = " ";
+        if (mA<0) {
+          mA = -mA;
+          mA_sign = "-";
+        }
+        int mV = (int)(volts*1000.0);
+
+        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%c%04dmV%05d %s\r\n",
                 (int)(cells_v[0]*10),
                 (discharge_bits    &(1<<0))?'!':' ',
                 (int)(cells_v[1]*10),
@@ -713,8 +721,9 @@ void handle_commands() {
                 (discharge_bits    &(1<<6))?'!':' ',
                 (int)(cells_v[7]*10),
                 (discharge_bits    &(1<<7))?'!':' ',
-                (int)(current*1000.0),
-                (int)(volts*1000.0),
+                mA_sign,
+                mA,
+                mV,
                 gauge);
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }

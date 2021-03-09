@@ -40,7 +40,7 @@
 #include "scancodes.h"
 #include <stdlib.h>
 
-#define KBD_FW_REV "R1 20210218"
+#define KBD_FW_REV "R1 20210309"
 #define KBD_VARIANT_STANDALONE 0
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
@@ -243,9 +243,9 @@ void remote_get_voltages(void) {
 
   int amps_offset = 3*8+3;
   // cut off string
-  response[amps_offset+4]=0;
+  response[amps_offset+5]=0;
   bat_amps = ((float)atoi(&response[amps_offset]))/1000.0;
-  int volts_offset = amps_offset+4+1;
+  int volts_offset = amps_offset+6+1;
   response[volts_offset+5]=0;
   bat_volts = ((float)atoi(&response[volts_offset]))/1000.0;
   int gauge_offset = volts_offset+5+1;
