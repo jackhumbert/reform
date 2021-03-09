@@ -697,10 +697,10 @@ void handle_commands() {
         }
 
         int mA = (int)(current*1000.0);
-        char mA_sign = " ";
+        char mA_sign = ' ';
         if (mA<0) {
           mA = -mA;
-          mA_sign = "-";
+          mA_sign = '-';
         }
         int mV = (int)(volts*1000.0);
 
