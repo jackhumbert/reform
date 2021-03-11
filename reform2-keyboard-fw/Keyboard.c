@@ -324,14 +324,17 @@ void remote_get_status(void) {
 
   gfx_poke_str(0, 2, "MNT Reform Keyboard");
   gfx_poke_str(0, 3, KBD_FW_REV);
+  gfx_on();
+  gfx_flush();
 
+#ifndef KBD_VARIANT_STANDALONE
   term_x = 0;
   term_y = 0;
-
   Serial_SendByte('s');
   Serial_SendByte('\r');
   Delay_MS(1);
   remote_receive_string(1);
+#endif
 }
 
 int oledbrt=0;
@@ -489,7 +492,34 @@ void remote_disable_som_uart(void) {
   empty_serial();
 }
 
-#define MENU_NUM_ITEMS 8
+typedef struct MenuItem {
+  char* title;
+  int keycode;
+} MenuItem;
+
+#ifdef KBD_VARIANT_STANDALONE
+#define MENU_NUM_ITEMS 4
+const MenuItem menu_items[] = {
+  { "Exit Menu         ESC", KEY_ESCAPE },
+  { "Key Backlight-     F1", KEY_F1 },
+  { "Key Backlight+     F2", KEY_F2 },
+  { "System Status       s", KEY_S }
+};
+#else
+#define MENU_NUM_ITEMS 9
+const MenuItem menu_items[] = {
+  { "Exit Menu         ESC", KEY_ESCAPE },
+  { "Power On            1", KEY_1 },
+  { "Power Off           0", KEY_0 },
+  { "Reset               r", KEY_R },
+  { "Battery Status      b", KEY_B },
+  { "Key Backlight-     F1", KEY_F1 },
+  { "Key Backlight+     F2", KEY_F2 },
+  { "Wake              SPC", KEY_SPC },
+  { "System Status       s", KEY_S }
+};
+#endif
+
 int current_menu_y = 0;
 int current_scroll_y = 0;
 int active_meta_mode = 0;
@@ -497,47 +527,19 @@ int active_meta_mode = 0;
 int execute_meta_function(int keycode);
 
 void render_menu(int y) {
-  char str[32];
-  int i=0;
   gfx_clear();
   gfx_invert_row(current_menu_y-y);
-  sprintf(str, "Exit Menu         ESC");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Power On            1");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Power Off           0");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Reset               r");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Battery Status      b");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Key Backlight-     F1");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Key Backlight+     F2");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Wake              SPC");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "System Status       s");
-  gfx_poke_str(0,(i++)-y,str);
-  //sprintf(str, "Aux Power On     x");
-  //gfx_poke_str(0,(i++)-y,str);
-  //sprintf(str, "Aux Power Off    v");
-  //gfx_poke_str(0,(i++)-y,str);
-
+  for (int i=0; i<MENU_NUM_ITEMS; i++) {
+    gfx_poke_str(0,i-y,menu_items[i].title);
+  }
   gfx_on();
   gfx_flush();
 }
 
 int execute_menu_function(int y) {
-  if (y==1) return execute_meta_function(KEY_1);
-  if (y==2) return execute_meta_function(KEY_0);
-  if (y==3) return execute_meta_function(KEY_R);
-  if (y==4) return execute_meta_function(KEY_B);
-  if (y==5) return execute_meta_function(KEY_F1);
-  if (y==6) return execute_meta_function(KEY_F2);
-  if (y==7) return execute_meta_function(KEY_SPACE);
-  if (y==8) return execute_meta_function(KEY_S);
-
+  if (y>=0 && y<MENU_NUM_ITEMS) {
+    return execute_meta_function(menu_items[y].keycode);
+  }
   return execute_meta_function(KEY_ESCAPE);
 }
 
@@ -590,7 +592,7 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == HID_KEYBOARD_SC_DOWN_ARROW) {
     current_menu_y++;
-    if (current_menu_y>MENU_NUM_ITEMS) current_menu_y = MENU_NUM_ITEMS;
+    if (current_menu_y>=MENU_NUM_ITEMS) current_menu_y = MENU_NUM_ITEMS-1;
     if (current_menu_y>=current_scroll_y+3) current_scroll_y++;
     render_menu(current_scroll_y);
     return 1;
