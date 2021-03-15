@@ -41,8 +41,8 @@
 #include <stdlib.h>
 
 #define KBD_FW_REV "R1 20210315"
-#define KBD_VARIANT_STANDALONE 0
-#define KBD_VARIANT_QWERTY_US 1
+//#define KBD_VARIANT_STANDALONE
+#define KBD_VARIANT_QWERTY_US
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
@@ -516,7 +516,7 @@ const MenuItem menu_items[] = {
   { "Battery Status      b", KEY_B },
   { "Key Backlight-     F1", KEY_F1 },
   { "Key Backlight+     F2", KEY_F2 },
-  { "Wake              SPC", KEY_SPC },
+  { "Wake              SPC", KEY_SPACE },
   { "System Status       s", KEY_S }
 };
 #endif
@@ -741,7 +741,7 @@ void process_alerts(void) {
 
 int main(void)
 {
-#if KBD_VARIANT_QWERTY_US
+#ifdef KBD_VARIANT_QWERTY_US
   matrix[15*4+1]=KEY_DELETE;
 #endif
 
@@ -756,7 +756,7 @@ int main(void)
     HID_Device_USBTask(&Keyboard_HID_Interface);
     USB_USBTask();
     counter++;
-    if (!KBD_VARIANT_STANDALONE) {
+#ifndef KBD_VARIANT_STANDALONE
       if (counter>=30000) {
         remote_check_for_low_battery();
         counter = 0;
@@ -764,7 +764,7 @@ int main(void)
       if (counter%750 == 0) {
         process_alerts();
       }
-    }
+#endif
   }
 }
 
