@@ -40,7 +40,9 @@
 #include "scancodes.h"
 #include <stdlib.h>
 
-#define KBD_FW_REV "R1 20210218"
+#define KBD_FW_REV "R1 20210315"
+#define KBD_VARIANT_STANDALONE 0
+#define KBD_VARIANT_QWERTY_US 1
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
@@ -71,7 +73,7 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
 #define set_input(portdir,pin) portdir &= ~(1<<pin)
 #define set_output(portdir,pin) portdir |= (1<<pin)
 
-const uint8_t matrix[15*6] = {
+uint8_t matrix[15*6] = {
   KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, HID_KEYBOARD_SC_EXSEL, HID_KEYBOARD_SC_EXSEL,
 
   KEY_GRAVE_ACCENT_AND_TILDE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS_AND_UNDERSCORE, KEY_EQUAL_AND_PLUS, KEY_BACKSPACE, 0,
@@ -80,7 +82,7 @@ const uint8_t matrix[15*6] = {
 
   HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_APPLICATION, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON_AND_COLON, KEY_APOSTROPHE_AND_QUOTE, KEY_ENTER, 0,
 
-  HID_KEYBOARD_SC_LEFT_SHIFT, KEY_DELETE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT, 0,
+  HID_KEYBOARD_SC_LEFT_SHIFT, HID_KEYBOARD_SC_NON_US_BACKSLASH_AND_PIPE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT, 0,
 
   HID_KEYBOARD_SC_RIGHT_GUI, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_RIGHT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0,0,0
 };
@@ -100,11 +102,12 @@ void gfx_clear(void) {
       gfx_poke(x,y,' ');
     }
   }
+  gfx_clear_invert();
 }
 
 void empty_serial(void) {
   int clock = 0;
-  while (Serial_ReceiveByte()>=0 && clock<1000) {
+  while (Serial_ReceiveByte()>=0 && clock<100) {
     // flush serial
     clock++;
   }
@@ -230,6 +233,12 @@ void remote_get_voltages(void) {
   Delay_MS(1);
   remote_receive_string(0);
 
+  // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???%
+  //             |  |  |  |  |  |  |  |  | |      |     |
+  //             0  3  6  9  12 15 18 21 24|      |     |
+  //                                       26     33    39
+  //                                       |
+  //                                       `- can be a minus
   float sum_volts = 0;
 
   for (int i=0; i<8; i++) {
@@ -239,11 +248,11 @@ void remote_get_voltages(void) {
     sum_volts += voltages[i];
   }
 
-  int amps_offset = 3*8+3;
+  int amps_offset = 3*8+2;
   // cut off string
-  response[amps_offset+4]=0;
+  response[amps_offset+5]=0;
   bat_amps = ((float)atoi(&response[amps_offset]))/1000.0;
-  int volts_offset = amps_offset+4+1;
+  int volts_offset = amps_offset+5+2;
   response[volts_offset+5]=0;
   bat_volts = ((float)atoi(&response[volts_offset]))/1000.0;
   int gauge_offset = volts_offset+5+1;
@@ -275,20 +284,58 @@ void remote_get_voltages(void) {
   gfx_flush();
 }
 
+int low_battery_alert = 0;
+
+void remote_check_for_low_battery(void) {
+  char bat_gauge[5] = {0,0,0,0,0};
+
+  low_battery_alert = 0;
+  empty_serial();
+
+  Serial_SendByte('c');
+  Serial_SendByte('\r');
+  Delay_MS(1);
+  remote_receive_string(0);
+
+  for (int i=0; i<8; i++) {
+    voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
+    if (voltages[i]<0) voltages[i]=0;
+    if (voltages[i]>=10) voltages[i]=9.9;
+    if (voltages[i]<3.0) {
+      low_battery_alert = 1;
+    }
+  }
+
+  int gauge_offset = 3*8+3+4+1+5+1;
+  strncpy(bat_gauge, &response[gauge_offset], 4);
+
+  if (bat_gauge[0] == '?') {
+    // battery charge level unknown
+  } else {
+    int percent = atoi(bat_gauge);
+    if (percent<10) {
+      low_battery_alert = 1;
+    }
+  }
+}
+
 void remote_get_status(void) {
   gfx_clear();
   empty_serial();
 
   gfx_poke_str(0, 2, "MNT Reform Keyboard");
   gfx_poke_str(0, 3, KBD_FW_REV);
+  gfx_on();
+  gfx_flush();
 
+#ifndef KBD_VARIANT_STANDALONE
   term_x = 0;
   term_y = 0;
-
   Serial_SendByte('s');
   Serial_SendByte('\r');
   Delay_MS(1);
   remote_receive_string(1);
+#endif
 }
 
 int oledbrt=0;
@@ -446,7 +493,34 @@ void remote_disable_som_uart(void) {
   empty_serial();
 }
 
-#define MENU_NUM_ITEMS 8
+typedef struct MenuItem {
+  char* title;
+  int keycode;
+} MenuItem;
+
+#ifdef KBD_VARIANT_STANDALONE
+#define MENU_NUM_ITEMS 4
+const MenuItem menu_items[] = {
+  { "Exit Menu         ESC", KEY_ESCAPE },
+  { "Key Backlight-     F1", KEY_F1 },
+  { "Key Backlight+     F2", KEY_F2 },
+  { "System Status       s", KEY_S }
+};
+#else
+#define MENU_NUM_ITEMS 9
+const MenuItem menu_items[] = {
+  { "Exit Menu         ESC", KEY_ESCAPE },
+  { "Power On            1", KEY_1 },
+  { "Power Off           0", KEY_0 },
+  { "Reset               r", KEY_R },
+  { "Battery Status      b", KEY_B },
+  { "Key Backlight-     F1", KEY_F1 },
+  { "Key Backlight+     F2", KEY_F2 },
+  { "Wake              SPC", KEY_SPC },
+  { "System Status       s", KEY_S }
+};
+#endif
+
 int current_menu_y = 0;
 int current_scroll_y = 0;
 int active_meta_mode = 0;
@@ -454,49 +528,19 @@ int active_meta_mode = 0;
 int execute_meta_function(int keycode);
 
 void render_menu(int y) {
-  char str[32];
-  int i=0;
   gfx_clear();
-  gfx_clear_invert();
   gfx_invert_row(current_menu_y-y);
-  sprintf(str, "Exit Menu         ESC");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Power On            1");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Power Off           0");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Reset               r");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Battery Status      b");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Key Backlight-     F1");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Key Backlight+     F2");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "Wake              SPC");
-  gfx_poke_str(0,(i++)-y,str);
-  sprintf(str, "System Status       s");
-  gfx_poke_str(0,(i++)-y,str);
-  //sprintf(str, "Aux Power On     x");
-  //gfx_poke_str(0,(i++)-y,str);
-  //sprintf(str, "Aux Power Off    v");
-  //gfx_poke_str(0,(i++)-y,str);
-
+  for (int i=0; i<MENU_NUM_ITEMS; i++) {
+    gfx_poke_str(0,i-y,menu_items[i].title);
+  }
   gfx_on();
   gfx_flush();
-  gfx_clear_invert();
 }
 
 int execute_menu_function(int y) {
-  if (y==1) return execute_meta_function(KEY_1);
-  if (y==2) return execute_meta_function(KEY_0);
-  if (y==3) return execute_meta_function(KEY_R);
-  if (y==4) return execute_meta_function(KEY_B);
-  if (y==5) return execute_meta_function(KEY_F1);
-  if (y==6) return execute_meta_function(KEY_F2);
-  if (y==7) return execute_meta_function(KEY_SPACE);
-  if (y==8) return execute_meta_function(KEY_S);
-
+  if (y>=0 && y<MENU_NUM_ITEMS) {
+    return execute_meta_function(menu_items[y].keycode);
+  }
   return execute_meta_function(KEY_ESCAPE);
 }
 
@@ -549,12 +593,8 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == HID_KEYBOARD_SC_DOWN_ARROW) {
     current_menu_y++;
-    if (current_menu_y>MENU_NUM_ITEMS) current_menu_y = MENU_NUM_ITEMS;
+    if (current_menu_y>=MENU_NUM_ITEMS) current_menu_y = MENU_NUM_ITEMS-1;
     if (current_menu_y>=current_scroll_y+3) current_scroll_y++;
-    render_menu(current_scroll_y);
-    return 1;
-  }
-  else if (keycode == KEY_M) {
     render_menu(current_scroll_y);
     return 1;
   }
@@ -634,16 +674,18 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
       if (debounced_pressed) {
         total_pressed++;
 
+        // circle key?
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
-          if (!active_meta_mode) {
+          if (!active_meta_mode && !last_meta_key) {
             current_scroll_y = 0;
             current_menu_y = 0;
             active_meta_mode = 1;
             // render menu
-            execute_meta_function(KEY_M);
+            render_menu(current_scroll_y);
           }
         } else {
           if (active_meta_mode) {
+            // not holding the same key?
             if (last_meta_key!=keycode) {
               // hyper/circle/menu functions
               int stay_meta = execute_meta_function(keycode);
@@ -656,7 +698,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
               }
             }
           } else if (!last_meta_key) {
-            // report keypress via USB
+            // not meta mode, regular key: report keypress via USB
             // 6 keys is a hard limit in the HID descriptor :/
             if (usb_report_mode && KeyboardReport && used_key_codes<6) {
               KeyboardReport->KeyCode[used_key_codes++] = keycode;
@@ -676,19 +718,53 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     }
   }
 
+  // if no more keys are held down, allow a new meta command
   if (total_pressed<1) last_meta_key = 0;
+}
+
+int blink = 0;
+
+void process_alerts(void) {
+  if (low_battery_alert) {
+    gfx_on();
+    for (int x=8;x<=11;x++) {
+      gfx_poke( x,0,' ');
+    }
+    if (blink) {
+      gfx_poke( 9,0,4*32+2);
+      gfx_poke(10,0,4*32+3);
+    }
+    gfx_flush();
+  }
+  blink = 1-blink;
 }
 
 int main(void)
 {
+#if KBD_VARIANT_QWERTY_US
+  matrix[15*4+1]=KEY_DELETE;
+#endif
+
   SetupHardware();
   GlobalInterruptEnable();
+
+  int counter = 0;
 
   for (;;)
   {
     process_keyboard(0, NULL);
     HID_Device_USBTask(&Keyboard_HID_Interface);
     USB_USBTask();
+    counter++;
+    if (!KBD_VARIANT_STANDALONE) {
+      if (counter>=30000) {
+        remote_check_for_low_battery();
+        counter = 0;
+      }
+      if (counter%750 == 0) {
+        process_alerts();
+      }
+    }
   }
 }
 
@@ -811,7 +887,6 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
       }
     }
     gfx_flush();
-    gfx_clear_invert();
   }
   if (data[0]=='O' && data[1]=='I' && data[2]=='N' && data[3]=='V') {
     gfx_clear_invert();
