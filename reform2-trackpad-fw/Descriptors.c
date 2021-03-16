@@ -80,14 +80,15 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseReport[] =
             HID_RI_PHYSICAL_MAXIMUM(8, 127),
             HID_RI_REPORT_COUNT(8, 0x02),
             HID_RI_REPORT_SIZE(8, 0x08),
+  //HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
             // ---
                 HID_RI_USAGE_PAGE(8, 0x01), /* Generic Desktop */
                 HID_RI_USAGE(8, 0x38), /* Usage Wheel */
                 HID_RI_LOGICAL_MINIMUM(8, -127),
                 HID_RI_LOGICAL_MAXIMUM(8, 127),
-            		HID_RI_PHYSICAL_MINIMUM(8, -127),
-								HID_RI_PHYSICAL_MAXIMUM(8, 127),
+                HID_RI_PHYSICAL_MINIMUM(8, -127),
+                HID_RI_PHYSICAL_MAXIMUM(8, 127),
                 HID_RI_REPORT_COUNT(8, 0x01),
 								HID_RI_REPORT_SIZE(8, 0x08),
 								HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
@@ -258,4 +259,3 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	*DescriptorAddress = Address;
 	return Size;
 }
-

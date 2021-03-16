@@ -137,9 +137,9 @@ void SetupHardware(void)
   DDRD = 0b00000000;
   DDRB = 0b00000100;
   DDRC = 0b00000000;
-  
+
   //output_high(PORTC, 5);
-  
+
   // no jtag plox
   //MCUCR |=(1<<JTD);
   //MCUCR |=(1<<JTD);
@@ -154,13 +154,13 @@ void SetupHardware(void)
   i2c_write(0x32);
   i2c_write(2); // reset
   i2c_stop();
-  
+
   i2c_start_wait(ADDR_SENSOR|I2C_WRITE);
   i2c_write(0x04);
   i2c_write(0x32);
   i2c_write(0); // reset
   i2c_stop();
-  
+
   Delay_MS(100);
 }
 
@@ -199,16 +199,26 @@ void EVENT_USB_Device_StartOfFrame(void)
 uint8_t addr1 = 0x00;
 uint8_t addr2 = 0x11;
 uint8_t buf[80];
+float dx2 = 0, dy2 = 0;
+float dx3 = 0, dy3 = 0;
+float dx4 = 0, dy4 = 0;
+float dxx = 0, dyy = 0;
+float dx = 0, dy = 0;
 int16_t lastx = 0, lasty = 0;
+int16_t lastx2 = 0, lasty2 = 0;
 unsigned int cycle = 0;
 int wheeling = 0;
 int touched_time = 0;
+int touched_time2 = 0;
 int last_num_fingers = 0;
 int start_num_fingers = 0;
 int report_lift = 0;
 
 #define PRESS_TIME 6
-#define MOTION_CLIP 80
+#define MOTION_CLIP 127
+
+//#define READ_LEN 8
+#define READ_LEN 20
 
 /** HID class driver callback function for the creation of HID reports to the host.
  *
@@ -229,6 +239,8 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   if (ReportType==HID_REPORT_ITEM_Feature) return false;
 
   USB_WheelMouseReport_Data_t* MouseReport = (USB_WheelMouseReport_Data_t*)ReportData;
+
+  // note: look for IQS550
 
   MouseReport->Button = 0;
   MouseReport->Wheel = 0;
@@ -252,67 +264,88 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   i2c_write(addr2);
   i2c_rep_start(ADDR_SENSOR|I2C_READ);
 
-  for (int i=0; i<8; i++) {
+  for (int i=0; i<READ_LEN; i++) {
     buf[i] = i2c_readAck();
   }
-  buf[8] = i2c_readNak();
+  buf[READ_LEN] = i2c_readNak();
   i2c_stop();
 
   int num_fingers = buf[0];
 
-  // absolute x and y coordinates are signed 16-bit integers 
-  int16_t xpos = ((uint16_t)buf[5]<<8)|((uint16_t)buf[6]);
-  int16_t ypos = ((uint16_t)buf[7]<<8)|((uint16_t)buf[8]);
-
-  // convert to relative deltas as float
-  float dx = (float)(xpos-lastx);
-  float dy = (float)(ypos-lasty);
-  lastx = xpos;
-  lasty = ypos;
-
   // touched?
   if (num_fingers) {
     touched_time++;
+    touched_time2++;
     wheeling = 0;
+
+    if (num_fingers != last_num_fingers) {
+      touched_time2 = 0;
+    }
 
     if (start_num_fingers < num_fingers) {
       start_num_fingers = num_fingers;
     }
 
     if (start_num_fingers == 2) {
-      // left mouse button
-      MouseReport->Button |= 1;
-      touched_time++;
-    } else if (start_num_fingers == 3) {
       // wheel
       wheeling = 1;
+    } else if (start_num_fingers == 3) {
+      MouseReport->Button |= 1;
     } else if (start_num_fingers == 4) {
       // right mouse button
-      MouseReport->Button |= 2;
+      //MouseReport->Button |= 2;
     }
 
-    // skip dramatic values
-    if (dx<MOTION_CLIP && dx>=-MOTION_CLIP && dy<MOTION_CLIP && dy>=-MOTION_CLIP) {
-      // skip the first motion reading(s) immediately after
-      // touchdown because they often have skips
-      if (touched_time > 4) {
-        if (wheeling) {
-          dy/=5;
-          if (dy>0 && dy<1) dy=1;
-          MouseReport->Wheel = -dy;
-        } else {
-          // normal movement
-          MouseReport->X = dx*1.5;
-          MouseReport->Y = dy*1.2;
+    // fingers are 7 bytes apart, up to 5 fingers
+    // absolute x and y coordinates are signed 16-bit integers
+    int16_t xpos = ((uint16_t)buf[5]<<8)|((uint16_t)buf[6]);
+    int16_t ypos = ((uint16_t)buf[7]<<8)|((uint16_t)buf[8]);
+    int16_t xpos2 = ((uint16_t)buf[12]<<8)|((uint16_t)buf[13]);
+    int16_t ypos2 = ((uint16_t)buf[14]<<8)|((uint16_t)buf[15]);
+
+    // skip the first motion reading(s) immediately after
+    // touchdown because they often have skips
+    if (touched_time2 > 4) {
+      if (num_fingers>=2) {
+        dx = ((float)xpos2+(float)xpos)/2-((float)lastx2+(float)lastx)/2;
+        dy = ((float)ypos2+(float)ypos)/2-((float)lasty2+(float)lasty)/2;
+      } else {
+        dx = (float)(xpos-lastx);
+        dy = (float)(ypos-lasty);
+      }
+
+      dxx = (dx+dx2+dx3+dx4)/4.0;
+      dyy = (dy+dy2+dy3+dy4)/4.0;
+
+      //if (dxx>MOTION_CLIP) dxx=MOTION_CLIP;
+      //if (dxx<=-MOTION_CLIP) dxx=-MOTION_CLIP;
+      //if (dyy>MOTION_CLIP) dyy=MOTION_CLIP;
+      //if (dyy<=-MOTION_CLIP) dyy=-MOTION_CLIP;
+
+      if (wheeling) {
+        float sgn = 1;
+        if (dyy<0) sgn = -1;
+        if (dyy>=2 || dyy<=-2) {
+          MouseReport->Wheel = (-sgn) * sqrt(sgn*dyy);
         }
+      } else {
+        // normal movement
+        MouseReport->X = dxx;
+        MouseReport->Y = dyy;
       }
     }
+
+    lastx = xpos; lasty = ypos;
+    lastx2 = xpos2; lasty2 = ypos2;
   } else {
     // no (more) touches
 
     if (start_num_fingers == 1 && touched_time > 0 && touched_time <= PRESS_TIME) {
       // tapped for a short time with 1 finger? left click
       MouseReport->Button |= 1;
+    } else if (start_num_fingers == 2 && touched_time > 0 && touched_time <= PRESS_TIME) {
+      // tapped for a short time with 2 fingers? right click
+      MouseReport->Button |= 2;
     } else if (start_num_fingers == 3 && touched_time > 0 && touched_time <= PRESS_TIME) {
       // tapped for a short time with 3 fingers? middle click
       MouseReport->Button |= 4;
@@ -320,7 +353,13 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
     touched_time = 0;
     start_num_fingers = 0;
     report_lift = 1;
+    dx = 0;
+    dy = 0;
   }
+
+  dx4 = dx3; dy4 = dy3;
+  dx3 = dx2; dy3 = dy2;
+  dx2 = dx;  dy2 = dy;
 
   last_num_fingers = num_fingers;
 
@@ -365,4 +404,3 @@ int main(void)
 		USB_USBTask();
 	}
 }
-
