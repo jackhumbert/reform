@@ -37,7 +37,7 @@
 #define REFORM_MBREV_R3 13 // R2 with "NTC instead of RNG/SS" fix
 
 // don't forget to set this to the correct rev for your motherboard!
-//#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R3
+#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
 //#define REF2_DEBUG 1
 #define FW_REV "MREF2LPC R2 20210419"
 
@@ -179,7 +179,13 @@ uint8_t spir[64];
 #define UNDERVOLTAGE_CRITICAL_VALUE 2.3
 #define MISSING_VALUE_HI 4.3
 #define MISSING_VALUE_LO 0.2
-#define FULLY_CHARGED_VOLTAGE 3.5
+#if (REFORM_MOTHERBOARD_REV >= REFORM_MBREV_R3)
+  #define FULLY_CHARGED_VOLTAGE 3.4
+  #define FULLY_CHARGED_CURRENT -0.3
+#else
+  #define FULLY_CHARGED_VOLTAGE 3.5
+  #define FULLY_CHARGED_CURRENT -0.6
+#endif
 #define WALLPOWER_DETECT_VOLTAGE 24
 
 void set_discharge_bits(uint16_t bits) {
@@ -850,7 +856,7 @@ int main(void)
           cycles_in_state = 0;
         }
       }
-      else if (current < 0.01 && current > -0.6 && num_fully_charged_cells >= 8) {
+      else if (current < 0.01 && current > FULLY_CHARGED_CURRENT && num_fully_charged_cells >= 8) {
         if (cycles_in_state > 5) {
           // when transitioning to fully charged, we assume that we're at max capacity
           capacity_accu_ampsecs = capacity_max_ampsecs;
@@ -912,6 +918,8 @@ int main(void)
       }
     }
     else if (state == ST_FULLY_CHARGED) {
+      reset_discharge_bits();
+
       if (cycles_in_state > 5) {
         // if none of the cells are fully charged anymore, allow charging again
         if (num_fully_charged_cells < 1) {
