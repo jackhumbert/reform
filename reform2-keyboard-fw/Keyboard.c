@@ -40,7 +40,7 @@
 #include "scancodes.h"
 #include <stdlib.h>
 
-#define KBD_FW_REV "R1 20210315"
+#define KBD_FW_REV "R1 20210419"
 //#define KBD_VARIANT_STANDALONE
 #define KBD_VARIANT_QWERTY_US
 
@@ -306,8 +306,8 @@ void remote_check_for_low_battery(void) {
     }
   }
 
-  int gauge_offset = 3*8+3+4+1+5+1;
-  strncpy(bat_gauge, &response[gauge_offset], 4);
+  int gauge_offset = 3*8+2+5+2+5+1;
+  strncpy(bat_gauge, &response[gauge_offset], 3);
 
   if (bat_gauge[0] == '?') {
     // battery charge level unknown
