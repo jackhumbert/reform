@@ -33,12 +33,13 @@
 #define REFORM_MBREV_D3 3
 #define REFORM_MBREV_D4 4
 #define REFORM_MBREV_R1 11
-#define REFORM_MBREV_R2 12
+#define REFORM_MBREV_R2 12 // stock R2
+#define REFORM_MBREV_R3 13 // R2 with "NTC instead of RNG/SS" fix
 
-// don't forget to set this!
-#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
+// don't forget to set this to the correct rev for your motherboard!
+//#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R3
 //#define REF2_DEBUG 1
-#define FW_REV "MREF2LPC R2 20210309"
+#define FW_REV "MREF2LPC R2 20210419"
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -167,8 +168,13 @@ uint16_t missing_bits = 0;
 uint16_t missing_reason = 0;
 uint8_t spir[64];
 
-#define OVERVOLTAGE_START_VALUE 3.61
-#define OVERVOLTAGE_STOP_VALUE 3.5
+#if (REFORM_MOTHERBOARD_REV >= REFORM_MBREV_R3)
+  #define OVERVOLTAGE_START_VALUE 3.8
+  #define OVERVOLTAGE_STOP_VALUE 3.6
+#else
+  #define OVERVOLTAGE_START_VALUE 3.61
+  #define OVERVOLTAGE_STOP_VALUE 3.5
+#endif
 #define UNDERVOLTAGE_VALUE 2.45
 #define UNDERVOLTAGE_CRITICAL_VALUE 2.3
 #define MISSING_VALUE_HI 4.3
@@ -642,19 +648,22 @@ void handle_commands() {
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
       else if (remote_cmd == 's') {
+        int acc_mah = (int)(capacity_accu_ampsecs/3.6);
+        int min_mah = (int)(capacity_min_ampsecs/3.6);
+
         // get charger system state
         if (state == ST_CHARGE) {
-          sprintf(uartBuffer,FW_REV"normal [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"normal,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_OVERVOLTED) {
-          sprintf(uartBuffer,FW_REV"balancing [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"balancing,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_UNDERVOLTED) {
-          sprintf(uartBuffer,FW_REV"undervolted [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"undervolted,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_MISSING) {
-          sprintf(uartBuffer,FW_REV"cell missing [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"cell missing,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_FULLY_CHARGED) {
-          sprintf(uartBuffer,FW_REV"full charge [%d]\r",cycles_in_state);
+          sprintf(uartBuffer,FW_REV"full charge,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else {
-          sprintf(uartBuffer,FW_REV"unknown %d [%d]\r",state,cycles_in_state);
+          sprintf(uartBuffer,FW_REV"unknown:%d,%d,%d,%d\r",state,cycles_in_state,min_mah,acc_mah);
         }
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
@@ -764,7 +773,7 @@ void calculate_capacity_percentage()
   } else if (capacity_accu_ampsecs >= capacity_max_ampsecs) {
     capacity_percentage = 100;
   } else {
-    capacity_percentage = (int)(100.0*((float)capacity_accu_ampsecs - (float)capacity_min_ampsecs) / (float)capacity_max_ampsecs);
+    capacity_percentage = (int)(100.0*((float)(capacity_accu_ampsecs - capacity_min_ampsecs)) / (float)(capacity_max_ampsecs - capacity_min_ampsecs));
   }
 }
 
