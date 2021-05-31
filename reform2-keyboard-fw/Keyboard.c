@@ -41,8 +41,9 @@
 #include <stdlib.h>
 
 #define KBD_FW_REV "R1 20210419"
-//#define KBD_VARIANT_STANDALONE
+#define KBD_VARIANT_STANDALONE
 #define KBD_VARIANT_QWERTY_US
+//#define KBD_VARIANT_NEO2
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
@@ -743,6 +744,11 @@ int main(void)
 {
 #ifdef KBD_VARIANT_QWERTY_US
   matrix[15*4+1]=KEY_DELETE;
+#endif
+#ifdef KBD_VARIANT_NEO2
+  matrix[15*3+0]=HID_KEYBOARD_SC_CAPS_LOCK; // M3
+  matrix[15*2+13]=KEY_ENTER;
+  matrix[15*3+13]=KEY_BACKSLASH_AND_PIPE; // M3
 #endif
 
   SetupHardware();
