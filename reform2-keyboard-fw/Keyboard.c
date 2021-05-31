@@ -41,7 +41,7 @@
 #include <stdlib.h>
 
 #define KBD_FW_REV "R1 20210419"
-#define KBD_VARIANT_STANDALONE
+//#define KBD_VARIANT_STANDALONE
 #define KBD_VARIANT_QWERTY_US
 //#define KBD_VARIANT_NEO2
 
