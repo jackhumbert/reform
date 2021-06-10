@@ -2,14 +2,14 @@
 <export version="D">
   <design>
     <source>/home/mntmn/code/reform/reform2-trackpad-pcb/reform2-trackpad.sch</source>
-    <date>Sun 19 Apr 2020 05:12:32 PM CEST</date>
-    <tool>Eeschema 5.1.6~rc1+dfsg1-1</tool>
+    <date>2020-10-21T13:17:04 CEST</date>
+    <tool>Eeschema 5.1.6+dfsg1-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
         <title>MNT Reform 2 Trackpad</title>
         <company>MNT Research GmbH</company>
-        <rev>2.0D-4</rev>
-        <date>2020-04-12</date>
+        <rev>2.0R-1</rev>
+        <date>2020-10-03</date>
         <source>reform2-trackpad.sch</source>
         <comment number="1" value="https://mntre.com"/>
         <comment number="2" value="Engineer: Lukas F. Hartmann"/>
@@ -44,6 +44,9 @@
     <comp ref="MK5">
       <value>Mounting_Hole</value>
       <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <fields>
+        <field name="DNP">y</field>
+      </fields>
       <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5B5F3DA7</tstamp>
@@ -51,6 +54,9 @@
     <comp ref="MK6">
       <value>Mounting_Hole</value>
       <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <fields>
+        <field name="DNP">y</field>
+      </fields>
       <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5B5F3DAD</tstamp>
@@ -123,7 +129,7 @@
     </comp>
     <comp ref="Y1">
       <value>Crystal_GND24</value>
-      <footprint>Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm_HandSoldering</footprint>
+      <footprint>Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm</footprint>
       <fields>
         <field name="Manufacturer">Abracon</field>
         <field name="Manufacturer_No">ABM8AIG-16.000MHz-4-T</field>
@@ -135,6 +141,9 @@
     <comp ref="MK13">
       <value>LOGO</value>
       <footprint>footprints:mnt-minilogo</footprint>
+      <fields>
+        <field name="DNP">y</field>
+      </fields>
       <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5B61922F</tstamp>
@@ -154,8 +163,8 @@
       <value>SW_HWB</value>
       <footprint>Button_Switch_SMD:SW_DIP_SPSTx01_Slide_Omron_A6S-110x_W8.9mm_P2.54mm</footprint>
       <fields>
-        <field name="Manufacturer">Omron</field>
-        <field name="Manufacturer_No">A6S-1101-H</field>
+        <field name="Manufacturer">Apem</field>
+        <field name="Manufacturer_No">DM01</field>
       </fields>
       <libsource lib="Switch" part="SW_DIP_x01" description="1x DIP Switch, Single Pole Single Throw (SPST) switch, small symbol"/>
       <sheetpath names="/" tstamps="/"/>
@@ -163,10 +172,10 @@
     </comp>
     <comp ref="SW6">
       <value>SW_RST</value>
-      <footprint>Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2</footprint>
+      <footprint>footprints2:Diptronics-PTLP2</footprint>
       <fields>
-        <field name="Manufacturer">CK</field>
-        <field name="Manufacturer_No">KMR221GLFS</field>
+        <field name="Manufacturer">Diptronics</field>
+        <field name="Manufacturer_No">PTLP2</field>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <sheetpath names="/" tstamps="/"/>
@@ -187,7 +196,6 @@
       <value>0.1uF</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Flags">DNP</field>
         <field name="Manufacturer">Yageo</field>
         <field name="Manufacturer_No">CC0603JPX7R9BB104</field>
       </fields>
@@ -240,11 +248,62 @@
       <tstamp>5DBF5E5D</tstamp>
     </comp>
     <comp ref="MK1">
-      <value>WEEE</value>
-      <footprint>Symbol:WEEE-Logo_4.2x6mm_SilkScreen</footprint>
+      <value>BADGE</value>
+      <footprint>footprints:reform2-trackpadctrl-badge</footprint>
+      <fields>
+        <field name="DNP">y</field>
+      </fields>
       <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5E5BAC8A</tstamp>
+    </comp>
+    <comp ref="U3">
+      <value>USBLC6-2SC6</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</datasheet>
+      <fields>
+        <field name="Manufacturer">STMicroelectronics</field>
+        <field name="Manufacturer_No">USBLC6-2SC6</field>
+      </fields>
+      <libsource lib="Power_Protection" part="USBLC6-2SC6" description="Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F873023</tstamp>
+    </comp>
+    <comp ref="F1">
+      <value>0ZCJ0075AF2E</value>
+      <footprint>Fuse:Fuse_1206_3216Metric_Castellated</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="Manufacturer">Bel Fuse</field>
+        <field name="Manufacturer_No">0ZCJ0075AF2E</field>
+      </fields>
+      <libsource lib="Device" part="Polyfuse" description="Resettable fuse, polymeric positive temperature coefficient"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F895E48</tstamp>
+    </comp>
+    <comp ref="FB1">
+      <value>BLM18PG221SH1D</value>
+      <footprint>Inductor_SMD:L_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="Manufacturer">Murata</field>
+        <field name="Manufacturer_No">BLM18PG221SH1D</field>
+      </fields>
+      <libsource lib="Device" part="Ferrite_Bead_Small" description="Ferrite bead, small symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F899AC1</tstamp>
+    </comp>
+    <comp ref="D1">
+      <value>BZT52-B5V6J</value>
+      <footprint>Diode_SMD:D_SOD-123</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="Manufacturer">Nexperia</field>
+        <field name="Manufacturer_No">BZT52-B5V6J</field>
+      </fields>
+      <libsource lib="Device" part="D_Zener" description="Zener diode"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F89D31C</tstamp>
     </comp>
   </components>
   <libparts>
@@ -316,6 +375,57 @@
         <pin num="4" name="4" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="Device" part="D_Zener">
+      <description>Zener diode</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>TO-???*</fp>
+        <fp>*_Diode_*</fp>
+        <fp>*SingleDiode*</fp>
+        <fp>D_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D_Zener</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="Ferrite_Bead_Small">
+      <description>Ferrite bead, small symbol</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Inductor_*</fp>
+        <fp>L_*</fp>
+        <fp>*Ferrite*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">FB</field>
+        <field name="Value">Ferrite_Bead_Small</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="Polyfuse">
+      <description>Resettable fuse, polymeric positive temperature coefficient</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>*polyfuse*</fp>
+        <fp>*PTC*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">F</field>
+        <field name="Value">Polyfuse</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="Device" part="R_Small">
       <description>Resistor, small symbol</description>
       <docs>~</docs>
@@ -354,6 +464,26 @@
       </fields>
       <pins>
         <pin num="1" name="1" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="Power_Protection" part="USBLC6-2SC6">
+      <description>Very low capacitance ESD protection diode, 2 data-line, SOT-23-6</description>
+      <docs>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</docs>
+      <footprints>
+        <fp>SOT?23*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">USBLC6-2SC6</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+      </fields>
+      <pins>
+        <pin num="1" name="I/O1" type="passive"/>
+        <pin num="2" name="GND" type="passive"/>
+        <pin num="3" name="I/O2" type="passive"/>
+        <pin num="4" name="I/O2" type="passive"/>
+        <pin num="5" name="VBUS" type="passive"/>
+        <pin num="6" name="I/O1" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Switch" part="SW_DIP_x01">
@@ -455,6 +585,9 @@
     <library logical="Mechanical">
       <uri>/usr/share/kicad/library/Mechanical.lib</uri>
     </library>
+    <library logical="Power_Protection">
+      <uri>/usr/share/kicad/library/Power_Protection.lib</uri>
+    </library>
     <library logical="Switch">
       <uri>/usr/share/kicad/library/Switch.lib</uri>
     </library>
@@ -463,121 +596,128 @@
     </library>
   </libraries>
   <nets>
-    <net code="1" name="+5V">
-      <node ref="U2" pin="1"/>
-      <node ref="J1" pin="1"/>
-      <node ref="C5" pin="1"/>
-      <node ref="U2" pin="3"/>
-      <node ref="U1" pin="31"/>
+    <net code="1" name="Net-(R9-Pad1)">
+      <node ref="U1" pin="30"/>
+      <node ref="R9" pin="1"/>
     </net>
-    <net code="2" name="Net-(U2-Pad4)">
-      <node ref="U2" pin="4"/>
-    </net>
-    <net code="3" name="+3V3">
-      <node ref="R11" pin="2"/>
-      <node ref="R10" pin="2"/>
-      <node ref="R1" pin="1"/>
-      <node ref="R2" pin="2"/>
-      <node ref="U1" pin="4"/>
-      <node ref="U1" pin="32"/>
-      <node ref="C3" pin="1"/>
-      <node ref="J2" pin="3"/>
-      <node ref="U2" pin="5"/>
-    </net>
-    <net code="4" name="Net-(R2-Pad1)">
-      <node ref="U1" pin="13"/>
-      <node ref="R2" pin="1"/>
-      <node ref="SW7" pin="1"/>
-    </net>
-    <net code="5" name="RDY">
-      <node ref="U1" pin="19"/>
-      <node ref="J2" pin="6"/>
-    </net>
-    <net code="6" name="SDA">
-      <node ref="R11" pin="1"/>
+    <net code="2" name="SDA">
       <node ref="U1" pin="15"/>
       <node ref="J2" pin="1"/>
+      <node ref="R11" pin="1"/>
     </net>
-    <net code="7" name="SCL">
-      <node ref="U1" pin="16"/>
+    <net code="3" name="SCL">
       <node ref="R10" pin="1"/>
       <node ref="J2" pin="2"/>
+      <node ref="U1" pin="16"/>
     </net>
-    <net code="8" name="Net-(U1-Pad20)">
-      <node ref="U1" pin="20"/>
-    </net>
-    <net code="9" name="Net-(U1-Pad14)">
-      <node ref="U1" pin="14"/>
-    </net>
-    <net code="10" name="Net-(U1-Pad17)">
-      <node ref="U1" pin="17"/>
-    </net>
-    <net code="11" name="Net-(U1-Pad18)">
-      <node ref="U1" pin="18"/>
-    </net>
-    <net code="12" name="Net-(U1-Pad21)">
-      <node ref="U1" pin="21"/>
-    </net>
-    <net code="13" name="Net-(U1-Pad11)">
-      <node ref="U1" pin="11"/>
-    </net>
-    <net code="14" name="Net-(U1-Pad12)">
-      <node ref="U1" pin="12"/>
-    </net>
-    <net code="15" name="GND">
-      <node ref="C3" pin="2"/>
-      <node ref="U1" pin="28"/>
-      <node ref="U1" pin="3"/>
-      <node ref="Y1" pin="4"/>
-      <node ref="SW6" pin="1"/>
-      <node ref="C2" pin="1"/>
-      <node ref="C1" pin="2"/>
-      <node ref="SW7" pin="2"/>
-      <node ref="C4" pin="2"/>
-      <node ref="Y1" pin="2"/>
-      <node ref="C5" pin="2"/>
-      <node ref="J1" pin="4"/>
-      <node ref="J2" pin="4"/>
-      <node ref="MK5" pin="1"/>
-      <node ref="MK6" pin="1"/>
-      <node ref="U2" pin="2"/>
-    </net>
-    <net code="16" name="RST">
-      <node ref="J2" pin="5"/>
-    </net>
-    <net code="17" name="Net-(J1-Pad3)">
-      <node ref="R8" pin="1"/>
-      <node ref="J1" pin="3"/>
-    </net>
-    <net code="18" name="Net-(R8-Pad2)">
+    <net code="4" name="Net-(R8-Pad2)">
       <node ref="R8" pin="2"/>
       <node ref="U1" pin="29"/>
     </net>
-    <net code="19" name="Net-(R9-Pad1)">
-      <node ref="R9" pin="1"/>
-      <node ref="U1" pin="30"/>
+    <net code="5" name="/PD+">
+      <node ref="U3" pin="4"/>
+      <node ref="J1" pin="3"/>
     </net>
-    <net code="20" name="Net-(J1-Pad2)">
+    <net code="6" name="/UD-">
+      <node ref="U3" pin="1"/>
       <node ref="R9" pin="2"/>
-      <node ref="J1" pin="2"/>
     </net>
-    <net code="21" name="Net-(U1-Pad8)">
-      <node ref="U1" pin="8"/>
+    <net code="7" name="/UD+">
+      <node ref="U3" pin="3"/>
+      <node ref="R8" pin="1"/>
     </net>
-    <net code="22" name="Net-(U1-Pad9)">
-      <node ref="U1" pin="9"/>
+    <net code="8" name="Net-(U1-Pad18)">
+      <node ref="U1" pin="18"/>
     </net>
-    <net code="23" name="Net-(U1-Pad7)">
-      <node ref="U1" pin="7"/>
+    <net code="9" name="RST">
+      <node ref="J2" pin="5"/>
     </net>
-    <net code="24" name="Net-(U1-Pad23)">
-      <node ref="U1" pin="23"/>
+    <net code="10" name="RDY">
+      <node ref="J2" pin="6"/>
+      <node ref="U1" pin="19"/>
     </net>
-    <net code="25" name="Net-(U1-Pad10)">
-      <node ref="U1" pin="10"/>
+    <net code="11" name="Net-(U1-Pad12)">
+      <node ref="U1" pin="12"/>
     </net>
-    <net code="26" name="Net-(U1-Pad22)">
+    <net code="12" name="Net-(U1-Pad11)">
+      <node ref="U1" pin="11"/>
+    </net>
+    <net code="13" name="Net-(U1-Pad21)">
+      <node ref="U1" pin="21"/>
+    </net>
+    <net code="14" name="Net-(U1-Pad20)">
+      <node ref="U1" pin="20"/>
+    </net>
+    <net code="15" name="Net-(U1-Pad17)">
+      <node ref="U1" pin="17"/>
+    </net>
+    <net code="16" name="Net-(U1-Pad14)">
+      <node ref="U1" pin="14"/>
+    </net>
+    <net code="17" name="+3V3">
+      <node ref="R2" pin="2"/>
+      <node ref="U2" pin="5"/>
+      <node ref="J2" pin="3"/>
+      <node ref="R10" pin="2"/>
+      <node ref="R11" pin="2"/>
+      <node ref="U1" pin="32"/>
+      <node ref="U1" pin="4"/>
+      <node ref="C3" pin="1"/>
+      <node ref="R1" pin="1"/>
+    </net>
+    <net code="18" name="Net-(U2-Pad4)">
+      <node ref="U2" pin="4"/>
+    </net>
+    <net code="19" name="+5V">
+      <node ref="U2" pin="3"/>
+      <node ref="U2" pin="1"/>
+      <node ref="U1" pin="31"/>
+      <node ref="C5" pin="1"/>
+      <node ref="U3" pin="5"/>
+      <node ref="FB1" pin="1"/>
+      <node ref="D1" pin="1"/>
+    </net>
+    <net code="20" name="Net-(R1-Pad2)">
+      <node ref="R1" pin="2"/>
+      <node ref="SW6" pin="2"/>
+      <node ref="U1" pin="24"/>
+    </net>
+    <net code="21" name="GND">
+      <node ref="C3" pin="2"/>
+      <node ref="Y1" pin="2"/>
+      <node ref="Y1" pin="4"/>
+      <node ref="MK5" pin="1"/>
+      <node ref="MK6" pin="1"/>
+      <node ref="SW7" pin="2"/>
+      <node ref="SW6" pin="1"/>
+      <node ref="J2" pin="4"/>
+      <node ref="C2" pin="1"/>
+      <node ref="U1" pin="28"/>
+      <node ref="C1" pin="2"/>
+      <node ref="U1" pin="3"/>
+      <node ref="D1" pin="2"/>
+      <node ref="U3" pin="2"/>
+      <node ref="U2" pin="2"/>
+      <node ref="C5" pin="2"/>
+      <node ref="C4" pin="2"/>
+      <node ref="J1" pin="4"/>
+    </net>
+    <net code="22" name="/5V_IN">
+      <node ref="J1" pin="1"/>
+      <node ref="F1" pin="2"/>
+    </net>
+    <net code="23" name="Net-(F1-Pad1)">
+      <node ref="FB1" pin="2"/>
+      <node ref="F1" pin="1"/>
+    </net>
+    <net code="24" name="Net-(U1-Pad6)">
+      <node ref="U1" pin="6"/>
+    </net>
+    <net code="25" name="Net-(U1-Pad22)">
       <node ref="U1" pin="22"/>
+    </net>
+    <net code="26" name="Net-(U1-Pad23)">
+      <node ref="U1" pin="23"/>
     </net>
     <net code="27" name="Net-(U1-Pad25)">
       <node ref="U1" pin="25"/>
@@ -588,27 +728,40 @@
     <net code="29" name="Net-(U1-Pad5)">
       <node ref="U1" pin="5"/>
     </net>
-    <net code="30" name="Net-(U1-Pad6)">
-      <node ref="U1" pin="6"/>
+    <net code="30" name="Net-(U1-Pad7)">
+      <node ref="U1" pin="7"/>
     </net>
-    <net code="31" name="Net-(C1-Pad1)">
+    <net code="31" name="Net-(U1-Pad8)">
+      <node ref="U1" pin="8"/>
+    </net>
+    <net code="32" name="Net-(U1-Pad9)">
+      <node ref="U1" pin="9"/>
+    </net>
+    <net code="33" name="Net-(U1-Pad10)">
+      <node ref="U1" pin="10"/>
+    </net>
+    <net code="34" name="/PD-">
+      <node ref="J1" pin="2"/>
+      <node ref="U3" pin="6"/>
+    </net>
+    <net code="35" name="Net-(C1-Pad1)">
+      <node ref="U1" pin="1"/>
       <node ref="Y1" pin="1"/>
       <node ref="C1" pin="1"/>
-      <node ref="U1" pin="1"/>
     </net>
-    <net code="32" name="Net-(C2-Pad2)">
-      <node ref="C2" pin="2"/>
-      <node ref="U1" pin="2"/>
-      <node ref="Y1" pin="3"/>
-    </net>
-    <net code="33" name="Net-(C4-Pad1)">
-      <node ref="U1" pin="27"/>
+    <net code="36" name="Net-(C4-Pad1)">
       <node ref="C4" pin="1"/>
+      <node ref="U1" pin="27"/>
     </net>
-    <net code="34" name="Net-(R1-Pad2)">
-      <node ref="R1" pin="2"/>
-      <node ref="U1" pin="24"/>
-      <node ref="SW6" pin="2"/>
+    <net code="37" name="Net-(C2-Pad2)">
+      <node ref="Y1" pin="3"/>
+      <node ref="U1" pin="2"/>
+      <node ref="C2" pin="2"/>
+    </net>
+    <net code="38" name="Net-(R2-Pad1)">
+      <node ref="U1" pin="13"/>
+      <node ref="SW7" pin="1"/>
+      <node ref="R2" pin="1"/>
     </net>
   </nets>
 </export>

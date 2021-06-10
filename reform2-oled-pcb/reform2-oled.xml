@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="D">
   <design>
-    <source>/home/mntmn/code/reform/reform2-oled/reform2-oled.sch</source>
-    <date>Fri 06 Mar 2020 02:35:59 PM CET</date>
-    <tool>Eeschema 5.1.2+dfsg1-1</tool>
+    <source>/home/mntmn/code/reform/reform2-oled-pcb/reform2-oled.sch</source>
+    <date>2020-10-20T14:28:39 CEST</date>
+    <tool>Eeschema 5.1.6+dfsg1-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
-        <title>Reform Status Display OLED</title>
+        <title>MNT Reform 2 Keyboard OLED</title>
         <company>MNT Research GmbH</company>
-        <rev>D-1</rev>
-        <date>2019-11-07</date>
+        <rev>2.0R-1</rev>
+        <date>2020-09-08</date>
         <source>reform2-oled.sch</source>
-        <comment number="1" value="License: GPLv3+"/>
-        <comment number="2" value="https://mntre.com"/>
-        <comment number="3" value=""/>
+        <comment number="1" value="https://mntre.com"/>
+        <comment number="2" value="Engineer: Lukas F. Hartmann"/>
+        <comment number="3" value="License: CERN-OHL-S 2.0"/>
         <comment number="4" value=""/>
       </title_block>
     </sheet>
@@ -134,6 +134,10 @@
     <comp ref="U1">
       <value>SSD1306</value>
       <footprint>KiCad-SSD1306_OLED-0:SSD1306_OLED-0.91-128x32</footprint>
+      <fields>
+        <field name="Manufacturer">Enrich Electronics</field>
+        <field name="Manufacturer_No">ENH-OB00910003</field>
+      </fields>
       <libsource lib="SSD1306_OLED-0.91-128x32" part="SSD1306" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5EAB622B</tstamp>
@@ -159,6 +163,14 @@
       <libsource lib="Device" part="R_Small" description="Resistor, small symbol"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5E7D0D47</tstamp>
+    </comp>
+    <comp ref="GFX2">
+      <value>BADGE</value>
+      <footprint>footprints-oled:reform2-oled-badge</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F85DFE2</tstamp>
     </comp>
   </components>
   <libparts>
@@ -268,7 +280,7 @@
       <uri>/usr/share/kicad/library/Mechanical.lib</uri>
     </library>
     <library logical="SSD1306_OLED-0.91-128x32">
-      <uri>/home/mntmn/code/reform/reform2-oled/KiCad-SSD1306_OLED-0.91-128x32/SSD1306_OLED-0.91-128x32.lib</uri>
+      <uri>/home/mntmn/code/reform/reform2-oled-pcb/KiCad-SSD1306_OLED-0.91-128x32/SSD1306_OLED-0.91-128x32.lib</uri>
     </library>
   </libraries>
   <nets>
@@ -284,7 +296,7 @@
       <node ref="R2" pin="2"/>
       <node ref="U1" pin="8"/>
       <node ref="U1" pin="5"/>
-      <node ref="J1" pin="4"/>
+      <node ref="J1" pin="1"/>
       <node ref="C2" pin="1"/>
       <node ref="C1" pin="1"/>
     </net>
@@ -325,7 +337,7 @@
       <node ref="C2" pin="2"/>
       <node ref="C1" pin="2"/>
       <node ref="C7" pin="2"/>
-      <node ref="J1" pin="1"/>
+      <node ref="J1" pin="4"/>
       <node ref="U1" pin="7"/>
     </net>
     <net code="12" name="DISP_SDA">

@@ -1,10 +1,7 @@
-Reference, Quantity, Value, Footprint, Datasheet, Manufacturer, Manufacturer_No
-C3 C4 ,2,"10uF","Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder","","Taiyo Yuden","LMK107BBJ106KALT"
-C5 C6 C1 C2 C7 ,5,"1uF","Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder","","Taiyo Yuden","UMK107BJ105KA-T"
-GFX1 ,1,"MNT","reform2:mntreform","~"
-H1 ,1,"MH1","MountingHole:MountingHole_2.2mm_M2_Pad","~"
-H2 ,1,"MH2","MountingHole:MountingHole_2.2mm_M2_Pad","~"
-J1 ,1,"AUX","Connector_FFC-FPC:Molex_200528-0040_1x04-1MP_P1.00mm_Horizontal","","Molex","200528-0040"
-R1 ,1,"330k","Resistor_SMD:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder","","Yageo","AF0603FR-07330KL"
-R2 ,1,"4.7k","Resistor_SMD:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder","","Yageo","RC0603FR-074K7L"
-U1 ,1,"SSD1306","KiCad-SSD1306_OLED-0:SSD1306_OLED-0.91-128x32",""
+Reference,Quantity,Value,Footprint,Manufacturer,Manufacturer_No,Supplied By
+C3 C4 ,2,10uF,Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder,Taiyo Yuden,LMK107BBJ106KALT,PCBWay
+C5 C6 C1 C2 C7 ,5,1uF,Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder,Taiyo Yuden,UMK107BJ105KA-T,PCBWay
+J1 ,1,AUX,Connector_FFC-FPC:Molex_200528-0040_1x04-1MP_P1.00mm_Horizontal,Molex,200528-0040,Customer
+R1 ,1,330k,Resistor_SMD:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder,Yageo,AF0603FR-07330KL,Customer
+R2 ,1,4.7k,Resistor_SMD:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder,Yageo,RC0603FR-074K7L,Customer
+U1 ,1,SSD1306,KiCad-SSD1306_OLED-0:SSD1306_OLED-0.91-128x32,Enrich Electronics,ENH-OB00910003,Customer

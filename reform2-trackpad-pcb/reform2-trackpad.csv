@@ -1,17 +1,18 @@
-Reference, Quantity, Value, Footprint, Datasheet, Manufacturer, Manufacturer_No, Flags
-C1 C2 ,2,"18pF","Capacitor_SMD:C_0603_1608Metric","","Yageo","CC0603JRNPO9BN180",""
-C3 C5 ,2,"0.1uF","Capacitor_SMD:C_0603_1608Metric","","Yageo","CC0603JPX7R9BB104",""
-C4 ,1,"1uF","Capacitor_SMD:C_0603_1608Metric","","Taiyo Yuden","UMK107BJ105KA-T",""
-J1 ,1,"Conn_USB","Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical","","JST","B4B-PH-K-S(LF)(SN)",""
-J2 ,1,"Conn_01x06_Female","Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal","","Hirose","FH12-6S-0.5SH(55)",""
-MK1 ,1,"WEEE","Symbol:WEEE-Logo_4.2x6mm_SilkScreen",""
-MK13 ,1,"LOGO","footprints:mnt-minilogo",""
-MK5 MK6 ,2,"Mounting_Hole","MountingHole:MountingHole_2.2mm_M2_Pad",""
-R10 R11 ,2,"4.7k","Resistor_SMD:R_0603_1608Metric","","Yageo","RC0603FR-074K7L",""
-R2 R1 ,2,"10k","Resistor_SMD:R_0603_1608Metric","","Vishay Dale","CRCW060310K0JNEAC",""
-R8 R9 ,2,"22","Resistor_SMD:R_0603_1608Metric","","Yageo","RT0603DRD0722RL",""
-SW6 ,1,"SW_RST","Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2","","CK","KMR221GLFS",""
-SW7 ,1,"SW_HWB","Button_Switch_SMD:SW_DIP_SPSTx01_Slide_Omron_A6S-110x_W8.9mm_P2.54mm","","Omron","A6S-1101-H",""
-U1 ,1,"ATmega32U2-AU","Package_QFP:TQFP-32_7x7mm_P0.8mm","","Microchip","ATMEGA32U2-AU",""
-U2 ,1,"TLV75533PDBV","Package_TO_SOT_SMD:SOT-23-5","","Texas Instruments","TLV75533PDBVR",""
-Y1 ,1,"Crystal_GND24","Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm_HandSoldering","","Abracon","ABM8AIG-16.000MHz-4-T",""
+Reference,Quantity,Value,Footprint,Manufacturer,Manufacturer_No,DNP,Supplied By
+C1 C2 ,2,18pF,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603JRNPO9BN180,,PCBWay
+C3 C5 ,2,0.1uF,Capacitor_SMD:C_0603_1608Metric,Yageo,CC0603JPX7R9BB104,,PCBWay
+C4 ,1,1uF,Capacitor_SMD:C_0603_1608Metric,Taiyo Yuden,UMK107BJ105KA-T,,PCBWay
+D1 ,1,BZT52-B5V6J,Diode_SMD:D_SOD-123,Nexperia,BZT52-B5V6J,,Customer
+F1 ,1,0ZCJ0075AF2E,Fuse:Fuse_1206_3216Metric_Castellated,Bel Fuse,0ZCJ0075AF2E,,Customer
+FB1 ,1,BLM18PG221SH1D,Inductor_SMD:L_0603_1608Metric,Murata,BLM18PG221SH1D,,PCBWay
+J1 ,1,Conn_USB,Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical,JST,B4B-PH-K-S(LF)(SN),,Customer
+J2 ,1,Conn_01x06_Female,Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal,Hirose,FH12-6S-0.5SH(55),,Customer
+R10 R11 ,2,4.7k,Resistor_SMD:R_0603_1608Metric,Yageo,RC0603FR-074K7L,,PCBWay
+R2 R1 ,2,10k,Resistor_SMD:R_0603_1608Metric,Vishay Dale,CRCW060310K0JNEAC,,PCBWay
+R8 R9 ,2,22,Resistor_SMD:R_0603_1608Metric,Yageo,RT0603DRD0722RL,,PCBWay
+SW6 ,1,SW_RST,footprints2:Diptronics-PTLP2,Diptronics,PTLP2,,Customer
+SW7 ,1,SW_HWB,Button_Switch_SMD:SW_DIP_SPSTx01_Slide_Omron_A6S-110x_W8.9mm_P2.54mm,Apem,DM01,,Customer
+U1 ,1,ATmega32U2-AU,Package_QFP:TQFP-32_7x7mm_P0.8mm,Microchip,ATMEGA32U2-AU,,Customer
+U2 ,1,TLV75533PDBV,Package_TO_SOT_SMD:SOT-23-5,Texas Instruments,TLV75533PDBVR,,Customer
+U3 ,1,USBLC6-2SC6,Package_TO_SOT_SMD:SOT-23-6,STMicroelectronics,USBLC6-2SC6,,PCBWay
+Y1 ,1,Crystal_GND24,Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm,Abracon,ABM8AIG-16.000MHz-4-T,,Customer

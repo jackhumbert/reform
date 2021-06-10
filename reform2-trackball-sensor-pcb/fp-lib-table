@@ -2,4 +2,5 @@
   (lib (name pat9125el)(type KiCad)(uri ${KIPRJMOD}/pat9125el)(options "")(descr ""))
   (lib (name reform2-motherboard)(type KiCad)(uri /home/mntmn/code/reform/reform2-motherboard/reform2-motherboard/footprints/reform2-motherboard.pretty)(options "")(descr ""))
   (lib (name footprints)(type KiCad)(uri /home/mntmn/code/reform/reform2-motherboard/reform2-motherboard/footprints)(options "")(descr ""))
+  (lib (name footprints-sensor)(type KiCad)(uri ${KIPRJMOD}/footprints-sensor)(options "")(descr ""))
 )

@@ -1,4 +1,5 @@
 (fp_lib_table
   (lib (name KiCad-SSD1306_OLED-0)(type KiCad)(uri ${KIPRJMOD}/KiCad-SSD1306_OLED-0.91-128x32)(options "")(descr ""))
   (lib (name reform2)(type KiCad)(uri ${KIPRJMOD}/reform2.pretty)(options "")(descr ""))
+  (lib (name footprints-oled)(type KiCad)(uri ${KIPRJMOD}/footprints-oled)(options "")(descr ""))
 )
