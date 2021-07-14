@@ -166,19 +166,19 @@ void SetupHardware(void)
   DDRD = 0b00000000;
   //DDRB = 0b11000110;
   DDRC = 0b00000000;
-  
+
   output_high(PORTD, 0); // enable input pullup for LMB
   output_high(PORTD, 1); // enable input pullup for RMB
   output_high(PORTD, 2); // enable input pullup for RMB
   output_high(PORTD, 3); // enable input pullup for RMB
   output_high(PORTD, 4); // enable input pullup for RMB
-    
+
   // no jtag plox
   //MCUCR |=(1<<JTD);
   //MCUCR |=(1<<JTD);
-  
+
   i2c_init();
-  
+
   USB_Init();
 
   Delay_MS(1000);
@@ -188,14 +188,14 @@ void SetupHardware(void)
   if (!i2c_start(ADDR_SENSOR|I2C_WRITE)) {
     i2c_write(0x7f);
     i2c_write(0x0);
-    i2c_stop();  
+    i2c_stop();
 
     led_ok();
   }
   if (!i2c_start(ADDR_SENSOR|I2C_WRITE)) {
     i2c_write(0x05);
     i2c_write(0x01);
-    i2c_stop();  
+    i2c_stop();
 
     led_ok();
   }
@@ -251,7 +251,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          uint16_t* const ReportSize)
 {
   if (ReportType==HID_REPORT_ITEM_Feature) return false;
-  
+
   int8_t nx = 0;
   int8_t ny = 0;
 
@@ -268,7 +268,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
     ny = i2c_readNak();
     i2c_stop();
   }
-    
+
   USB_WheelMouseReport_Data_t* MouseReport = (USB_WheelMouseReport_Data_t*)ReportData;
 
   if (!(PIND&(1<<4))) {
@@ -280,12 +280,9 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   if (!(PIND&(1<<1))) {
     MouseReport->Button |= 4;
   }
-  if (!(PIND&(1<<2))) {
-    MouseReport->Button |= 1;
-  }
 
   MouseReport->Wheel = 0;
-  
+
   if (!(PIND&1) || !(PIND&(1<<2))) {
     // wheel
     MouseReport->Wheel = -ny;
@@ -314,7 +311,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
                                           const uint16_t ReportSize)
 {
   if (ReportSize<4) return;
-  char* d = (char*)ReportData; 
+  char* d = (char*)ReportData;
   if (d[0]=='L' && d[1]=='E' && d[2]=='D' && d[3]=='S') {
     uint8_t bits = ((d[4]=='1')<<4)|((d[5]=='1')<<3)|((d[6]=='1')<<2)|((d[7]=='1')<<1)|(d[8]=='1');
     led_set(bits);
@@ -332,4 +329,3 @@ int main(void)
 		USB_USBTask();
 	}
 }
-
