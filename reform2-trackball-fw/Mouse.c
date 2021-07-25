@@ -250,7 +250,29 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          void* ReportData,
                                          uint16_t* const ReportSize)
 {
-  if (ReportType==HID_REPORT_ITEM_Feature) return false;
+  if (ReportType==HID_REPORT_ITEM_Feature) {
+    if (*ReportID==0) {
+      *ReportID=2;
+    }
+    
+    if (*ReportID==2) {
+      USB_WheelMouseFeatureReport_Data_t* FeatureReport = (USB_WheelMouseFeatureReport_Data_t*)ReportData;
+      FeatureReport->Multiplier = 2;
+      *ReportSize = sizeof(USB_WheelMouseFeatureReport_Data_t);
+      return true;
+    } else {
+      led_set(0x2);
+      return false;
+    }
+  }
+
+  if (*ReportID==0) {
+    *ReportID=1;
+  }
+  if (*ReportID!=1) {
+    led_set(0x1);
+    return false;
+  }
   
   int8_t nx = 0;
   int8_t ny = 0;
@@ -285,10 +307,12 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   }
 
   MouseReport->Wheel = 0;
+  MouseReport->Pan = 0;
   
   if (!(PIND&1) || !(PIND&(1<<2))) {
     // wheel
-    MouseReport->Wheel = -ny;
+    MouseReport->Pan = 2*nx;
+    MouseReport->Wheel = 2*-ny;
   } else {
     MouseReport->X = 2*abs(nx)*nx;
     MouseReport->Y = 2*abs(ny)*ny;

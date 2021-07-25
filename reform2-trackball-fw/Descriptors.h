@@ -95,6 +95,12 @@ typedef struct
   int8_t  X;
   int8_t  Y;
   int8_t  Wheel;
+  int8_t  Pan;
 } ATTR_PACKED USB_WheelMouseReport_Data_t;
+
+typedef struct
+{
+  int8_t Multiplier;
+} ATTR_PACKED USB_WheelMouseFeatureReport_Data_t;
 
 #endif

@@ -58,6 +58,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseReport[] =
   HID_RI_USAGE_PAGE(8, 0x01), /* Generic Desktop */
     HID_RI_USAGE(8, 0x02), /* Mouse */
     HID_RI_COLLECTION(8, 0x01), /* Application */
+        HID_RI_REPORT_ID(8, 0x01),
         HID_RI_USAGE(8, 0x01), /* Pointer */
         HID_RI_COLLECTION(8, 0x00), /* Physical */
             HID_RI_USAGE_PAGE(8, 0x09), /* Button */
@@ -68,9 +69,11 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseReport[] =
             HID_RI_REPORT_COUNT(8, 0x03),
             HID_RI_REPORT_SIZE(8, 0x01),
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+
             HID_RI_REPORT_COUNT(8, 0x01), // 5 bits padding
             HID_RI_REPORT_SIZE(8, 0x05),
             HID_RI_INPUT(8, HID_IOF_CONSTANT),
+
             HID_RI_USAGE_PAGE(8, 0x01), /* Generic Desktop */
             HID_RI_USAGE(8, 0x30), /* Usage X */
             HID_RI_USAGE(8, 0x31), /* Usage Y */
@@ -81,17 +84,45 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseReport[] =
             HID_RI_REPORT_COUNT(8, 0x02),
             HID_RI_REPORT_SIZE(8, 0x08),
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
+
+            HID_RI_COLLECTION(8, 0x02), /* Logical */
             // ---
+                HID_RI_REPORT_ID(8, 0x02),
+                HID_RI_USAGE_PAGE(8, 0x01), /* Generic Desktop */
+                HID_RI_USAGE(8, 0x48), /* Usage Resolution Multiplier */
+                HID_RI_LOGICAL_MINIMUM(8, 0),
+                HID_RI_LOGICAL_MAXIMUM(8, 1),
+                HID_RI_PHYSICAL_MINIMUM(8, 1),
+                HID_RI_PHYSICAL_MAXIMUM(8, 16),
+                HID_RI_REPORT_COUNT(8, 0x01),
+                HID_RI_REPORT_SIZE(8, 0x08),
+                HID_RI_FEATURE(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
+            // ---
+            // ---
+                HID_RI_REPORT_ID(8, 0x01),
                 HID_RI_USAGE_PAGE(8, 0x01), /* Generic Desktop */
                 HID_RI_USAGE(8, 0x38), /* Usage Wheel */
                 HID_RI_LOGICAL_MINIMUM(8, -127),
                 HID_RI_LOGICAL_MAXIMUM(8, 127),
-            		HID_RI_PHYSICAL_MINIMUM(8, -127),
-								HID_RI_PHYSICAL_MAXIMUM(8, 127),
+                HID_RI_PHYSICAL_MINIMUM(8, 0),
+                HID_RI_PHYSICAL_MAXIMUM(8, 0),
                 HID_RI_REPORT_COUNT(8, 0x01),
-								HID_RI_REPORT_SIZE(8, 0x08),
-								HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
+                HID_RI_REPORT_SIZE(8, 0x08),
+                HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
             // ---
+            // ---
+                HID_RI_REPORT_ID(8, 0x01),
+                HID_RI_USAGE_PAGE(8, 0x0c), /* Consumer */
+                HID_RI_USAGE(16, 0x238), /* Usage AC Pan, Linear Control */
+                HID_RI_LOGICAL_MINIMUM(8, -127),
+                HID_RI_LOGICAL_MAXIMUM(8, 127),
+                HID_RI_PHYSICAL_MINIMUM(8, -127),
+                HID_RI_PHYSICAL_MAXIMUM(8, 127),
+                HID_RI_REPORT_COUNT(8, 0x01),
+                HID_RI_REPORT_SIZE(8, 0x08),
+                HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
+            // ---
+            HID_RI_END_COLLECTION(0),
         HID_RI_END_COLLECTION(0),
     HID_RI_END_COLLECTION(0),
 };
