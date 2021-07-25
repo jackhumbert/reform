@@ -115,9 +115,6 @@ USB_ClassInfo_HID_Device_t Mouse_HID_Interface =
 			},
 	};
 
-// LM PD0 input pullup
-// RM PD1 input pullup
-
 #define ADDR_SENSOR (0x74<<1)
 
 uint8_t twi_write_reg[1];
@@ -236,13 +233,35 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          void* ReportData,
                                          uint16_t* const ReportSize)
 {
-  if (ReportType==HID_REPORT_ITEM_Feature) return false;
+  if (ReportType==HID_REPORT_ITEM_Feature) {
+    if (*ReportID==0) {
+      *ReportID=2;
+    }
+
+    if (*ReportID==2) {
+      USB_WheelMouseFeatureReport_Data_t* FeatureReport = (USB_WheelMouseFeatureReport_Data_t*)ReportData;
+      FeatureReport->Multiplier = 2;
+      *ReportSize = sizeof(USB_WheelMouseFeatureReport_Data_t);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  if (*ReportID==0) {
+    *ReportID=1;
+  }
+
+  if (*ReportID!=1) {
+    return false;
+  }
 
   USB_WheelMouseReport_Data_t* MouseReport = (USB_WheelMouseReport_Data_t*)ReportData;
 
   // note: look for IQS550
 
   MouseReport->Button = 0;
+  MouseReport->Pan = 0;
   MouseReport->Wheel = 0;
   MouseReport->X = 0;
   MouseReport->Y = 0;
@@ -323,11 +342,9 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
       //if (dyy<=-MOTION_CLIP) dyy=-MOTION_CLIP;
 
       if (wheeling) {
-        float sgn = 1;
-        if (dyy<0) sgn = -1;
-        if (dyy>=2 || dyy<=-2) {
-          MouseReport->Wheel = (-sgn) * sqrt(sgn*dyy);
-        }
+        // horizontal and vertical scrolling
+        MouseReport->Pan = dxx;
+        MouseReport->Wheel = -dyy;
       } else {
         // normal movement
         MouseReport->X = dxx;
