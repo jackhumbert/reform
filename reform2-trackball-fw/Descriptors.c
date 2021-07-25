@@ -93,7 +93,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseReport[] =
                 HID_RI_LOGICAL_MINIMUM(8, 0),
                 HID_RI_LOGICAL_MAXIMUM(8, 1),
                 HID_RI_PHYSICAL_MINIMUM(8, 1),
-                HID_RI_PHYSICAL_MAXIMUM(8, 16),
+                HID_RI_PHYSICAL_MAXIMUM(8, 12), /* Sensitivity of Wheels */
                 HID_RI_REPORT_COUNT(8, 0x01),
                 HID_RI_REPORT_SIZE(8, 0x08),
                 HID_RI_FEATURE(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
