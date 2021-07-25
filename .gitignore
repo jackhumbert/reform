@@ -17,4 +17,5 @@ _autosave*
 .DS_Store
 a.out
 bin
+update-mntbom.sh
 

@@ -1,5 +1,6 @@
-
-x1 = 8;
+// for MNT Reform 2.0 R-2
+ 
+x1 = 6+8;
 y1 = 4;
 
 x2 = x1+23;
@@ -8,15 +9,15 @@ y2 = y1+10;
 x3 = x2+12.75;
 y3 = y2+60;
 
-sink_width = 54;
-sink_height = 6;
-sink_depth = 25+y3+1;
+sink_width = 60;
+sink_height = 5;
+sink_depth = 25+y3+1.45;
 
 fins_y = 20.5;
 fin_width = sink_width+2;
 fin_thickness = 2;
 fin_spacing = 3;
-fin_depth = sink_height-2;
+fin_depth = sink_height-1.5;
 
 module screw_hole(x,y,height) {
   shh=3;

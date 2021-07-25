@@ -1,4 +1,5 @@
 (fp_lib_table
   (lib (name reform2-motherboard)(type KiCad)(uri /home/mntmn/code/reform/reform2-motherboard/reform2-motherboard/footprints/reform2-motherboard.pretty)(options "")(descr ""))
   (lib (name footprints)(type KiCad)(uri ${KIPRJMOD}/footprints)(options "")(descr ""))
+  (lib (name footprints2)(type KiCad)(uri /home/mntmn/code/reform/reform2-trackball-pcb/footprints)(options "")(descr ""))
 )

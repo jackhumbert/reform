@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="D">
   <design>
-    <source>/home/mntmn/code/reform/reform2-trackball/reform-trackball.sch</source>
-    <date>Fri 06 Mar 2020 02:26:51 PM CET</date>
-    <tool>Eeschema 5.1.2+dfsg1-1</tool>
+    <source>/home/mntmn/code/reform/reform2-trackball-pcb/reform2-trackball.sch</source>
+    <date>2020-10-19T22:18:36 CEST</date>
+    <tool>Eeschema 5.1.6+dfsg1-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
-        <title>Reform 2 Trackball</title>
-        <company>MNT Research GmbH</company>
-        <rev>D-3</rev>
-        <date>2020-02-24</date>
-        <source>reform-trackball.sch</source>
-        <comment number="1" value="License: GPLv3+ https://www.gnu.org/licenses/gpl-3.0.en.html"/>
-        <comment number="2" value="Copyright 2017-2020 Lukas F. Hartmann / MNT Research GmbH"/>
-        <comment number="3" value="https://mntmn.com/reform"/>
+        <title>MNT Reform 2 Trackball</title>
+        <company>Copyright 2017-2020 MNT Research GmbH</company>
+        <rev>2.0R-1</rev>
+        <date>2020-09-08</date>
+        <source>reform2-trackball.sch</source>
+        <comment number="1" value="https://mntre.comm"/>
+        <comment number="2" value="Engineer: Lukas F. Hartmann"/>
+        <comment number="3" value="License: CERN-OHL-S 2.0"/>
         <comment number="4" value=""/>
       </title_block>
     </sheet>
@@ -42,62 +42,6 @@
       <libsource lib="Connector" part="Conn_01x04_Male" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5B5F1753</tstamp>
-    </comp>
-    <comp ref="MK5">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F3DA7</tstamp>
-    </comp>
-    <comp ref="MK6">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F3DAD</tstamp>
-    </comp>
-    <comp ref="MK7">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F3DB3</tstamp>
-    </comp>
-    <comp ref="MK8">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F3DB9</tstamp>
-    </comp>
-    <comp ref="MK9">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F4257</tstamp>
-    </comp>
-    <comp ref="MK10">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F425D</tstamp>
-    </comp>
-    <comp ref="MK11">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F4263</tstamp>
-    </comp>
-    <comp ref="MK12">
-      <value>Mounting_Hole</value>
-      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
-      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B5F4269</tstamp>
     </comp>
     <comp ref="C3">
       <value>0.1uF</value>
@@ -173,7 +117,7 @@
     </comp>
     <comp ref="Y1">
       <value>Crystal_GND24</value>
-      <footprint>Crystals:Crystal_SMD_3225-4pin_3.2x2.5mm_HandSoldering</footprint>
+      <footprint>Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm</footprint>
       <datasheet>~</datasheet>
       <fields>
         <field name="Manufacturer">Abracon</field>
@@ -182,13 +126,6 @@
       <libsource lib="Device" part="Crystal_GND24" description="Four pin crystal, GND on pins 2 and 4"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5B608FD3</tstamp>
-    </comp>
-    <comp ref="MK13">
-      <value>LOGO</value>
-      <footprint>reform2-motherboard:mntreform</footprint>
-      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5B61922F</tstamp>
     </comp>
     <comp ref="J2">
       <value>Conn_01x06_Female</value>
@@ -274,8 +211,8 @@
       <footprint>Button_Switch_SMD:SW_DIP_SPSTx01_Slide_Omron_A6S-110x_W8.9mm_P2.54mm</footprint>
       <datasheet>~</datasheet>
       <fields>
-        <field name="Manufacturer">Omron</field>
-        <field name="Manufacturer_No">A6S-1101-H</field>
+        <field name="Manufacturer">Apem</field>
+        <field name="Manufacturer_No">DM01</field>
       </fields>
       <libsource lib="Switch" part="SW_DIP_x01" description="1x DIP Switch, Single Pole Single Throw (SPST) switch, small symbol"/>
       <sheetpath names="/" tstamps="/"/>
@@ -409,7 +346,7 @@
         <field name="Manufacturer">Texas Instruments</field>
         <field name="Manufacturer_No">TLV75533PDBVR</field>
       </fields>
-      <libsource lib="Regulator_Linear" part="TLV75533PDBV" description="500mA Low Dropout Voltage Regulator, Fixed Output 3.3V, SOT-23-5"/>
+      <libsource lib="reform-trackball-rescue" part="TLV75533PDBV-Regulator_Linear" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5DAEEA1F</tstamp>
     </comp>
@@ -472,6 +409,124 @@
       <libsource lib="Device" part="R_Small" description="Resistor, small symbol"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5DBF5E5D</tstamp>
+    </comp>
+    <comp ref="MK1">
+      <value>BADGE</value>
+      <footprint>footprints-trackball:mntreform-trackball-badge</footprint>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F6BBD83</tstamp>
+    </comp>
+    <comp ref="MK13">
+      <value>LOGO</value>
+      <footprint>reform2-motherboard:mntreform</footprint>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B61922F</tstamp>
+    </comp>
+    <comp ref="MK12">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F4269</tstamp>
+    </comp>
+    <comp ref="MK11">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F4263</tstamp>
+    </comp>
+    <comp ref="MK10">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F425D</tstamp>
+    </comp>
+    <comp ref="MK9">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F4257</tstamp>
+    </comp>
+    <comp ref="MK8">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F3DB9</tstamp>
+    </comp>
+    <comp ref="MK7">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F3DB3</tstamp>
+    </comp>
+    <comp ref="MK6">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F3DAD</tstamp>
+    </comp>
+    <comp ref="MK5">
+      <value>Mounting_Hole</value>
+      <footprint>MountingHole:MountingHole_2.2mm_M2_Pad</footprint>
+      <libsource lib="Mechanical" part="MountingHole_Pad" description="Mounting Hole with connection"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B5F3DA7</tstamp>
+    </comp>
+    <comp ref="U3">
+      <value>USBLC6-2SC6</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</datasheet>
+      <fields>
+        <field name="Manufacturer">STMicroelectronics</field>
+        <field name="Manufacturer_No">USBLC6-2SC6</field>
+      </fields>
+      <libsource lib="Power_Protection" part="USBLC6-2SC6" description="Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F65961E</tstamp>
+    </comp>
+    <comp ref="FB1">
+      <value>BLM18PG221SH1D</value>
+      <footprint>Inductor_SMD:L_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="Manufacturer">Murata</field>
+        <field name="Manufacturer_No">BLM18PG221SH1D</field>
+      </fields>
+      <libsource lib="Device" part="Ferrite_Bead_Small" description="Ferrite bead, small symbol"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F6AD2B1</tstamp>
+    </comp>
+    <comp ref="D6">
+      <value>BZT52-B5V6J</value>
+      <footprint>Diode_SMD:D_SOD-123</footprint>
+      <datasheet>https://diotec.com/tl_files/diotec/files/pdf/datasheets/bzt52b2v4.pdf</datasheet>
+      <fields>
+        <field name="Manufacturer">Nexperia</field>
+        <field name="Manufacturer_No">BZT52-B5V6J</field>
+      </fields>
+      <libsource lib="Diode" part="BZT52Bxx" description="500mW Zener Diode, SOD-123"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F70C861</tstamp>
+    </comp>
+    <comp ref="F1">
+      <value>0ZCJ0075AF2E</value>
+      <footprint>Fuse:Fuse_1206_3216Metric_Castellated</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="Manufacturer">Bel Fuse</field>
+        <field name="Manufacturer_No">0ZCJ0075AF2E</field>
+      </fields>
+      <libsource lib="Device" part="Polyfuse" description="Resettable fuse, polymeric positive temperature coefficient"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5F7426C5</tstamp>
     </comp>
   </components>
   <libparts>
@@ -543,6 +598,23 @@
         <pin num="4" name="4" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="Device" part="Ferrite_Bead_Small">
+      <description>Ferrite bead, small symbol</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Inductor_*</fp>
+        <fp>L_*</fp>
+        <fp>*Ferrite*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">FB</field>
+        <field name="Value">Ferrite_Bead_Small</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="Device" part="LED_Small">
       <description>Light emitting diode, small symbol</description>
       <docs>~</docs>
@@ -560,6 +632,22 @@
         <pin num="2" name="A" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="Device" part="Polyfuse">
+      <description>Resettable fuse, polymeric positive temperature coefficient</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>*polyfuse*</fp>
+        <fp>*PTC*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">F</field>
+        <field name="Value">Polyfuse</field>
+      </fields>
+      <pins>
+        <pin num="1" name="~" type="passive"/>
+        <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="Device" part="R_Small">
       <description>Resistor, small symbol</description>
       <docs>~</docs>
@@ -573,6 +661,22 @@
       <pins>
         <pin num="1" name="~" type="passive"/>
         <pin num="2" name="~" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Diode" part="BZT52Bxx">
+      <description>500mW Zener Diode, SOD-123</description>
+      <docs>https://diotec.com/tl_files/diotec/files/pdf/datasheets/bzt52b2v4.pdf</docs>
+      <footprints>
+        <fp>D?SOD?123*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">BZT52Bxx</field>
+        <field name="Footprint">Diode_SMD:D_SOD-123</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Mechanical" part="MountingHole">
@@ -600,49 +704,24 @@
         <pin num="1" name="1" type="input"/>
       </pins>
     </libpart>
-    <libpart lib="Regulator_Linear" part="TLV71209_SOT23-5">
-      <aliases>
-        <alias>TLV71210_SOT23-5</alias>
-        <alias>TLV71211_SOT23-5</alias>
-        <alias>TLV71310PDBV</alias>
-        <alias>TLV71311PDBV</alias>
-        <alias>TLV71312PDBV</alias>
-        <alias>TLV71315PDBV</alias>
-        <alias>TLV71318PDBV</alias>
-        <alias>TLV713185PDBV</alias>
-        <alias>TLV71325PDBV</alias>
-        <alias>TLV71328PDBV</alias>
-        <alias>TLV713285PDBV</alias>
-        <alias>TLV71330PDBV</alias>
-        <alias>TLV71333PDBV</alias>
-        <alias>TLV75509PDBV</alias>
-        <alias>TLV75510PDBV</alias>
-        <alias>TLV75512PDBV</alias>
-        <alias>TLV75515PDBV</alias>
-        <alias>TLV75518PDBV</alias>
-        <alias>TLV75519PDBV</alias>
-        <alias>TLV75525PDBV</alias>
-        <alias>TLV75528PDBV</alias>
-        <alias>TLV75529PDBV</alias>
-        <alias>TLV75530PDBV</alias>
-        <alias>TLV75533PDBV</alias>
-      </aliases>
-      <description>300mA Low Dropout Voltage Regulator, Fixed Output 0.9V, SOT-23-5</description>
-      <docs>http://www.ti.com/lit/ds/symlink/tlv712.pdf</docs>
+    <libpart lib="Power_Protection" part="USBLC6-2SC6">
+      <description>Very low capacitance ESD protection diode, 2 data-line, SOT-23-6</description>
+      <docs>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</docs>
       <footprints>
         <fp>SOT?23*</fp>
       </footprints>
       <fields>
         <field name="Reference">U</field>
-        <field name="Value">TLV71209_SOT23-5</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-5</field>
+        <field name="Value">USBLC6-2SC6</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
       </fields>
       <pins>
-        <pin num="1" name="IN" type="power_in"/>
-        <pin num="2" name="GND" type="power_in"/>
-        <pin num="3" name="EN" type="input"/>
-        <pin num="4" name="NC" type="NotConnected"/>
-        <pin num="5" name="OUT" type="power_out"/>
+        <pin num="1" name="I/O1" type="passive"/>
+        <pin num="2" name="GND" type="passive"/>
+        <pin num="3" name="I/O2" type="passive"/>
+        <pin num="4" name="I/O2" type="passive"/>
+        <pin num="5" name="VBUS" type="passive"/>
+        <pin num="6" name="I/O1" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Switch" part="SW_DIP_x01">
@@ -726,6 +805,23 @@
         <pin num="32" name="AVCC" type="power_in"/>
       </pins>
     </libpart>
+    <libpart lib="reform-trackball-rescue" part="TLV75533PDBV-Regulator_Linear">
+      <footprints>
+        <fp>SOT?23*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">TLV75533PDBV-Regulator_Linear</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-5</field>
+      </fields>
+      <pins>
+        <pin num="1" name="IN" type="power_in"/>
+        <pin num="2" name="GND" type="power_in"/>
+        <pin num="3" name="EN" type="input"/>
+        <pin num="4" name="NC" type="NotConnected"/>
+        <pin num="5" name="OUT" type="power_out"/>
+      </pins>
+    </libpart>
   </libparts>
   <libraries>
     <library logical="Connector">
@@ -734,215 +830,238 @@
     <library logical="Device">
       <uri>/usr/share/kicad/library/Device.lib</uri>
     </library>
+    <library logical="Diode">
+      <uri>/usr/share/kicad/library/Diode.lib</uri>
+    </library>
     <library logical="Mechanical">
       <uri>/usr/share/kicad/library/Mechanical.lib</uri>
     </library>
-    <library logical="Regulator_Linear">
-      <uri>/usr/share/kicad/library/Regulator_Linear.lib</uri>
+    <library logical="Power_Protection">
+      <uri>/usr/share/kicad/library/Power_Protection.lib</uri>
     </library>
     <library logical="Switch">
       <uri>/usr/share/kicad/library/Switch.lib</uri>
     </library>
     <library logical="reform-trackball">
-      <uri>/home/mntmn/code/reform/reform2-trackball/reform-trackball.lib</uri>
+      <uri>/home/mntmn/code/reform/reform2-trackball-pcb/reform-trackball.lib</uri>
     </library>
     <library logical="reform-trackball-rescue">
-      <uri>/home/mntmn/code/reform/reform2-trackball/reform-trackball-rescue.lib</uri>
+      <uri>/home/mntmn/code/reform/reform2-trackball-pcb/reform-trackball-rescue.lib</uri>
     </library>
   </libraries>
   <nets>
-    <net code="1" name="Net-(D2-Pad1)">
-      <node ref="D2" pin="1"/>
-      <node ref="U1" pin="23"/>
+    <net code="1" name="GND">
+      <node ref="C3" pin="2"/>
+      <node ref="Y1" pin="2"/>
+      <node ref="Y1" pin="4"/>
+      <node ref="C4" pin="2"/>
+      <node ref="C1" pin="2"/>
+      <node ref="J1" pin="4"/>
+      <node ref="U1" pin="28"/>
+      <node ref="C2" pin="1"/>
+      <node ref="D6" pin="2"/>
+      <node ref="MK11" pin="1"/>
+      <node ref="MK12" pin="1"/>
+      <node ref="U3" pin="2"/>
+      <node ref="MK5" pin="1"/>
+      <node ref="MK6" pin="1"/>
+      <node ref="MK7" pin="1"/>
+      <node ref="MK8" pin="1"/>
+      <node ref="MK9" pin="1"/>
+      <node ref="MK10" pin="1"/>
+      <node ref="U1" pin="3"/>
+      <node ref="SW2" pin="2"/>
+      <node ref="SW1" pin="2"/>
+      <node ref="J2" pin="1"/>
+      <node ref="SW6" pin="1"/>
+      <node ref="SW7" pin="2"/>
+      <node ref="C5" pin="2"/>
+      <node ref="U2" pin="2"/>
+      <node ref="SW3" pin="2"/>
+      <node ref="SW5" pin="2"/>
+      <node ref="SW4" pin="2"/>
     </net>
-    <net code="2" name="Net-(R1-Pad2)">
-      <node ref="R1" pin="2"/>
-      <node ref="SW6" pin="2"/>
-      <node ref="U1" pin="24"/>
+    <net code="2" name="+5V">
+      <node ref="C5" pin="1"/>
+      <node ref="U2" pin="1"/>
+      <node ref="U3" pin="5"/>
+      <node ref="D6" pin="1"/>
+      <node ref="FB1" pin="2"/>
+      <node ref="U1" pin="31"/>
+      <node ref="U2" pin="3"/>
     </net>
-    <net code="3" name="Net-(D1-Pad1)">
-      <node ref="U1" pin="22"/>
-      <node ref="D1" pin="1"/>
+    <net code="3" name="+3V3">
+      <node ref="U1" pin="32"/>
+      <node ref="U1" pin="4"/>
+      <node ref="J2" pin="6"/>
+      <node ref="R1" pin="1"/>
+      <node ref="R2" pin="2"/>
+      <node ref="C3" pin="1"/>
+      <node ref="R10" pin="2"/>
+      <node ref="R11" pin="2"/>
+      <node ref="R7" pin="2"/>
+      <node ref="R6" pin="2"/>
+      <node ref="R5" pin="2"/>
+      <node ref="R4" pin="2"/>
+      <node ref="R3" pin="2"/>
+      <node ref="U2" pin="5"/>
     </net>
-    <net code="4" name="Net-(D3-Pad1)">
+    <net code="4" name="SCL">
+      <node ref="U1" pin="16"/>
+      <node ref="R10" pin="1"/>
+      <node ref="J2" pin="4"/>
+    </net>
+    <net code="5" name="Net-(U1-Pad18)">
+      <node ref="U1" pin="18"/>
+    </net>
+    <net code="6" name="Net-(U1-Pad17)">
+      <node ref="U1" pin="17"/>
+    </net>
+    <net code="7" name="Net-(U1-Pad14)">
+      <node ref="U1" pin="14"/>
+    </net>
+    <net code="8" name="SDA">
+      <node ref="R11" pin="1"/>
+      <node ref="U1" pin="15"/>
+      <node ref="J2" pin="3"/>
+    </net>
+    <net code="9" name="Net-(U2-Pad4)">
+      <node ref="U2" pin="4"/>
+    </net>
+    <net code="10" name="Net-(D3-Pad1)">
       <node ref="D3" pin="1"/>
       <node ref="U1" pin="25"/>
     </net>
-    <net code="5" name="Net-(D4-Pad1)">
-      <node ref="D4" pin="1"/>
-      <node ref="U1" pin="26"/>
+    <net code="11" name="Net-(R1-Pad2)">
+      <node ref="U1" pin="24"/>
+      <node ref="SW6" pin="2"/>
+      <node ref="R1" pin="2"/>
     </net>
-    <net code="6" name="Net-(D5-Pad1)">
+    <net code="12" name="Net-(D1-Pad1)">
+      <node ref="D1" pin="1"/>
+      <node ref="U1" pin="22"/>
+    </net>
+    <net code="13" name="Net-(D2-Pad1)">
+      <node ref="U1" pin="23"/>
+      <node ref="D2" pin="1"/>
+    </net>
+    <net code="14" name="Net-(D4-Pad1)">
+      <node ref="U1" pin="26"/>
+      <node ref="D4" pin="1"/>
+    </net>
+    <net code="15" name="Net-(D5-Pad1)">
       <node ref="U1" pin="5"/>
       <node ref="D5" pin="1"/>
     </net>
-    <net code="7" name="Net-(D5-Pad2)">
+    <net code="16" name="Net-(D5-Pad2)">
       <node ref="D5" pin="2"/>
       <node ref="R7" pin="1"/>
     </net>
-    <net code="8" name="Net-(D3-Pad2)">
-      <node ref="R5" pin="1"/>
+    <net code="17" name="Net-(D3-Pad2)">
       <node ref="D3" pin="2"/>
+      <node ref="R5" pin="1"/>
     </net>
-    <net code="9" name="Net-(D2-Pad2)">
+    <net code="18" name="Net-(D2-Pad2)">
       <node ref="R4" pin="1"/>
       <node ref="D2" pin="2"/>
     </net>
-    <net code="10" name="Net-(D1-Pad2)">
-      <node ref="D1" pin="2"/>
+    <net code="19" name="Net-(D1-Pad2)">
       <node ref="R3" pin="1"/>
+      <node ref="D1" pin="2"/>
     </net>
-    <net code="11" name="Net-(D4-Pad2)">
-      <node ref="D4" pin="2"/>
+    <net code="20" name="Net-(U1-Pad20)">
+      <node ref="U1" pin="20"/>
+    </net>
+    <net code="21" name="Net-(D4-Pad2)">
       <node ref="R6" pin="1"/>
+      <node ref="D4" pin="2"/>
     </net>
-    <net code="12" name="Net-(R2-Pad1)">
-      <node ref="R2" pin="1"/>
-      <node ref="SW7" pin="1"/>
-      <node ref="U1" pin="13"/>
+    <net code="22" name="Net-(F1-Pad1)">
+      <node ref="F1" pin="1"/>
+      <node ref="FB1" pin="1"/>
     </net>
-    <net code="13" name="+5V">
-      <node ref="U1" pin="31"/>
-      <node ref="U2" pin="3"/>
+    <net code="23" name="/5V_IN">
+      <node ref="F1" pin="2"/>
       <node ref="J1" pin="1"/>
-      <node ref="C5" pin="1"/>
-      <node ref="U2" pin="1"/>
     </net>
-    <net code="14" name="+3V3">
-      <node ref="C3" pin="1"/>
-      <node ref="U2" pin="5"/>
-      <node ref="R1" pin="1"/>
-      <node ref="R6" pin="2"/>
-      <node ref="R3" pin="2"/>
-      <node ref="R4" pin="2"/>
-      <node ref="R5" pin="2"/>
-      <node ref="R7" pin="2"/>
-      <node ref="R2" pin="2"/>
-      <node ref="U1" pin="4"/>
-      <node ref="U1" pin="32"/>
-      <node ref="J2" pin="6"/>
-      <node ref="R10" pin="2"/>
-      <node ref="R11" pin="2"/>
+    <net code="24" name="/UD+">
+      <node ref="R8" pin="1"/>
+      <node ref="U3" pin="3"/>
     </net>
-    <net code="15" name="Net-(R9-Pad1)">
-      <node ref="U1" pin="30"/>
-      <node ref="R9" pin="1"/>
+    <net code="25" name="/PD+">
+      <node ref="J1" pin="3"/>
+      <node ref="U3" pin="4"/>
     </net>
-    <net code="16" name="SDA">
-      <node ref="J2" pin="3"/>
-      <node ref="U1" pin="15"/>
-      <node ref="R11" pin="1"/>
+    <net code="26" name="/PD-">
+      <node ref="U3" pin="6"/>
+      <node ref="J1" pin="2"/>
     </net>
-    <net code="17" name="SCL">
-      <node ref="R10" pin="1"/>
-      <node ref="J2" pin="4"/>
-      <node ref="U1" pin="16"/>
+    <net code="27" name="/UD-">
+      <node ref="U3" pin="1"/>
+      <node ref="R9" pin="2"/>
     </net>
-    <net code="18" name="Net-(R8-Pad2)">
+    <net code="28" name="/D+">
       <node ref="U1" pin="29"/>
       <node ref="R8" pin="2"/>
     </net>
-    <net code="19" name="Net-(J1-Pad2)">
-      <node ref="R9" pin="2"/>
-      <node ref="J1" pin="2"/>
+    <net code="29" name="/D-">
+      <node ref="U1" pin="30"/>
+      <node ref="R9" pin="1"/>
     </net>
-    <net code="20" name="Net-(J1-Pad3)">
-      <node ref="J1" pin="3"/>
-      <node ref="R8" pin="1"/>
-    </net>
-    <net code="21" name="Net-(U1-Pad11)">
-      <node ref="U1" pin="11"/>
-    </net>
-    <net code="22" name="GND">
-      <node ref="Y1" pin="4"/>
-      <node ref="J1" pin="4"/>
-      <node ref="SW3" pin="2"/>
-      <node ref="C1" pin="2"/>
-      <node ref="SW2" pin="2"/>
-      <node ref="C2" pin="1"/>
-      <node ref="Y1" pin="2"/>
-      <node ref="SW5" pin="2"/>
-      <node ref="SW4" pin="2"/>
-      <node ref="J2" pin="1"/>
-      <node ref="U1" pin="3"/>
-      <node ref="SW1" pin="2"/>
-      <node ref="MK7" pin="1"/>
-      <node ref="MK6" pin="1"/>
-      <node ref="SW6" pin="1"/>
-      <node ref="U2" pin="2"/>
-      <node ref="SW7" pin="2"/>
-      <node ref="U1" pin="28"/>
-      <node ref="C5" pin="2"/>
-      <node ref="C4" pin="2"/>
-      <node ref="MK10" pin="1"/>
-      <node ref="MK11" pin="1"/>
-      <node ref="MK8" pin="1"/>
-      <node ref="C3" pin="2"/>
-      <node ref="MK12" pin="1"/>
-      <node ref="MK5" pin="1"/>
-      <node ref="MK9" pin="1"/>
-    </net>
-    <net code="23" name="Net-(J2-Pad5)">
+    <net code="30" name="Net-(J2-Pad5)">
       <node ref="J2" pin="5"/>
     </net>
-    <net code="24" name="Net-(U1-Pad12)">
+    <net code="31" name="Net-(U1-Pad12)">
       <node ref="U1" pin="12"/>
     </net>
-    <net code="25" name="Net-(U1-Pad21)">
+    <net code="32" name="Net-(U1-Pad11)">
+      <node ref="U1" pin="11"/>
+    </net>
+    <net code="33" name="Net-(U1-Pad21)">
       <node ref="U1" pin="21"/>
     </net>
-    <net code="26" name="Net-(U1-Pad20)">
-      <node ref="U1" pin="20"/>
+    <net code="34" name="Net-(C4-Pad1)">
+      <node ref="U1" pin="27"/>
+      <node ref="C4" pin="1"/>
     </net>
-    <net code="27" name="Net-(U1-Pad18)">
-      <node ref="U1" pin="18"/>
-    </net>
-    <net code="28" name="Net-(U1-Pad17)">
-      <node ref="U1" pin="17"/>
-    </net>
-    <net code="29" name="Net-(U1-Pad14)">
-      <node ref="U1" pin="14"/>
-    </net>
-    <net code="30" name="Net-(U2-Pad4)">
-      <node ref="U2" pin="4"/>
-    </net>
-    <net code="31" name="Net-(SW5-Pad1)">
+    <net code="35" name="Net-(SW5-Pad1)">
       <node ref="SW5" pin="1"/>
       <node ref="U1" pin="6"/>
     </net>
-    <net code="32" name="Net-(SW4-Pad1)">
+    <net code="36" name="Net-(SW4-Pad1)">
       <node ref="SW4" pin="1"/>
       <node ref="U1" pin="7"/>
     </net>
-    <net code="33" name="Net-(C4-Pad1)">
-      <node ref="C4" pin="1"/>
-      <node ref="U1" pin="27"/>
+    <net code="37" name="MT">
+      <node ref="U1" pin="19"/>
+      <node ref="J2" pin="2"/>
     </net>
-    <net code="34" name="Net-(C2-Pad2)">
+    <net code="38" name="Net-(C1-Pad1)">
+      <node ref="C1" pin="1"/>
+      <node ref="U1" pin="1"/>
+      <node ref="Y1" pin="1"/>
+    </net>
+    <net code="39" name="Net-(C2-Pad2)">
       <node ref="Y1" pin="3"/>
-      <node ref="U1" pin="2"/>
       <node ref="C2" pin="2"/>
+      <node ref="U1" pin="2"/>
     </net>
-    <net code="35" name="Net-(SW1-Pad1)">
+    <net code="40" name="Net-(SW1-Pad1)">
       <node ref="U1" pin="10"/>
       <node ref="SW1" pin="1"/>
     </net>
-    <net code="36" name="Net-(SW2-Pad1)">
-      <node ref="U1" pin="9"/>
+    <net code="41" name="Net-(SW2-Pad1)">
       <node ref="SW2" pin="1"/>
+      <node ref="U1" pin="9"/>
     </net>
-    <net code="37" name="Net-(SW3-Pad1)">
-      <node ref="U1" pin="8"/>
+    <net code="42" name="Net-(SW3-Pad1)">
       <node ref="SW3" pin="1"/>
+      <node ref="U1" pin="8"/>
     </net>
-    <net code="38" name="MT">
-      <node ref="J2" pin="2"/>
-      <node ref="U1" pin="19"/>
-    </net>
-    <net code="39" name="Net-(C1-Pad1)">
-      <node ref="U1" pin="1"/>
-      <node ref="C1" pin="1"/>
-      <node ref="Y1" pin="1"/>
+    <net code="43" name="Net-(R2-Pad1)">
+      <node ref="R2" pin="1"/>
+      <node ref="SW7" pin="1"/>
+      <node ref="U1" pin="13"/>
     </net>
   </nets>
 </export>
