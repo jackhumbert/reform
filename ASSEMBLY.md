@@ -9,10 +9,10 @@
 | Reference             | Source/Description/MPN |
 | --------------------- | ---------------------- |
 | TB Cup                | 3D Printed PLA: https://source.mnt.re/reform/reform/-/blob/master/reform2-3d-printed-parts/trackball/reform2-trackball-support-20201005.stl |
-| TB Sensor FPC         | 6-pin 0.5mm pitch flex cable: Würth Elektronik 687606050002 | 
+| TB Sensor FPC         | 6-pin 0.5mm pitch flex cable: Würth Elektronik 687606050002 |
 | TB Sensor PCBA        | PCBA: https://source.mnt.re/reform/reform/-/tree/master/reform2-trackball-sensor-pcb |
 | TB Controller PCBA    | PCBA: https://source.mnt.re/reform/reform/-/tree/master/reform2-trackball-pcb |
-| TB Lid                | 3D Printed PLA: https://source.mnt.re/reform/reform/-/blob/master/reform2-3d-printed-parts/trackball/reform2-trackball-lid-20201005.stl | 
+| TB Lid                | 3D Printed PLA: https://source.mnt.re/reform/reform/-/blob/master/reform2-3d-printed-parts/trackball/reform2-trackball-lid-20201005.stl |
 | TB Ball               | 25mm diameter POM sphere, black |
 | TB Firmware           | Source: https://source.mnt.re/reform/reform/-/tree/master/reform2-trackball-fw |
 | TB M2 Thread Insert   | KVT 300113472 / Tappex HiMOULD 017/117 |
@@ -26,6 +26,7 @@
 | Keyboard PCBA         | Source: https://source.mnt.re/reform/reform/-/tree/master/reform2-keyboard-pcb |
 | Keycaps               | 72x FKcaps MBK 1U or Kailh BSPG1350-06001P2, 10x FKcaps MBK 1.5U or Kailh BSPG1350-06009. Translucent ABS coated with black PU. |
 | KB Firmware           | Source: https://source.mnt.re/reform/reform/-/tree/master/reform2-keyboard-fw |
+| Motherboard PCBA      | Source: https://source.mnt.re/reform/reform/-/tree/master/reform2-trackpad-pcb |
 | LPC Firmware          | Source: https://source.mnt.re/reform/reform/-/tree/master/reform2-lpc-fw |
 | Display Cable         | eDP DuPont (2mm pitch, 2x15P) to IPEX cable, Spec: https://source.mnt.re/reform/reform/-/blob/master/reform2-cables/mnt-reform2-edp-cable.pdf |
 | Display Panel         | Innolux N125HCE-GN1 |
@@ -38,10 +39,12 @@
 | OLED Cable            | 4P (1mm pitch) FPC, Würth Elektronik 686704050001 |
 | USB/SYSCTL Cable      | MREFCBLU20R01, JST-PH 4P cable, 24AWG, 15cm length, Spec: https://source.mnt.re/reform/reform/-/blob/master/reform2-cables/mnt-reform2-serial-cable.png |
 | MIPI-DSI Cable        | Würth Elektronik 687733050002 |
-| Battery Cable         | Molex 151320502 (PicoLock, 5P) |
 | Side Panels           | Lasercut 1mm Acrylic: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-ports/ports-20d3-v2-laser.pdf |
 | Magnet                | Neodymium N52, 10x3x2.4mm, Nickel Coating, Thickness Magnetized |
 | Rubber Foot           | Modulor 0303782 |
+| Battery PCBA      | Source: https://source.mnt.re/reform/reform/-/tree/master/reform2-batterypack-pcb |
+| Battery Cable         | Molex 151320502 (PicoLock, 5P) |
+| Battery Cell          | LiFePO4 18650, JGNE HTCFR18650 |
 | CPU Module            | Boundary Devices Nit8MQ_SOM_4r16e, or RBZ/MNT LS1028A (https://source.mnt.re/reform/mnt-reform-layerscape-ls1028a-som), or MNT RKX7 (https://source.mnt.re/reform/reform-kintex-som) |
 | Heatsink              | CNC milled, anodized Al6061. Source: https://source.mnt.re/reform/reform/-/blob/master/reform2-heatsink/reform2-heatsink.scad |
 | Spacer A              | Würth Elektronik 960030021 |
@@ -51,8 +54,6 @@
 | M2x6-965H             | Screw M2x6 Silver Countersunk DIN 965H |
 | M2x12-965H            | Screw M2x12 Silver Countersunk DIN 965H |
 | M4x5-965H             | Screw M4x5 Silver Countersunk DIN 965H |
-| Battery Cell          | LiFePO4 18650, JGNE HTCFR18650 |
-
 
 ## Subassembly: Trackball (MREFATB)
 
@@ -120,11 +121,11 @@
 
 ## Subassembly: Motherboard with SOM and Heatsink
 
-1. Connect MIPI-DSI port of *CPU Module* to MIPI-DSI socket on *MREFAMB* using *MIPI-DSI Cable*.
-2. Plug *CPU Module* into CPU slot of Motherboard *MREFAMB*.
+1. Connect MIPI-DSI port of *CPU Module* to MIPI-DSI socket on *Motherboard PCBA* using *MIPI-DSI Cable*.
+2. Plug *CPU Module* into CPU slot of *Motherboard PCBA*.
 3. Apply thermal paste on CPU die.
-4. Mount *Heatsink* on *CPU Module* and *MREFAMB* using 4x *M2x12-965H* screws and 2x 3mm *Spacer A* and 2x 4mm *Spacer B*.
-5. Power *MREFAMB* via 24V DC jack and flash *MREFAMB* with *LPC Firmware* using a MicroUSB cable. Refer to procedure: https://mntre.com/reform2/handbook/parts.html#flashing-the-firmware
+4. Mount *Heatsink* on *CPU Module* and *Motherboard PCBA* using 4x *M2x12-965H* screws and 2x 3mm *Spacer A* and 2x 4mm *Spacer B*.
+5. Power *Motherboard PCBA* via 24V DC jack and flash *Motherboard PCBA* with *LPC Firmware* using a MicroUSB cable. Refer to procedure: https://mntre.com/reform2/handbook/parts.html#flashing-the-firmware
 
 ## Final Device Assembly
 
@@ -153,7 +154,7 @@
 15. Flip the laptop on the back, so that the *Battery Boards* are close to you.
 16. Connect the *USB Cable* coming through the top left hole in the main box to the motherboard’s UI1 header. Bend the cable down near the plug.
 17. Connect the *SYSCTL Cable* cable coming through the top right hole in the main box to the motherboard’s SYSCTL header. Bend the cable down near the plug.
-18. Remove protective film from the left and right acrylic *Side Panels* and mount with 2x M2x5-965H screws each. 
+18. Remove protective film from the left and right acrylic *Side Panels* and mount with 2x M2x5-965H screws each.
 19. Plug the 8x *Battery Cell* into the holders. Carefully pay attention to the polarity (+/-)!
 20. Put the *Bottom Plate* on the bottom of the *Main Box* and mount it with 10x *M2x6-965H* screws. Don't overtighten screws, don't squeeze cables.
 21. Stick 4x *Rubber Foot* in the corners of the acrylic plate (their center approximately 1cm distance from each edge).
