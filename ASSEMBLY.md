@@ -47,6 +47,11 @@
 | Battery Cell          | LiFePO4 18650, JGNE HTCFR18650 |
 | CPU Module            | Boundary Devices Nit8MQ_SOM_4r16e, or RBZ/MNT LS1028A (https://source.mnt.re/reform/mnt-reform-layerscape-ls1028a-som), or MNT RKX7 (https://source.mnt.re/reform/reform-kintex-som) |
 | Heatsink              | CNC milled, anodized Al6061. Source: https://source.mnt.re/reform/reform/-/blob/master/reform2-heatsink/reform2-heatsink.scad |
+| Main Box              | CNC milled, anodized Al6061. Thread Spec: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-cnc/reform2-production-case-20201013/mntreform2-main-box-screw-specs-20201008.pdf STEP: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-cnc/reform2-production-case-20201013/mntreform2-main-box-20201008.step |
+| Bottom Plate          | CNC milled, anodized Al6061. STEP: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-cnc/reform2-production-case-20201013/mntreform2-bottom-plate-20201008.step |
+| Keyboard Frame        | CNC milled, anodized Al6061. STEP: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-cnc/reform2-production-case-20201013/mntreform2-keyboard-bezel-2020108.step |
+| Screen Back           | CNC milled, anodized Al6061. Thread Spec: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-cnc/reform2-production-case-20201013/mntreform2-screen-back-screw-specs-20201008.pdf STEP: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-cnc/reform2-production-case-20201013/mntreform2-screen-back-20201008.step |
+| Screen Front          | CNC milled, anodized Al6061. STEP: https://source.mnt.re/reform/reform/-/blob/master/reform2-case-cnc/reform2-production-case-20201013/mntreform2-screen-front-20201008.step |
 | Spacer A              | Würth Elektronik 960030021 |
 | Spacer B              | Würth Elektronik 960040021 |
 | M2x4-7985H            | Screw M2x4 Black Pan Head DIN 7985H |
@@ -54,6 +59,7 @@
 | M2x6-965H             | Screw M2x6 Silver Countersunk DIN 965H |
 | M2x12-965H            | Screw M2x12 Silver Countersunk DIN 965H |
 | M4x5-965H             | Screw M4x5 Silver Countersunk DIN 965H |
+| 3D Parts Sources      | Fusion: https://source.mnt.re/reform/reform/-/tree/master/reform2-case-sources |
 
 ## Subassembly: Trackball (MREFATB)
 
@@ -88,7 +94,7 @@
 
 ![Keyboard Module](https://mntre.com/reform2/handbook/_images/kbd-callouts.png =300x)
 
-1. Install Keycaps on *MREFAKB*
+1. Install Keycaps on *Keyboard PCBA*
 2. Laser engrave Keycaps using desired lettering, i.e.: https://source.mnt.re/reform/reform/-/blob/master/reform2-keyboard-pcb/lettering/reform2-keyboard-v6-lettering-qwerty-medium-paths.svg
 3. Flash *KB Firmware*. Refer to https://mntre.com/reform2/handbook/parts.html#keyboard-firmware
 
@@ -110,7 +116,7 @@
 
 1. Mount *Left Hinge* and *Right Hinge* in the bottom left and right corners of *Screen Back* with 3x M4x5-965H screws each. Note that the hinge labeled “SMS-ZZ-219-L” goes on the right side, and the hinge labeled “SMS-ZZ-219-R” goes on the left side.
 2. Mount 4x *Magnet* in magnet slots of *Main Box*.
-3. Mount 4x Matching *Magnet* in magnet slots along the top edge of the Screen Back. These, together with their counterparts in the Main Box, hold the laptop shut when closed.
+3. Mount 4x Matching *Magnet* in magnet slots along the top edge of the *Screen Back*. These, together with their counterparts in the *Main Box*, hold the laptop shut when closed.
 4. Connect *Display Cable* in back of *Display Panel*.
 5. Secure IPEX connector of *Display Cable* with Kapton tape.
 6. Insert *Display Panel* in *Screen Back*.
@@ -149,8 +155,8 @@
 10. Feed both cables through the hole in the main box that is closest to each port of the keyboard.
 11. Mount the keyboard with 6x *M2x4-7985H* screws. Pull the keyboard towards you while tightening the screws, or keycaps could later conflict with the hinges if the keyboard is mounted a millimeter too far up.
 12. Mount the *OLED PCBA* with 2x *M2x4-7985H*. Remove protection film.
-13. If it is not straight, very gently un-warp the keyboard frame, section by section with both hands close together. Don’t bend it with both hands on opposite ends of the frame–you’ll likely twist it, especially the thinnest parts around the display!
-14. Plug the keyboard frame into the main box and mount it with 6x *M2x5-965H* screws.
+13. If it is not straight, very gently un-warp the *Keyboard Frame*, section by section with both hands close together.
+14. Plug the *Keyboard Frame* into the main box and mount it with 6x *M2x5-965H* screws.
 15. Flip the laptop on the back, so that the *Battery Boards* are close to you.
 16. Connect the *USB Cable* coming through the top left hole in the main box to the motherboard’s UI1 header. Bend the cable down near the plug.
 17. Connect the *SYSCTL Cable* cable coming through the top right hole in the main box to the motherboard’s SYSCTL header. Bend the cable down near the plug.
