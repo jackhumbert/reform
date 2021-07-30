@@ -57,7 +57,7 @@
 
 ## Subassembly: Trackball (MREFATB)
 
-![Trackball Subassembly](https://mntre.com/reform2/handbook/_images/7-callouts.png)
+![Trackball Subassembly](https://mntre.com/reform2/handbook/_images/7-callouts.png =300x)
 
 1. Mount 2x *TB M2 Thread* in *TB Cup*
 2. Plug *TB Sensor FPC* into *TB Sensor PCBA*
@@ -76,7 +76,7 @@
 
 ## Subassembly: Trackpad (MREFATP)
 
-![Trackpad Subassembly](https://mntre.com/reform2/handbook/_images/8-2-callouts.png)
+![Trackpad Subassembly](https://mntre.com/reform2/handbook/_images/8-2-callouts.png =300x)
 
 1. Mount *TP Sensor PCBA* on *TP Carrier* and remove foil covering adhesive of *TP Sensor PCBA*
 2. Mount *TP Glass Assembly* on *TP Carrier* and *TP Sensor PCBA* using adhesive on bottom side of *TP Glass Assembly*
@@ -86,7 +86,7 @@
 
 ## Subassembly: Keyboard (MREFAKB)
 
-![Keyboard Module](https://mntre.com/reform2/handbook/_images/kbd-callouts.png)
+![Keyboard Module](https://mntre.com/reform2/handbook/_images/kbd-callouts.png =300x)
 
 1. Install Keycaps on *MREFAKB*
 2. Laser engrave Keycaps using desired lettering, i.e.: https://source.mnt.re/reform/reform/-/blob/master/reform2-keyboard-pcb/lettering/reform2-keyboard-v6-lettering-qwerty-medium-paths.svg
@@ -106,7 +106,7 @@
 
 ## Subassembly: Screen and Hinges
 
-![Screen Assembly Speakers](https://mntre.com/reform2/handbook/_images/speaker.png)
+![Screen Assembly Speakers](https://mntre.com/reform2/handbook/_images/speaker.png =300x)
 
 1. Mount *Left Hinge* and *Right Hinge* in the bottom left and right corners of *Screen Back* with 3x M4x5-965H screws each. Note that the hinge labeled “SMS-ZZ-219-L” goes on the right side, and the hinge labeled “SMS-ZZ-219-R” goes on the left side.
 2. Mount 4x *Magnet* in magnet slots of *Main Box*.
@@ -129,13 +129,13 @@
 
 ## Final Device Assembly
 
-![OLED Module](https://mntre.com/reform2/handbook/_images/21-callouts.png)
+![OLED Module](https://mntre.com/reform2/handbook/_images/21-callouts.png =300x)
 
-![Final Device Assembly Top 2](https://mntre.com/reform2/handbook/_images/23.png)
+![Final Device Assembly Top 2](https://mntre.com/reform2/handbook/_images/23.png =300x)
 
-![Final Device Assembly Bottom](https://mntre.com/reform2/handbook/_images/30.png)
+![Final Device Assembly Bottom](https://mntre.com/reform2/handbook/_images/30.png =300x)
 
-![Final Device Assembly Bottom 2](https://mntre.com/reform2/handbook/_images/33.png)
+![Final Device Assembly Bottom 2](https://mntre.com/reform2/handbook/_images/33.png =300x)
 
 1. Mount the *Motherboard with SOM and Heatsink* with 4x *M2x4-7985H* screws to the main box.
 2. Plug the *Display Cable* into the DISPLAY header. The *Display Cable* has a white dot marking pin 1. The white dot must point in the direction of the hinges (off the motherboard).
