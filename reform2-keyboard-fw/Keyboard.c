@@ -552,6 +552,7 @@ int execute_meta_function(int keycode) {
   if (keycode == KEY_0) {
     // TODO: are you sure?
     remote_turn_off_som();
+    EnterPowerOff();
   }
   else if (keycode == KEY_1) {
     remote_turn_on_som();
@@ -610,8 +611,6 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == KEY_P) {
     EnterPowerOff();
-    gfx_clear();
-    gfx_flush();
   }
 
   gfx_clear();
