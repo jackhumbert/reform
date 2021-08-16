@@ -845,6 +845,10 @@ void EnterPowerOff(void)
   // capabilities, so we need to wake up every so often to check if it is pressed, and
   // if so bring us out of power-off
   // We can use the Watchdog timer to do this.
+
+  // Turn off OLED to save power
+  gfx_clear_screen();
+  gfx_off();
   do {
     wdt_reset();
     WDTCSR = (1<<WDCE) | (1<<WDE); // Enable writes to watchdog
