@@ -829,6 +829,13 @@ void SetupHardware()
 void EnterPowerOff(void)
 {
   USB_Disable(); // Stop USB stack so it doesn't wake us up
+  
+  kbd_brightness_set(0);
+  // Turn off OLED to save power
+  gfx_clear_screen();
+  gfx_off();
+  // Disable ADC to save even more power
+  ADCSRA=0;
 
   cli();    // No interrupts 
 
@@ -846,9 +853,6 @@ void EnterPowerOff(void)
   // if so bring us out of power-off
   // We can use the Watchdog timer to do this.
 
-  // Turn off OLED to save power
-  gfx_clear_screen();
-  gfx_off();
   do {
     wdt_reset();
     WDTCSR = (1<<WDCE) | (1<<WDE); // Enable writes to watchdog
