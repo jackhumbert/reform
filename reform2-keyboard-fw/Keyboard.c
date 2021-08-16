@@ -520,7 +520,7 @@ const MenuItem menu_items[] = {
   { "Key Backlight+     F2", KEY_F2 },
   { "Wake              SPC", KEY_SPACE },
   { "System Status       s", KEY_S },
-  { "Low Power Test      p", KEY_P }
+  { "KBD Power-Off       p", KEY_P }
 };
 #endif
 
