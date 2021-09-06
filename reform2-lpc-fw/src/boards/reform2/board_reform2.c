@@ -37,9 +37,11 @@
 #define REFORM_MBREV_R3 13 // R2 with "NTC instead of RNG/SS" fix
 
 // don't forget to set this to the correct rev for your motherboard!
-#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
+#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R3
 //#define REF2_DEBUG 1
-#define FW_REV "MREF2LPC R2 20210419"
+#define FW_REV "MREF2LPC R2 20210906"
+
+#define POWERSAVE_SLEEP_SECONDS 1
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -134,7 +136,8 @@ enum state_t {
               ST_OVERVOLTED,
               ST_UNDERVOLTED,
               ST_MISSING,
-              ST_FULLY_CHARGED
+              ST_FULLY_CHARGED,
+              ST_POWERSAVE
 };
 
 // charging state machine
@@ -143,6 +146,7 @@ int cycles_in_state = 0;
 int charge_current = 1;
 uint32_t cur_second = 0;
 uint32_t last_second = 0;
+int powersave_holdoff_cycles = 10;
 
 // 1.8A x 3600 seconds/hour
 #define MAX_CAPACITY (1.8)*3600.0
@@ -447,32 +451,14 @@ void brownout_setup(void) {
 }
 
 void watchdog_feed(void) {
+  __disable_irq();
   LPC_WWDT->FEED = 0xAA;
   LPC_WWDT->FEED = 0x55;
+  __enable_irq();
 }
 
 #define WWDT_WDMOD_WDEN             ((uint32_t) (1 << 0))
 #define WWDT_WDMOD_WDRESET          ((uint32_t) (1 << 1))
-
-void watchdog_setup(void) {
-  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<15); // WWDT enable
-
-  LPC_SYSCON->WDTOSCCTRL =
-    (1<<5) | // FREQSEL 0.6MHz
-    31; // DIVSEL 64 (31+1)*2
-
-  LPC_SYSCON->PDRUNCFG &= ~(1<<6); // WDTOSC_PD disable
-
-  LPC_WWDT->CLKSEL = 1; // WDOSC
-
-  LPC_WWDT->TC = 0xffff/5; // timeout counter, ~5 seconds
-
-  LPC_WWDT->MOD = 0;
-  LPC_WWDT->MOD |= WWDT_WDMOD_WDRESET; // enable WDRESET (watchdog resets system)
-  LPC_WWDT->MOD |= WWDT_WDMOD_WDEN; // watchdog enable
-
-  watchdog_feed();
-}
 
 void boardInit(void)
 {
@@ -668,6 +654,8 @@ void handle_commands() {
           sprintf(uartBuffer,FW_REV"cell missing,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_FULLY_CHARGED) {
           sprintf(uartBuffer,FW_REV"full charge,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
+        } else if (state == ST_POWERSAVE) {
+          sprintf(uartBuffer,FW_REV"pwrsv,%d,%lu\r",cycles_in_state,LPC_WWDT->TV);
         } else {
           sprintf(uartBuffer,FW_REV"unknown:%d,%d,%d,%d\r",state,cycles_in_state,min_mah,acc_mah);
         }
@@ -798,6 +786,67 @@ void report_to_spi(void)
   ssp0Send((uint8_t*)report, strlen(report));
 }
 
+void WDT_IRQHandler(void)
+{
+	// Disable WDT interrupt
+	NVIC_DisableIRQ(WDT_IRQn);
+  NVIC_ClearPendingIRQ(WDT_IRQn);
+}
+
+// WARNING: take care not to overflow TC (11786 * secs)
+void deep_sleep_seconds(int secs) {
+  // make WWDTINT wake the LPC up from sleep
+  // STARTERP1 WWDTINT bit 12
+  LPC_SYSCON->STARTERP1 |= (1 << 12);
+
+  NVIC_DisableIRQ(WDT_IRQn);
+
+  // Configure watchdog timer to wake us up
+  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<15); // WWDT enable
+
+  // 9375Hz??
+  LPC_SYSCON->WDTOSCCTRL =
+    (1<<5) | // FREQSEL 0.6MHz
+    31; // DIVSEL 64 (31+1)*2
+
+  // Power configuration register
+  LPC_SYSCON->PDRUNCFG &= ~(1<<6); // WDTOSC_PD disable (power down disable)
+  LPC_SYSCON->PDSLEEPCFG &= ~(1<<6); // WDTOSC_PD disable (power down disable)
+  LPC_SYSCON->PDAWAKECFG = LPC_SYSCON->PDRUNCFG; // when waking up, power up the default blocks
+
+  LPC_WWDT->CLKSEL = 1; // WDOSC
+
+  //LPC_WWDT->TC = 0xffff/5; // timeout counter, ~5 seconds
+  // FIXME isn't that 1.39s? (0xffff/5.0937/5.0)
+  // no, apparently it is 5.56s (x4)
+
+  LPC_WWDT->TC = 11786 * secs; // timeout counter, ~1 second
+
+  LPC_WWDT->MOD = 0;
+  //LPC_WWDT->MOD |= WWDT_WDMOD_WDRESET; // WDRESET (watchdog resets system)
+  LPC_WWDT->MOD |= WWDT_WDMOD_WDEN; // watchdog enable
+
+  // counter value that triggers interrupt
+  LPC_WWDT->WARNINT = 0;
+
+  // need to feed WD once to apply WDMOD values
+  watchdog_feed();
+
+  // NVIC exception 25 (WWDT) interrupt source:
+  // ISER SETENA bit 25 -> 0xE000E100
+  NVIC_ClearPendingIRQ(WDT_IRQn);
+  NVIC_EnableIRQ(WDT_IRQn);
+
+  // Go to deep sleep mode
+  LPC_PMU->PCON = 1<<11; // clear DPDFLAG
+  LPC_PMU->PCON = 1; // select deep power down mode
+  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+  __WFI();
+
+  NVIC_DisableIRQ(WDT_IRQn);
+  LPC_WWDT->MOD = 0;
+}
+
 int main(void)
 {
   boardInit();
@@ -807,11 +856,6 @@ int main(void)
   cycles_in_state = 0;
 
   last_second = delayGetSecondsActive();
-
-  // WIP, not yet tested
-  //watchdog_setup();
-  //sprintf(uartBuffer, "\r\nwatchdog_setup() completed.\r\n");
-  //uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
 
   while (1)
   {
@@ -872,6 +916,13 @@ int main(void)
           cycles_in_state = 0;
         }
       }
+      else if (current < 0.05 && current >= 0) {
+        // if not charging and the system is off, we can sleep regularly to save power
+        if (cycles_in_state > 0 && powersave_holdoff_cycles <= 0) {
+          state = ST_POWERSAVE;
+          cycles_in_state = 0;
+        }
+      }
     }
     else if (state == ST_UNDERVOLTED) {
       // TODO: issue alert -- switch off system if critical
@@ -884,8 +935,10 @@ int main(void)
           turn_som_power_off();
         }
 
-        state = ST_CHARGE;
-        cycles_in_state = 0;
+        if (current >= 0 && powersave_holdoff_cycles <= 0) {
+          state = ST_POWERSAVE;
+          cycles_in_state = 0;
+        }
       }
     }
     else if (state == ST_OVERVOLTED) {
@@ -932,10 +985,25 @@ int main(void)
         }
       }
     }
+    else if (state == ST_POWERSAVE) {
+      deep_sleep_seconds(POWERSAVE_SLEEP_SECONDS);
+      state = ST_CHARGE;
+      cycles_in_state = 0;
+    }
 
     // handle keyboard commands
+    if (uartRxBufferDataPending()) {
+      // don't go to powersave if keyboard wants to communicate
+      powersave_holdoff_cycles = 5;
+    }
+
     handle_commands();
-    cur_second = delayGetSecondsActive();
+
+    if (state == ST_POWERSAVE) {
+      cur_second+=POWERSAVE_SLEEP_SECONDS;
+    } else {
+      cur_second = delayGetSecondsActive();
+    }
 
     if (last_second != cur_second) {
       if (cur_second-last_second<10) {
@@ -947,6 +1015,10 @@ int main(void)
         // report_to_spi();
       }
       last_second = cur_second;
+
+      if (powersave_holdoff_cycles>=0) {
+        powersave_holdoff_cycles--;
+      }
     }
   }
 }
