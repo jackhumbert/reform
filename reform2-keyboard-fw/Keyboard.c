@@ -855,7 +855,7 @@ void EnterPowerOff(void)
   do {
     wdt_reset();
     WDTCSR = (1<<WDCE) | (1<<WDE); // Enable writes to watchdog
-    WDTCSR = (1<<WDIE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1) | (1<<WDP0); // Interrupt mode, 1s timeout
+    WDTCSR = (1<<WDIE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1); // Interrupt mode, 1s timeout
 
     // Enter Power-save mode
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
