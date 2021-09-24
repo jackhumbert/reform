@@ -793,7 +793,7 @@ int main(void)
     USB_USBTask();
     counter++;
 #ifndef KBD_VARIANT_STANDALONE
-      if (counter>=30000) {
+      if (counter>=100000) {
         remote_check_for_low_battery();
         counter = 0;
       }
