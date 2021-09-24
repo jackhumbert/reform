@@ -222,15 +222,67 @@ void insert_bat_icon(char* str, int x, float v) {
 }
 
 void remote_try_wakeup(void) {
-  for (int i=0; i<500; i++) {
+  char buf[64];
+
+  for (int i=0; i<1000; i++) {
+    if (i%10 == 0) {
+      gfx_clear();
+      sprintf(buf, "Waking up LPC... %d%%", i/4);
+      gfx_poke_str(0, 0, buf);
+      gfx_flush();
+    }
+
+    Serial_SendByte('a');
     Serial_SendByte('\r');
-    Delay_MS(1);
+
+    if (Serial_ReceiveByte()>0) {
+      remote_receive_string(0);
+      break;
+    }
+
+    Delay_MS(25);
+  }
+  Serial_SendByte('\r');
+  Delay_MS(10);
+  while (remote_receive_string(0)) {
+    Delay_MS(25);
   }
 }
 
-void remote_get_voltages(void) {
+int remote_try_command(char* cmd, int print_response) {
+  int ok = 0;
+  
   empty_serial();
+  for (int tries=0; tries<2; tries++) {
+    for (int i=0; i<strlen(cmd); i++) {
+      Serial_SendByte(cmd[i]);
+    }
+    Serial_SendByte('\r');
+    Delay_MS(1);
 
+    if (print_response) {
+      term_x = 0;
+      term_y = 0;
+    }
+    ok = remote_receive_string(print_response);
+
+    if (!ok && tries == 0) {
+      remote_try_wakeup();
+      empty_serial();
+    }
+    if (ok) break;
+  }
+  if (!ok) {
+    gfx_clear();
+    gfx_poke_str(0, 0, "No response from LPC.");
+    gfx_flush();
+  }
+
+  empty_serial();
+  return ok;
+}
+
+void remote_get_voltages(void) {
   term_x = 0;
   term_y = 0;
 
@@ -238,24 +290,9 @@ void remote_get_voltages(void) {
   float bat_amps = 0;
   char bat_gauge[5] = {0,0,0,0,0};
 
-  Serial_SendByte('c');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  int ok = remote_receive_string(0);
-  if (!ok) {
-    remote_try_wakeup();
-    Serial_SendByte('c');
-    Serial_SendByte('\r');
-    Delay_MS(1);
-    ok = remote_receive_string(0);
-  }
-  if (!ok) {
-    gfx_clear();
-    gfx_poke_str(0, 0, "No response from LPC.");
-    gfx_flush();
-    return;
-  }
-
+  int ok = remote_try_command("c", 0);
+  if (!ok) return;
+  
   // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???%
   //             |  |  |  |  |  |  |  |  | |      |     |
   //             0  3  6  9  12 15 18 21 24|      |     |
@@ -318,7 +355,8 @@ void remote_check_for_low_battery(void) {
   Serial_SendByte('c');
   Serial_SendByte('\r');
   Delay_MS(1);
-  remote_receive_string(0);
+  int ok = remote_receive_string(0);
+  if (!ok) return;
 
   for (int i=0; i<8; i++) {
     voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
@@ -352,12 +390,8 @@ void remote_get_status(void) {
   gfx_flush();
 
 #ifndef KBD_VARIANT_STANDALONE
-  term_x = 0;
-  term_y = 0;
-  Serial_SendByte('s');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(1);
+  int ok = remote_try_command("s", 1);
+  if (!ok) return;
 #endif
 }
 
@@ -407,113 +441,81 @@ void kbd_brightness_set(int brite) {
 
 void remote_turn_on_som(void) {
   gfx_clear();
-  empty_serial();
 
-  term_x = 0;
-  term_y = 0;
-
-  Serial_SendByte('1');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("1p", 0);
+  if (!ok) return;
+  
   anim_hello();
   kbd_brightness_init();
 }
 
 void remote_turn_off_som(void) {
   anim_goodbye();
-  empty_serial();
 
-  term_x = 0;
-  term_y = 0;
-
-  Serial_SendByte('0');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("0p", 0);
+  if (!ok) return;
 }
 
 void remote_reset_som(void) {
-  empty_serial();
-
-  term_x = 0;
-  term_y = 0;
-
-  Serial_SendByte('2');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("2p", 0);
+  if (!ok) return;
 }
 
 void remote_wake_som(void) {
+  int ok = remote_try_command("1w", 0);
+  if (!ok) return;
+  ok = remote_try_command("0w", 0);
+  if (!ok) return;
+}
+
+int force_sleep = 0;
+
+void remote_force_sleep(void) {
   empty_serial();
 
   term_x = 0;
   term_y = 0;
 
-  Serial_SendByte('1');
-  Serial_SendByte('w');
-  Serial_SendByte('\r');
+  force_sleep = 1-force_sleep;
+
+  if (force_sleep) {
+    Serial_SendByte('1');
+    Serial_SendByte('x');
+    Serial_SendByte('\r');
+  } else {
+    Serial_SendByte('0');
+    Serial_SendByte('x');
+    Serial_SendByte('\r');
+  }
+  
   Delay_MS(1);
-  empty_serial();
-  Serial_SendByte('0');
-  Serial_SendByte('w');
-  Serial_SendByte('\r');
-  Delay_MS(1);
+  remote_receive_string(1);
   empty_serial();
 }
 
 void remote_turn_off_aux(void) {
-  empty_serial();
-
-  Serial_SendByte('3');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("3p", 0);
+  if (!ok) return;
 }
 
 void remote_turn_on_aux(void) {
-  empty_serial();
-
-  Serial_SendByte('4');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("4p", 0);
+  if (!ok) return;
 }
 
 void remote_report_voltages(void) {
-  empty_serial();
-
-  Serial_SendByte('0');
-  Serial_SendByte('c');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("0c", 0);
+  if (!ok) return;
 }
 
 void remote_enable_som_uart(void) {
-  empty_serial();
-
-  Serial_SendByte('1');
-  Serial_SendByte('u');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("1u", 0);
+  if (!ok) return;
 }
 
 void remote_disable_som_uart(void) {
-  empty_serial();
-
-  Serial_SendByte('0');
-  Serial_SendByte('u');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("0u", 0);
+  if (!ok) return;
 }
 
 typedef struct MenuItem {
@@ -530,7 +532,7 @@ const MenuItem menu_items[] = {
   { "System Status       s", KEY_S }
 };
 #else
-#define MENU_NUM_ITEMS 10
+#define MENU_NUM_ITEMS 11
 const MenuItem menu_items[] = {
   { "Exit Menu         ESC", KEY_ESCAPE },
   { "Power On            1", KEY_1 },
@@ -541,7 +543,8 @@ const MenuItem menu_items[] = {
   { "Key Backlight+     F2", KEY_F2 },
   { "Wake              SPC", KEY_SPACE },
   { "System Status       s", KEY_S },
-  { "KBD Power-Off       p", KEY_P }
+  { "KBD Power-Off       p", KEY_P },
+  { "LPC Sleep           x", KEY_X },
 };
 #endif
 
@@ -586,10 +589,10 @@ int execute_meta_function(int keycode) {
   else if (keycode == KEY_SPACE) {
     remote_wake_som();
   }
-  /*else if (keycode == KEY_X) {
-    remote_turn_on_aux();
+  else if (keycode == KEY_X) {
+    remote_force_sleep();
   }
-  else if (keycode == KEY_V) {
+  /*else if (keycode == KEY_V) {
     remote_turn_off_aux();
   }*/
   else if (keycode == KEY_B) {
@@ -999,6 +1002,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='0') {
     // PWR0: shutdown (turn off power rails)
     remote_turn_off_som();
+    EnterPowerOff();
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='3') {
     // PWR3: aux power off
