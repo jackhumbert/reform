@@ -221,6 +221,13 @@ void insert_bat_icon(char* str, int x, float v) {
   str[x+1] = 4*32+icon+1;
 }
 
+void remote_try_wakeup(void) {
+  for (int i=0; i<500; i++) {
+    Serial_SendByte('\r');
+    Delay_MS(1);
+  }
+}
+
 void remote_get_voltages(void) {
   empty_serial();
 
@@ -234,7 +241,20 @@ void remote_get_voltages(void) {
   Serial_SendByte('c');
   Serial_SendByte('\r');
   Delay_MS(1);
-  remote_receive_string(0);
+  int ok = remote_receive_string(0);
+  if (!ok) {
+    remote_try_wakeup();
+    Serial_SendByte('c');
+    Serial_SendByte('\r');
+    Delay_MS(1);
+    ok = remote_receive_string(0);
+  }
+  if (!ok) {
+    gfx_clear();
+    gfx_poke_str(0, 0, "No response from LPC.");
+    gfx_flush();
+    return;
+  }
 
   // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???%
   //             |  |  |  |  |  |  |  |  | |      |     |
@@ -829,7 +849,7 @@ void SetupHardware()
 void EnterPowerOff(void)
 {
   USB_Disable(); // Stop USB stack so it doesn't wake us up
-  
+
   kbd_brightness_set(0);
   // Turn off OLED to save power
   gfx_clear_screen();
@@ -837,11 +857,11 @@ void EnterPowerOff(void)
   // Disable ADC to save even more power
   ADCSRA=0;
 
-  cli();    // No interrupts 
+  cli();    // No interrupts
 
   // Set all ports not floating if possible, leaving pullups alone
   PORTB=0x3F; // Leave pull-up on all the columns on PB0-3, drive rows 2-3 high, 1-low
-  PORTC=0xC0; 
+  PORTC=0xC0;
   PORTD=0xF0; // Keep pullup on PD5 like setup did, drive rows 4,5,6 high
   PORTE=0x40; // Pullup on PE6
   PORTF=0xFF; // Pullups on PF (columns)
@@ -865,11 +885,11 @@ void EnterPowerOff(void)
     sleep_cpu();        // Actually go to sleep
     // Zzzzzz
     sleep_disable();    // We've woken up
-    sei();  
+    sei();
     // Check if circle key has been pressed (active-low)
     // If not reset the watchdog and try again
   } while(PINC&(1<<6));
-  
+
   // Resume and reinitialize hardware
   SetupHardware();
 }
