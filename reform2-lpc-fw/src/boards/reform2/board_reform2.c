@@ -382,6 +382,7 @@ uint16_t charger_alerts;
 uint16_t status_alerts;
 float chg_vin;
 float chg_vbat;
+int som_is_powered = 0;
 
 void turn_som_power_on(void) {
   LPC_GPIO->CLR[1] = (1 << 28); // hold in reset
@@ -405,6 +406,8 @@ void turn_som_power_on(void) {
   LPC_GPIO->SET[0] = (1 << 7);  // AUX 3v3 on (R1+)
 
   LPC_GPIO->SET[1] = (1 << 28); // release reset
+
+  som_is_powered = 1;
 }
 
 void turn_som_power_off(void) {
@@ -422,6 +425,8 @@ void turn_som_power_off(void) {
   LPC_GPIO->CLR[1] = (1 << 19); // 1v2 off
   LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
   LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
+
+  som_is_powered = 0;
 }
 
 // just a reset pulse to IMX, no power toggling
@@ -666,7 +671,7 @@ void handle_commands() {
         } else if (state == ST_FULLY_CHARGED) {
           sprintf(uartBuffer,FW_REV"full charge,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_POWERSAVE) {
-          sprintf(uartBuffer,FW_REV"pwrsv,%d,%x\r",cycles_in_state,LPC_WWDT->TV);
+          sprintf(uartBuffer,FW_REV"powersave,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else {
           sprintf(uartBuffer,FW_REV"unknown:%d,%d,%d,%d\r",state,cycles_in_state,min_mah,acc_mah);
         }
@@ -934,7 +939,7 @@ int main(void)
           cycles_in_state = 0;
         }
       }
-      else if (current < 0.05 && current >= 0) {
+      else if (current < 0.05 && current >= 0 && !som_is_powered) {
         // if not charging and the system is off, we can sleep regularly to save power
         if (powersave_holdoff_cycles <= 0) {
           next_state = ST_POWERSAVE;
