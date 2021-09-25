@@ -39,10 +39,10 @@
 // don't forget to set this to the correct rev for your motherboard!
 #define REFORM_MOTHERBOARD_REV REFORM_MBREV_R3
 //#define REF2_DEBUG 1
-#define FW_REV "MREF2LPC R3 20210924"
+#define FW_REV "MREF2LPC R3 20210925"
 
 #define POWERSAVE_SLEEP_SECONDS 1
-#define POWERSAVE_HOLDOFF_CYCLES 30
+#define POWERSAVE_HOLDOFF_CYCLES (60*15)
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -724,7 +724,7 @@ void handle_commands() {
         }
         int mV = (int)(volts*1000.0);
 
-        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%c%04dmV%05d %s\r\n",
+        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%c%04dmV%05d %s P%d\r\n",
                 (int)(cells_v[0]*10),
                 (discharge_bits    &(1<<0))?'!':' ',
                 (int)(cells_v[1]*10),
@@ -744,7 +744,8 @@ void handle_commands() {
                 mA_sign,
                 mA,
                 mV,
-                gauge);
+                gauge,
+                som_is_powered);
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
       else if (remote_cmd == 'S') {
