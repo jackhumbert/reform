@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include <avr/sleep.h>
 
-#define KBD_FW_REV "R1 20210924"
+#define KBD_FW_REV "R1 20210927"
 //#define KBD_VARIANT_STANDALONE
 #define KBD_VARIANT_QWERTY_US
 //#define KBD_VARIANT_NEO2
@@ -92,6 +92,7 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
 
 uint8_t matrix_debounce[COLS*6];
 uint8_t matrix_state[COLS*6];
+uint8_t remote_som_power_expected_state = 0;
 
 // f8 = sleep
 // 49 = mute
@@ -251,7 +252,7 @@ void remote_try_wakeup(void) {
 
 int remote_try_command(char* cmd, int print_response) {
   int ok = 0;
-  
+
   empty_serial();
   for (int tries=0; tries<2; tries++) {
     for (int i=0; i<strlen(cmd); i++) {
@@ -292,11 +293,11 @@ void remote_get_voltages(void) {
 
   int ok = remote_try_command("c", 0);
   if (!ok) return;
-  
-  // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???%
-  //             |  |  |  |  |  |  |  |  | |      |     |
-  //             0  3  6  9  12 15 18 21 24|      |     |
-  //                                       26     33    39
+
+  // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???% P1
+  //             |  |  |  |  |  |  |  |  | |      |     |    |
+  //             0  3  6  9  12 15 18 21 24|      |     |    |
+  //                                       26     33    39   44
   //                                       |
   //                                       `- can be a minus
   float sum_volts = 0;
@@ -318,6 +319,9 @@ void remote_get_voltages(void) {
   int gauge_offset = volts_offset+5+1;
   strncpy(bat_gauge, &response[gauge_offset], 4);
 
+  int syspower_offset = gauge_offset+5;
+  int is_computer_on = (response[syspower_offset+1] == '1');
+
   // plot
   gfx_clear();
   char str[32];
@@ -327,7 +331,7 @@ void remote_get_voltages(void) {
   insert_bat_icon(str,8,voltages[4]);
   gfx_poke_str(0,0,str);
 
-  sprintf(str,"[] %.1f  [] %.1f  ",voltages[1],voltages[5]);
+  sprintf(str,"[] %.1f  [] %.1f %s",voltages[1],voltages[5],is_computer_on?" On":"Off");
   insert_bat_icon(str,0,voltages[1]);
   insert_bat_icon(str,8,voltages[5]);
   gfx_poke_str(0,1,str);
@@ -359,6 +363,7 @@ void remote_check_for_low_battery(void) {
   if (!ok) return;
 
   for (int i=0; i<8; i++) {
+    // TODO: only accept digits
     voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
     if (voltages[i]<0) voltages[i]=0;
     if (voltages[i]>=10) voltages[i]=9.9;
@@ -376,6 +381,24 @@ void remote_check_for_low_battery(void) {
     int percent = atoi(bat_gauge);
     if (percent<10) {
       low_battery_alert = 1;
+    }
+  }
+
+  int syspower_offset = gauge_offset+5;
+  if (response[syspower_offset] == 'P') {
+    char digit = response[syspower_offset+1];
+    if (digit == '0' || digit == '1') {
+      int is_computer_on = (digit == '1');
+      if (!is_computer_on && remote_som_power_expected_state == 1) {
+        // LPC says the computer is off, but we didn't expect it to be.
+        // the only way this happens is if LPC turned off the system
+        // due to a low battery condition.
+        //
+        // The keyboard will then go to sleep accordingly.
+
+        EnterPowerOff();
+      }
+      remote_som_power_expected_state = is_computer_on;
     }
   }
 }
@@ -444,9 +467,11 @@ void remote_turn_on_som(void) {
 
   int ok = remote_try_command("1p", 0);
   if (!ok) return;
-  
+
   anim_hello();
   kbd_brightness_init();
+
+  remote_som_power_expected_state = 1;
 }
 
 void remote_turn_off_som(void) {
@@ -454,6 +479,8 @@ void remote_turn_off_som(void) {
 
   int ok = remote_try_command("0p", 0);
   if (!ok) return;
+
+  remote_som_power_expected_state = 0;
 }
 
 void remote_reset_som(void) {
@@ -466,31 +493,6 @@ void remote_wake_som(void) {
   if (!ok) return;
   ok = remote_try_command("0w", 0);
   if (!ok) return;
-}
-
-int force_sleep = 0;
-
-void remote_force_sleep(void) {
-  empty_serial();
-
-  term_x = 0;
-  term_y = 0;
-
-  force_sleep = 1-force_sleep;
-
-  if (force_sleep) {
-    Serial_SendByte('1');
-    Serial_SendByte('x');
-    Serial_SendByte('\r');
-  } else {
-    Serial_SendByte('0');
-    Serial_SendByte('x');
-    Serial_SendByte('\r');
-  }
-  
-  Delay_MS(1);
-  remote_receive_string(1);
-  empty_serial();
 }
 
 void remote_turn_off_aux(void) {
@@ -532,7 +534,7 @@ const MenuItem menu_items[] = {
   { "System Status       s", KEY_S }
 };
 #else
-#define MENU_NUM_ITEMS 11
+#define MENU_NUM_ITEMS 9
 const MenuItem menu_items[] = {
   { "Exit Menu         ESC", KEY_ESCAPE },
   { "Power On            1", KEY_1 },
@@ -543,8 +545,11 @@ const MenuItem menu_items[] = {
   { "Key Backlight+     F2", KEY_F2 },
   { "Wake              SPC", KEY_SPACE },
   { "System Status       s", KEY_S },
-  { "KBD Power-Off       p", KEY_P },
-  { "LPC Sleep           x", KEY_X },
+
+  // Only needed for debugging.
+  // The keyboard will go to sleep when turning off
+  // main system power.
+  //{ "KBD Power-Off       p", KEY_P },
 };
 #endif
 
@@ -588,9 +593,6 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == KEY_SPACE) {
     remote_wake_som();
-  }
-  else if (keycode == KEY_X) {
-    remote_force_sleep();
   }
   /*else if (keycode == KEY_V) {
     remote_turn_off_aux();
@@ -652,7 +654,6 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
 
   // pull ROWs low one after the other
   for (int y=0; y<6; y++) {
-
     switch (y) {
     case 0: output_low(PORTB, 6); break;
     case 1: output_low(PORTB, 5); break;
@@ -666,7 +667,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     // TODO maybe not necessary
     _delay_us(10);
 
-     // check input COLs
+    // check input COLs
     for (int x=0; x<14; x++) {
       uint16_t loc = y*COLS+x;
       uint16_t keycode = matrix[loc];
@@ -793,7 +794,7 @@ int main(void)
     USB_USBTask();
     counter++;
 #ifndef KBD_VARIANT_STANDALONE
-      if (counter>=30000) {
+      if (counter>=100000) {
         remote_check_for_low_battery();
         counter = 0;
       }
@@ -871,7 +872,7 @@ void EnterPowerOff(void)
   // ROW1 is the only row driven low and left low, thus is always ready to be read out
   // We just need to check COL14 (PC6) if it is low (pressed) or high
 
-  // Unfortunatly the circle key is on COL14(PC6) which doesn't have pin change interrupt
+  // Unfortunately the circle key is on COL14(PC6) which doesn't have pin change interrupt
   // capabilities, so we need to wake up every so often to check if it is pressed, and
   // if so bring us out of power-off
   // We can use the Watchdog timer to do this.
