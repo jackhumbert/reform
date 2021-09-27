@@ -37,9 +37,12 @@
 #define REFORM_MBREV_R3 13 // R2 with "NTC instead of RNG/SS" fix
 
 // don't forget to set this to the correct rev for your motherboard!
-#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R2
+#define REFORM_MOTHERBOARD_REV REFORM_MBREV_R3
 //#define REF2_DEBUG 1
-#define FW_REV "MREF2LPC R2 20210419"
+#define FW_REV "MREF2LPC R3 20210925"
+
+#define POWERSAVE_SLEEP_SECONDS 1
+#define POWERSAVE_HOLDOFF_CYCLES (60*15)
 
 #define INA260_ADDRESS 0x4e
 #define LTC4162F_ADDRESS 0x68
@@ -134,7 +137,8 @@ enum state_t {
               ST_OVERVOLTED,
               ST_UNDERVOLTED,
               ST_MISSING,
-              ST_FULLY_CHARGED
+              ST_FULLY_CHARGED,
+              ST_POWERSAVE
 };
 
 // charging state machine
@@ -143,6 +147,7 @@ int cycles_in_state = 0;
 int charge_current = 1;
 uint32_t cur_second = 0;
 uint32_t last_second = 0;
+int powersave_holdoff_cycles = POWERSAVE_HOLDOFF_CYCLES;
 
 // 1.8A x 3600 seconds/hour
 #define MAX_CAPACITY (1.8)*3600.0
@@ -377,6 +382,7 @@ uint16_t charger_alerts;
 uint16_t status_alerts;
 float chg_vin;
 float chg_vbat;
+int som_is_powered = 0;
 
 void turn_som_power_on(void) {
   LPC_GPIO->CLR[1] = (1 << 28); // hold in reset
@@ -400,6 +406,8 @@ void turn_som_power_on(void) {
   LPC_GPIO->SET[0] = (1 << 7);  // AUX 3v3 on (R1+)
 
   LPC_GPIO->SET[1] = (1 << 28); // release reset
+
+  som_is_powered = 1;
 }
 
 void turn_som_power_off(void) {
@@ -417,6 +425,8 @@ void turn_som_power_off(void) {
   LPC_GPIO->CLR[1] = (1 << 19); // 1v2 off
   LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
   LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
+
+  som_is_powered = 0;
 }
 
 // just a reset pulse to IMX, no power toggling
@@ -447,32 +457,14 @@ void brownout_setup(void) {
 }
 
 void watchdog_feed(void) {
+  __disable_irq();
   LPC_WWDT->FEED = 0xAA;
   LPC_WWDT->FEED = 0x55;
+  __enable_irq();
 }
 
 #define WWDT_WDMOD_WDEN             ((uint32_t) (1 << 0))
 #define WWDT_WDMOD_WDRESET          ((uint32_t) (1 << 1))
-
-void watchdog_setup(void) {
-  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<15); // WWDT enable
-
-  LPC_SYSCON->WDTOSCCTRL =
-    (1<<5) | // FREQSEL 0.6MHz
-    31; // DIVSEL 64 (31+1)*2
-
-  LPC_SYSCON->PDRUNCFG &= ~(1<<6); // WDTOSC_PD disable
-
-  LPC_WWDT->CLKSEL = 1; // WDOSC
-
-  LPC_WWDT->TC = 0xffff/5; // timeout counter, ~5 seconds
-
-  LPC_WWDT->MOD = 0;
-  LPC_WWDT->MOD |= WWDT_WDMOD_WDRESET; // enable WDRESET (watchdog resets system)
-  LPC_WWDT->MOD |= WWDT_WDMOD_WDEN; // watchdog enable
-
-  watchdog_feed();
-}
 
 void boardInit(void)
 {
@@ -545,9 +537,13 @@ uint8_t remote_arg = 0;
 unsigned char cmd_state = ST_EXPECT_DIGIT_0;
 unsigned int cmd_number = 0;
 int cmd_echo = 0;
+int force_sleep = 0;
 
 void handle_commands() {
   if (!uartRxBufferDataPending()) return;
+
+  // reset sleep counter on any interaction
+  powersave_holdoff_cycles = POWERSAVE_HOLDOFF_CYCLES;
 
   char chr = uartRxBufferRead();
 
@@ -638,6 +634,12 @@ void handle_commands() {
           uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
         }
       }
+      else if (remote_cmd == 'x') {
+        // test sleep
+        force_sleep = cmd_number;
+        sprintf(uartBuffer,"sleep: %d\r\n", force_sleep);
+        uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+      }
       else if (remote_cmd == 'a') {
         // get system current (mA)
         sprintf(uartBuffer,"%d\r\n",(int)(current*1000.0));
@@ -668,9 +670,12 @@ void handle_commands() {
           sprintf(uartBuffer,FW_REV"cell missing,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_FULLY_CHARGED) {
           sprintf(uartBuffer,FW_REV"full charge,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
+        } else if (state == ST_POWERSAVE) {
+          sprintf(uartBuffer,FW_REV"powersave,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else {
           sprintf(uartBuffer,FW_REV"unknown:%d,%d,%d,%d\r",state,cycles_in_state,min_mah,acc_mah);
         }
+
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
       else if (remote_cmd == 'u') {
@@ -719,7 +724,7 @@ void handle_commands() {
         }
         int mV = (int)(volts*1000.0);
 
-        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%c%04dmV%05d %s\r\n",
+        sprintf(uartBuffer,"%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%c%02d%cmA%c%04dmV%05d %s P%d\r\n",
                 (int)(cells_v[0]*10),
                 (discharge_bits    &(1<<0))?'!':' ',
                 (int)(cells_v[1]*10),
@@ -739,7 +744,8 @@ void handle_commands() {
                 mA_sign,
                 mA,
                 mV,
-                gauge);
+                gauge,
+                som_is_powered);
         uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
       }
       else if (remote_cmd == 'S') {
@@ -798,6 +804,67 @@ void report_to_spi(void)
   ssp0Send((uint8_t*)report, strlen(report));
 }
 
+void WDT_IRQHandler(void)
+{
+	// Disable WDT interrupt
+	NVIC_DisableIRQ(WDT_IRQn);
+  NVIC_ClearPendingIRQ(WDT_IRQn);
+}
+
+// WARNING: take care not to overflow TC (11786 * secs)
+void deep_sleep_seconds(int secs) {
+  // make WWDTINT wake the LPC up from sleep
+  // STARTERP1 WWDTINT bit 12
+  LPC_SYSCON->STARTERP1 |= (1 << 12);
+
+  NVIC_DisableIRQ(WDT_IRQn);
+
+  // Configure watchdog timer to wake us up
+  LPC_SYSCON->SYSAHBCLKCTRL |= (1<<15); // WWDT enable
+
+  // 9375Hz??
+  LPC_SYSCON->WDTOSCCTRL =
+    (1<<5) | // FREQSEL 0.6MHz
+    31; // DIVSEL 64 (31+1)*2
+
+  // Power configuration register
+  LPC_SYSCON->PDRUNCFG &= ~(1<<6); // WDTOSC_PD disable (power down disable)
+  LPC_SYSCON->PDSLEEPCFG &= ~(1<<6); // WDTOSC_PD disable (power down disable)
+  LPC_SYSCON->PDAWAKECFG = LPC_SYSCON->PDRUNCFG; // when waking up, power up the default blocks
+
+  LPC_WWDT->CLKSEL = 1; // WDOSC
+
+  //LPC_WWDT->TC = 0xffff/5; // timeout counter, ~5 seconds
+  // FIXME isn't that 1.39s? (0xffff/5.0937/5.0)
+  // no, apparently it is 5.56s (x4)
+
+  LPC_WWDT->TC = 11786 * secs; // timeout counter, ~1 second
+
+  LPC_WWDT->MOD = 0;
+  //LPC_WWDT->MOD |= WWDT_WDMOD_WDRESET; // WDRESET (watchdog resets system)
+  LPC_WWDT->MOD |= WWDT_WDMOD_WDEN; // watchdog enable
+
+  // counter value that triggers interrupt
+  LPC_WWDT->WARNINT = 0;
+
+  // need to feed WD once to apply WDMOD values
+  watchdog_feed();
+
+  // NVIC exception 25 (WWDT) interrupt source:
+  // ISER SETENA bit 25 -> 0xE000E100
+  NVIC_ClearPendingIRQ(WDT_IRQn);
+  NVIC_EnableIRQ(WDT_IRQn);
+
+  // Go to deep sleep mode
+  LPC_PMU->PCON = 1<<11; // clear DPDFLAG
+  LPC_PMU->PCON = 1; // select deep power down mode
+  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+  __WFI();
+
+  NVIC_DisableIRQ(WDT_IRQn);
+  LPC_WWDT->MOD = 0;
+}
+
 int main(void)
 {
   boardInit();
@@ -808,10 +875,7 @@ int main(void)
 
   last_second = delayGetSecondsActive();
 
-  // WIP, not yet tested
-  //watchdog_setup();
-  //sprintf(uartBuffer, "\r\nwatchdog_setup() completed.\r\n");
-  //uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  int next_state = state;
 
   while (1)
   {
@@ -827,8 +891,6 @@ int main(void)
 
     // charge current 2: ~0.2A
 
-    //watchdog_feed();
-
     measure_and_accumulate_current();
     measure_cell_voltages_and_control_discharge();
     calculate_capacity_percentage();
@@ -836,23 +898,29 @@ int main(void)
     if (state == ST_CHARGE) {
       reset_discharge_bits();
 
-      if (num_missing_cells > 0) {
+      if (force_sleep) {
+        // debug sleeping
+        if (powersave_holdoff_cycles <= 0) {
+          next_state = ST_POWERSAVE;
+          cycles_in_state = 0;
+        }
+      } else if ((num_missing_cells >= 1) && (num_missing_cells <= 7)) {
         missing_reason = missing_bits;
         // if cells were unplugged, we don't know the capacity anymore.
         reached_full_charge = 0;
-        state = ST_MISSING;
+        next_state = ST_MISSING;
         cycles_in_state = 0;
       }
-      else if (num_undervolted_cells > 0) {
+      else if (current >= 0 && num_undervolted_cells > 0) {
         // when transitioning to undervoltage, we assume we reached the bottom
         // of usable capacity, so record it
         // but only if we reached top charge once, or our counter will
         // be off.
-        if (cycles_in_state > 5) {
+        if (cycles_in_state > 2) {
           if (reached_full_charge > 0) {
             capacity_min_ampsecs = capacity_accu_ampsecs;
           }
-          state = ST_UNDERVOLTED;
+          next_state = ST_UNDERVOLTED;
           cycles_in_state = 0;
         }
       }
@@ -860,7 +928,7 @@ int main(void)
         if (cycles_in_state > 5) {
           // when transitioning to fully charged, we assume that we're at max capacity
           capacity_accu_ampsecs = capacity_max_ampsecs;
-          state = ST_FULLY_CHARGED;
+          next_state = ST_FULLY_CHARGED;
           reached_full_charge = 1;
           cycles_in_state = 0;
         }
@@ -868,14 +936,21 @@ int main(void)
       else if (num_overvolted_cells > 0) {
         if (cycles_in_state > 5) {
           // some cool-off time
-          state = ST_OVERVOLTED;
+          next_state = ST_OVERVOLTED;
+          cycles_in_state = 0;
+        }
+      }
+      else if (current < 0.05 && current >= 0 && !som_is_powered) {
+        // if not charging and the system is off, we can sleep regularly to save power
+        if (powersave_holdoff_cycles <= 0) {
+          next_state = ST_POWERSAVE;
           cycles_in_state = 0;
         }
       }
     }
     else if (state == ST_UNDERVOLTED) {
-      // TODO: issue alert -- switch off system if critical
       reset_discharge_bits();
+      deep_sleep_seconds(POWERSAVE_SLEEP_SECONDS);
 
       if (cycles_in_state > 1) {
         // TODO: find safe heuristic. here we turn off if half
@@ -884,7 +959,7 @@ int main(void)
           turn_som_power_off();
         }
 
-        state = ST_CHARGE;
+        next_state = ST_CHARGE;
         cycles_in_state = 0;
       }
     }
@@ -893,7 +968,7 @@ int main(void)
         missing_reason = missing_bits;
         // if cells were unplugged, we don't know the capacity anymore.
         reached_full_charge = 0;
-        state = ST_MISSING;
+        next_state = ST_MISSING;
         cycles_in_state = 0;
       } else {
         discharge_overvolted_cells();
@@ -902,17 +977,18 @@ int main(void)
         if (cycles_in_state > 1 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
           reset_discharge_bits();
 
-          state = ST_CHARGE;
+          next_state = ST_CHARGE;
           cycles_in_state = 0;
         }
       }
     }
     else if (state == ST_MISSING) {
       reset_discharge_bits();
+      deep_sleep_seconds(POWERSAVE_SLEEP_SECONDS);
 
-      if (cycles_in_state > 5) {
-        if (num_missing_cells < 1) {
-          state = ST_CHARGE;
+      if (cycles_in_state > 1) {
+        if (num_missing_cells == 0 || num_missing_cells == 8) {
+          next_state = ST_CHARGE;
           cycles_in_state = 0;
         }
       }
@@ -923,19 +999,30 @@ int main(void)
       if (cycles_in_state > 5) {
         // if none of the cells are fully charged anymore, allow charging again
         if (num_fully_charged_cells < 1) {
-          state = ST_CHARGE;
+          next_state = ST_CHARGE;
           cycles_in_state = 0;
         }
         else if (num_overvolted_cells > 0) {
-          state = ST_OVERVOLTED;
+          next_state = ST_OVERVOLTED;
           cycles_in_state = 0;
         }
       }
     }
+    else if (state == ST_POWERSAVE) {
+      deep_sleep_seconds(POWERSAVE_SLEEP_SECONDS);
+      next_state = ST_CHARGE;
+      cycles_in_state = 0;
+    }
 
     // handle keyboard commands
+    // this also resets powersave holdoff counter
     handle_commands();
-    cur_second = delayGetSecondsActive();
+
+    if (state == ST_POWERSAVE || state == ST_MISSING || state == ST_UNDERVOLTED) {
+      cur_second += POWERSAVE_SLEEP_SECONDS;
+    } else {
+      cur_second = delayGetSecondsActive();
+    }
 
     if (last_second != cur_second) {
       if (cur_second-last_second<10) {
@@ -947,7 +1034,14 @@ int main(void)
         // report_to_spi();
       }
       last_second = cur_second;
+
+      if (powersave_holdoff_cycles > 0) {
+        powersave_holdoff_cycles--;
+      }
     }
+
+    state = next_state;
+
   }
 }
 

@@ -41,10 +41,27 @@
 #include <stdlib.h>
 #include <avr/sleep.h>
 
-#define KBD_FW_REV "R1 20210815"
+#define KBD_FW_REV "R1 20210927"
 //#define KBD_VARIANT_STANDALONE
 #define KBD_VARIANT_QWERTY_US
 //#define KBD_VARIANT_NEO2
+
+#define COLS 14
+#define ROWS 6
+
+uint8_t matrix[COLS*6+2] = {
+  KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, HID_KEYBOARD_SC_EXSEL,
+
+  KEY_GRAVE_ACCENT_AND_TILDE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS_AND_UNDERSCORE, KEY_EQUAL_AND_PLUS, KEY_BACKSPACE,
+
+  KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_OPENING_BRACKET_AND_OPENING_BRACE, KEY_CLOSING_BRACKET_AND_CLOSING_BRACE, KEY_BACKSLASH_AND_PIPE,
+
+  HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_APPLICATION, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON_AND_COLON, KEY_APOSTROPHE_AND_QUOTE, KEY_ENTER,
+
+  HID_KEYBOARD_SC_LEFT_SHIFT, HID_KEYBOARD_SC_NON_US_BACKSLASH_AND_PIPE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT,
+
+  HID_KEYBOARD_SC_RIGHT_GUI, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_RIGHT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0xfe,0xed,0xca,0xfe
+};
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
@@ -75,22 +92,9 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
 #define set_input(portdir,pin) portdir &= ~(1<<pin)
 #define set_output(portdir,pin) portdir |= (1<<pin)
 
-uint8_t matrix[15*6] = {
-  KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, HID_KEYBOARD_SC_EXSEL, HID_KEYBOARD_SC_EXSEL,
-
-  KEY_GRAVE_ACCENT_AND_TILDE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS_AND_UNDERSCORE, KEY_EQUAL_AND_PLUS, KEY_BACKSPACE, 0,
-
-  KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_OPENING_BRACKET_AND_OPENING_BRACE, KEY_CLOSING_BRACKET_AND_CLOSING_BRACE, KEY_BACKSLASH_AND_PIPE, 0,
-
-  HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_APPLICATION, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON_AND_COLON, KEY_APOSTROPHE_AND_QUOTE, KEY_ENTER, 0,
-
-  HID_KEYBOARD_SC_LEFT_SHIFT, HID_KEYBOARD_SC_NON_US_BACKSLASH_AND_PIPE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT, 0,
-
-  HID_KEYBOARD_SC_RIGHT_GUI, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_RIGHT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0,0,0
-};
-
-uint8_t matrix_debounce[15*6];
-uint8_t matrix_state[15*6];
+uint8_t matrix_debounce[COLS*6];
+uint8_t matrix_state[COLS*6];
+uint8_t remote_som_power_expected_state = 0;
 
 // f8 = sleep
 // 49 = mute
@@ -220,9 +224,68 @@ void insert_bat_icon(char* str, int x, float v) {
   str[x+1] = 4*32+icon+1;
 }
 
-void remote_get_voltages(void) {
-  empty_serial();
+void remote_try_wakeup(void) {
+  char buf[64];
 
+  for (int i=0; i<1000; i++) {
+    if (i%10 == 0) {
+      gfx_clear();
+      sprintf(buf, "Waking up LPC... %d%%", i/4);
+      gfx_poke_str(0, 0, buf);
+      gfx_flush();
+    }
+
+    Serial_SendByte('a');
+    Serial_SendByte('\r');
+
+    if (Serial_ReceiveByte()>0) {
+      remote_receive_string(0);
+      break;
+    }
+
+    Delay_MS(25);
+  }
+  Serial_SendByte('\r');
+  Delay_MS(10);
+  while (remote_receive_string(0)) {
+    Delay_MS(25);
+  }
+}
+
+int remote_try_command(char* cmd, int print_response) {
+  int ok = 0;
+
+  empty_serial();
+  for (int tries=0; tries<2; tries++) {
+    for (int i=0; i<strlen(cmd); i++) {
+      Serial_SendByte(cmd[i]);
+    }
+    Serial_SendByte('\r');
+    Delay_MS(1);
+
+    if (print_response) {
+      term_x = 0;
+      term_y = 0;
+    }
+    ok = remote_receive_string(print_response);
+
+    if (!ok && tries == 0) {
+      remote_try_wakeup();
+      empty_serial();
+    }
+    if (ok) break;
+  }
+  if (!ok) {
+    gfx_clear();
+    gfx_poke_str(0, 0, "No response from LPC.");
+    gfx_flush();
+  }
+
+  empty_serial();
+  return ok;
+}
+
+void remote_get_voltages(void) {
   term_x = 0;
   term_y = 0;
 
@@ -230,15 +293,13 @@ void remote_get_voltages(void) {
   float bat_amps = 0;
   char bat_gauge[5] = {0,0,0,0,0};
 
-  Serial_SendByte('c');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(0);
+  int ok = remote_try_command("c", 0);
+  if (!ok) return;
 
-  // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???%
-  //             |  |  |  |  |  |  |  |  | |      |     |
-  //             0  3  6  9  12 15 18 21 24|      |     |
-  //                                       26     33    39
+  // lpc format: 32 32 32 32 32 32 32 32 mA 0256mV26143 ???% P1
+  //             |  |  |  |  |  |  |  |  | |      |     |    |
+  //             0  3  6  9  12 15 18 21 24|      |     |    |
+  //                                       26     33    39   44
   //                                       |
   //                                       `- can be a minus
   float sum_volts = 0;
@@ -260,21 +321,34 @@ void remote_get_voltages(void) {
   int gauge_offset = volts_offset+5+1;
   strncpy(bat_gauge, &response[gauge_offset], 4);
 
+  char* power_str = "   ";
+  int syspower_offset = gauge_offset+5;
+  char power_digit = response[syspower_offset+1];
+  if (power_digit == '1') {
+    power_str = " On";
+  } else if (power_digit == '0') {
+    power_str = "Off";
+  }
+
   // plot
   gfx_clear();
   char str[32];
 
-  sprintf(str,"[] %.1f  [] %.1f %s",voltages[0],voltages[4],bat_gauge);
+  sprintf(str,"[] %.1f  [] %.1f   %s",voltages[0],voltages[4],bat_gauge);
   insert_bat_icon(str,0,voltages[0]);
   insert_bat_icon(str,8,voltages[4]);
   gfx_poke_str(0,0,str);
 
-  sprintf(str,"[] %.1f  [] %.1f  ",voltages[1],voltages[5]);
+  sprintf(str,"[] %.1f  [] %.1f    %s",voltages[1],voltages[5],power_str);
   insert_bat_icon(str,0,voltages[1]);
   insert_bat_icon(str,8,voltages[5]);
   gfx_poke_str(0,1,str);
 
-  sprintf(str,"[] %.1f  [] %.1f %2.2fA",voltages[2],voltages[6],bat_amps);
+  if (bat_amps>=0) {
+    sprintf(str,"[] %.1f  [] %.1f %2.3fA",voltages[2],voltages[6],bat_amps);
+  } else {
+    sprintf(str,"[] %.1f  [] %.1f %2.2fA",voltages[2],voltages[6],bat_amps);
+  }
   insert_bat_icon(str,0,voltages[2]);
   insert_bat_icon(str,8,voltages[6]);
   gfx_poke_str(0,2,str);
@@ -297,9 +371,11 @@ void remote_check_for_low_battery(void) {
   Serial_SendByte('c');
   Serial_SendByte('\r');
   Delay_MS(1);
-  remote_receive_string(0);
+  int ok = remote_receive_string(0);
+  if (!ok) return;
 
   for (int i=0; i<8; i++) {
+    // TODO: only accept digits
     voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
     if (voltages[i]<0) voltages[i]=0;
     if (voltages[i]>=10) voltages[i]=9.9;
@@ -319,6 +395,25 @@ void remote_check_for_low_battery(void) {
       low_battery_alert = 1;
     }
   }
+
+  int syspower_offset = gauge_offset+5;
+  if (response[syspower_offset] == 'P') {
+    char digit = response[syspower_offset+1];
+    if (digit == '0' || digit == '1') {
+      int is_computer_on = (digit == '1');
+      if (!is_computer_on && remote_som_power_expected_state == 1) {
+        // LPC says the computer is off, but we didn't expect it to be.
+        // the only way this happens is if LPC turned off the system
+        // due to a low battery condition.
+        //
+        // The keyboard will then go to sleep accordingly.
+
+        EnterPowerOff();
+        reset_keyboard_state();
+      }
+      remote_som_power_expected_state = is_computer_on;
+    }
+  }
 }
 
 void remote_get_status(void) {
@@ -331,12 +426,8 @@ void remote_get_status(void) {
   gfx_flush();
 
 #ifndef KBD_VARIANT_STANDALONE
-  term_x = 0;
-  term_y = 0;
-  Serial_SendByte('s');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  remote_receive_string(1);
+  int ok = remote_try_command("s", 1);
+  if (!ok) return;
 #endif
 }
 
@@ -378,7 +469,7 @@ void kbd_brightness_dec(void) {
 }
 
 void kbd_brightness_set(int brite) {
-  pwmval=brite;
+  pwmval = brite;
   if (pwmval<0) pwmval = 0;
   if (pwmval>=10) pwmval = 10;
   OCR0A = pwmval;
@@ -386,113 +477,60 @@ void kbd_brightness_set(int brite) {
 
 void remote_turn_on_som(void) {
   gfx_clear();
-  empty_serial();
 
-  term_x = 0;
-  term_y = 0;
+  int ok = remote_try_command("1p", 0);
+  if (!ok) return;
 
-  Serial_SendByte('1');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
   anim_hello();
   kbd_brightness_init();
+
+  remote_som_power_expected_state = 1;
 }
 
 void remote_turn_off_som(void) {
   anim_goodbye();
-  empty_serial();
 
-  term_x = 0;
-  term_y = 0;
+  int ok = remote_try_command("0p", 0);
+  if (!ok) return;
 
-  Serial_SendByte('0');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  remote_som_power_expected_state = 0;
 }
 
 void remote_reset_som(void) {
-  empty_serial();
-
-  term_x = 0;
-  term_y = 0;
-
-  Serial_SendByte('2');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("2p", 0);
+  if (!ok) return;
 }
 
 void remote_wake_som(void) {
-  empty_serial();
-
-  term_x = 0;
-  term_y = 0;
-
-  Serial_SendByte('1');
-  Serial_SendByte('w');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
-  Serial_SendByte('0');
-  Serial_SendByte('w');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("1w", 0);
+  if (!ok) return;
+  ok = remote_try_command("0w", 0);
+  if (!ok) return;
 }
 
 void remote_turn_off_aux(void) {
-  empty_serial();
-
-  Serial_SendByte('3');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("3p", 0);
+  if (!ok) return;
 }
 
 void remote_turn_on_aux(void) {
-  empty_serial();
-
-  Serial_SendByte('4');
-  Serial_SendByte('p');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("4p", 0);
+  if (!ok) return;
 }
 
 void remote_report_voltages(void) {
-  empty_serial();
-
-  Serial_SendByte('0');
-  Serial_SendByte('c');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("0c", 0);
+  if (!ok) return;
 }
 
 void remote_enable_som_uart(void) {
-  empty_serial();
-
-  Serial_SendByte('1');
-  Serial_SendByte('u');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("1u", 0);
+  if (!ok) return;
 }
 
 void remote_disable_som_uart(void) {
-  empty_serial();
-
-  Serial_SendByte('0');
-  Serial_SendByte('u');
-  Serial_SendByte('\r');
-  Delay_MS(1);
-  empty_serial();
+  int ok = remote_try_command("0u", 0);
+  if (!ok) return;
 }
 
 typedef struct MenuItem {
@@ -509,7 +547,7 @@ const MenuItem menu_items[] = {
   { "System Status       s", KEY_S }
 };
 #else
-#define MENU_NUM_ITEMS 10
+#define MENU_NUM_ITEMS 9
 const MenuItem menu_items[] = {
   { "Exit Menu         ESC", KEY_ESCAPE },
   { "Power On            1", KEY_1 },
@@ -520,7 +558,11 @@ const MenuItem menu_items[] = {
   { "Key Backlight+     F2", KEY_F2 },
   { "Wake              SPC", KEY_SPACE },
   { "System Status       s", KEY_S },
-  { "KBD Power-Off       p", KEY_P }
+
+  // Only needed for debugging.
+  // The keyboard will go to sleep when turning off
+  // main system power.
+  { "KBD Power-Off       p", KEY_P },
 };
 #endif
 
@@ -553,6 +595,8 @@ int execute_meta_function(int keycode) {
     // TODO: are you sure?
     remote_turn_off_som();
     EnterPowerOff();
+    // Directly enter menu again
+    return 2;
   }
   else if (keycode == KEY_1) {
     remote_turn_on_som();
@@ -565,10 +609,7 @@ int execute_meta_function(int keycode) {
   else if (keycode == KEY_SPACE) {
     remote_wake_som();
   }
-  /*else if (keycode == KEY_X) {
-    remote_turn_on_aux();
-  }
-  else if (keycode == KEY_V) {
+  /*else if (keycode == KEY_V) {
     remote_turn_off_aux();
   }*/
   else if (keycode == KEY_B) {
@@ -611,6 +652,8 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == KEY_P) {
     EnterPowerOff();
+    // Directly enter menu again
+    return 2;
   }
 
   gfx_clear();
@@ -621,14 +664,30 @@ int execute_meta_function(int keycode) {
 
 uint8_t last_meta_key = 0;
 
+// enter the menu
+void enter_meta_mode(void) {
+  current_scroll_y = 0;
+  current_menu_y = 0;
+  active_meta_mode = 1;
+  // render menu
+  render_menu(current_scroll_y);
+}
+
+void reset_keyboard_state(void) {
+  for (int i=0; i<COLS*ROWS; i++) {
+    matrix_debounce[i] = 0;
+    matrix_state[i] = 0;
+  }
+  last_meta_key = 0;
+}
+
 void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardReport) {
   // how many keys are pressed this round
   uint8_t total_pressed = 0;
   uint8_t used_key_codes = 0;
 
   // pull ROWs low one after the other
-  for (int y=0; y<6; y++) {
-
+  for (int y=0; y<ROWS; y++) {
     switch (y) {
     case 0: output_low(PORTB, 6); break;
     case 1: output_low(PORTB, 5); break;
@@ -642,9 +701,9 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     // TODO maybe not necessary
     _delay_us(10);
 
-     // check input COLs
+    // check input COLs
     for (int x=0; x<14; x++) {
-      uint16_t loc = y*15+x;
+      uint16_t loc = y*COLS+x;
       uint16_t keycode = matrix[loc];
       uint8_t  pressed = 0;
       uint8_t  debounced_pressed = 0;
@@ -684,16 +743,12 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
         // circle key?
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
           if (!active_meta_mode && !last_meta_key) {
-            current_scroll_y = 0;
-            current_menu_y = 0;
-            active_meta_mode = 1;
-            // render menu
-            render_menu(current_scroll_y);
+            enter_meta_mode();
           }
         } else {
           if (active_meta_mode) {
             // not holding the same key?
-            if (last_meta_key!=keycode) {
+            if (last_meta_key != keycode) {
               // hyper/circle/menu functions
               int stay_meta = execute_meta_function(keycode);
               // don't repeat action while key is held down
@@ -702,6 +757,13 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
               // exit meta mode
               if (!stay_meta) {
                 active_meta_mode = 0;
+              }
+
+              // after wake-up from sleep mode, skip further keymap processing
+              if (stay_meta == 2) {
+                reset_keyboard_state();
+                enter_meta_mode();
+                return;
               }
             }
           } else if (!last_meta_key) {
@@ -749,16 +811,17 @@ void process_alerts(void) {
 int main(void)
 {
 #ifdef KBD_VARIANT_QWERTY_US
-  matrix[15*4+1]=KEY_DELETE;
+  matrix[COLS*4+1]=KEY_DELETE;
 #endif
 #ifdef KBD_VARIANT_NEO2
-  matrix[15*3+0]=HID_KEYBOARD_SC_CAPS_LOCK; // M3
-  matrix[15*2+13]=KEY_ENTER;
-  matrix[15*3+13]=KEY_BACKSLASH_AND_PIPE; // M3
+  matrix[COLS*3+0]=HID_KEYBOARD_SC_CAPS_LOCK; // M3
+  matrix[COLS*2+13]=KEY_ENTER;
+  matrix[COLS*3+13]=KEY_BACKSLASH_AND_PIPE; // M3
 #endif
 
   SetupHardware();
   GlobalInterruptEnable();
+  anim_hello();
 
   int counter = 0;
 
@@ -769,7 +832,7 @@ int main(void)
     USB_USBTask();
     counter++;
 #ifndef KBD_VARIANT_STANDALONE
-      if (counter>=30000) {
+      if (counter>=100000) {
         remote_check_for_low_battery();
         counter = 0;
       }
@@ -780,7 +843,7 @@ int main(void)
   }
 }
 
-void SetupHardware()
+void SetupHardware(void)
 {
   // Disable watchdog if enabled by bootloader/fuses
   MCUSR &= ~(1 << WDRF);
@@ -810,8 +873,6 @@ void SetupHardware()
   kbd_brightness_init();
   gfx_init(false);
 
-  anim_hello();
-
   Serial_Init(57600, false);
   USB_Init();
 }
@@ -828,26 +889,28 @@ void SetupHardware()
 void EnterPowerOff(void)
 {
   USB_Disable(); // Stop USB stack so it doesn't wake us up
-  
-  kbd_brightness_set(0);
+
+  // turn off backlight, but don't overwrite setting
+  OCR0A = 0;
+
   // Turn off OLED to save power
   gfx_clear_screen();
   gfx_off();
   // Disable ADC to save even more power
   ADCSRA=0;
 
-  cli();    // No interrupts 
+  cli();    // No interrupts
 
   // Set all ports not floating if possible, leaving pullups alone
   PORTB=0x3F; // Leave pull-up on all the columns on PB0-3, drive rows 2-3 high, 1-low
-  PORTC=0xC0; 
+  PORTC=0xC0;
   PORTD=0xF0; // Keep pullup on PD5 like setup did, drive rows 4,5,6 high
   PORTE=0x40; // Pullup on PE6
   PORTF=0xFF; // Pullups on PF (columns)
   // ROW1 is the only row driven low and left low, thus is always ready to be read out
   // We just need to check COL14 (PC6) if it is low (pressed) or high
 
-  // Unfortunatly the circle key is on COL14(PC6) which doesn't have pin change interrupt
+  // Unfortunately the circle key is on COL14(PC6) which doesn't have pin change interrupt
   // capabilities, so we need to wake up every so often to check if it is pressed, and
   // if so bring us out of power-off
   // We can use the Watchdog timer to do this.
@@ -855,7 +918,7 @@ void EnterPowerOff(void)
   do {
     wdt_reset();
     WDTCSR = (1<<WDCE) | (1<<WDE); // Enable writes to watchdog
-    WDTCSR = (1<<WDIE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1); // Interrupt mode, 1s timeout
+    WDTCSR = (1<<WDIE) | (1<<WDE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); // Interrupt mode, 1s timeout
 
     // Enter Power-save mode
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -864,11 +927,11 @@ void EnterPowerOff(void)
     sleep_cpu();        // Actually go to sleep
     // Zzzzzz
     sleep_disable();    // We've woken up
-    sei();  
+    sei();
     // Check if circle key has been pressed (active-low)
     // If not reset the watchdog and try again
   } while(PINC&(1<<6));
-  
+
   // Resume and reinitialize hardware
   SetupHardware();
 }
@@ -978,6 +1041,8 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='0') {
     // PWR0: shutdown (turn off power rails)
     remote_turn_off_som();
+    EnterPowerOff();
+    reset_keyboard_state();
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='3') {
     // PWR3: aux power off
