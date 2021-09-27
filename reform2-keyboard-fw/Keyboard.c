@@ -47,6 +47,8 @@
 //#define KBD_VARIANT_NEO2
 
 #define COLS 14
+#define ROWS 6
+
 uint8_t matrix[COLS*6+2] = {
   KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, HID_KEYBOARD_SC_EXSEL,
 
@@ -319,24 +321,34 @@ void remote_get_voltages(void) {
   int gauge_offset = volts_offset+5+1;
   strncpy(bat_gauge, &response[gauge_offset], 4);
 
+  char* power_str = "   ";
   int syspower_offset = gauge_offset+5;
-  int is_computer_on = (response[syspower_offset+1] == '1');
+  char power_digit = response[syspower_offset+1];
+  if (power_digit == '1') {
+    power_str = " On";
+  } else if (power_digit == '0') {
+    power_str = "Off";
+  }
 
   // plot
   gfx_clear();
   char str[32];
 
-  sprintf(str,"[] %.1f  [] %.1f %s",voltages[0],voltages[4],bat_gauge);
+  sprintf(str,"[] %.1f  [] %.1f   %s",voltages[0],voltages[4],bat_gauge);
   insert_bat_icon(str,0,voltages[0]);
   insert_bat_icon(str,8,voltages[4]);
   gfx_poke_str(0,0,str);
 
-  sprintf(str,"[] %.1f  [] %.1f %s",voltages[1],voltages[5],is_computer_on?" On":"Off");
+  sprintf(str,"[] %.1f  [] %.1f    %s",voltages[1],voltages[5],power_str);
   insert_bat_icon(str,0,voltages[1]);
   insert_bat_icon(str,8,voltages[5]);
   gfx_poke_str(0,1,str);
 
-  sprintf(str,"[] %.1f  [] %.1f %2.2fA",voltages[2],voltages[6],bat_amps);
+  if (bat_amps>=0) {
+    sprintf(str,"[] %.1f  [] %.1f %2.3fA",voltages[2],voltages[6],bat_amps);
+  } else {
+    sprintf(str,"[] %.1f  [] %.1f %2.2fA",voltages[2],voltages[6],bat_amps);
+  }
   insert_bat_icon(str,0,voltages[2]);
   insert_bat_icon(str,8,voltages[6]);
   gfx_poke_str(0,2,str);
@@ -534,7 +546,7 @@ const MenuItem menu_items[] = {
   { "System Status       s", KEY_S }
 };
 #else
-#define MENU_NUM_ITEMS 9
+#define MENU_NUM_ITEMS 10
 const MenuItem menu_items[] = {
   { "Exit Menu         ESC", KEY_ESCAPE },
   { "Power On            1", KEY_1 },
@@ -549,7 +561,7 @@ const MenuItem menu_items[] = {
   // Only needed for debugging.
   // The keyboard will go to sleep when turning off
   // main system power.
-  //{ "KBD Power-Off       p", KEY_P },
+  { "KBD Power-Off       p", KEY_P },
 };
 #endif
 
@@ -582,6 +594,8 @@ int execute_meta_function(int keycode) {
     // TODO: are you sure?
     remote_turn_off_som();
     EnterPowerOff();
+    // Directly enter menu again
+    return 2;
   }
   else if (keycode == KEY_1) {
     remote_turn_on_som();
@@ -637,6 +651,8 @@ int execute_meta_function(int keycode) {
   }
   else if (keycode == KEY_P) {
     EnterPowerOff();
+    // Directly enter menu again
+    return 2;
   }
 
   gfx_clear();
@@ -647,13 +663,30 @@ int execute_meta_function(int keycode) {
 
 uint8_t last_meta_key = 0;
 
+// enter the menu
+void enter_meta_mode(void) {
+  current_scroll_y = 0;
+  current_menu_y = 0;
+  active_meta_mode = 1;
+  // render menu
+  render_menu(current_scroll_y);
+}
+
+void reset_keyboard_state(void) {
+  for (int i=0; i<COLS*ROWS; i++) {
+    matrix_debounce[i] = 0;
+    matrix_state[i] = 0;
+  }
+  last_meta_key = 0;
+}
+
 void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardReport) {
   // how many keys are pressed this round
   uint8_t total_pressed = 0;
   uint8_t used_key_codes = 0;
 
   // pull ROWs low one after the other
-  for (int y=0; y<6; y++) {
+  for (int y=0; y<ROWS; y++) {
     switch (y) {
     case 0: output_low(PORTB, 6); break;
     case 1: output_low(PORTB, 5); break;
@@ -709,16 +742,12 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
         // circle key?
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
           if (!active_meta_mode && !last_meta_key) {
-            current_scroll_y = 0;
-            current_menu_y = 0;
-            active_meta_mode = 1;
-            // render menu
-            render_menu(current_scroll_y);
+            enter_meta_mode();
           }
         } else {
           if (active_meta_mode) {
             // not holding the same key?
-            if (last_meta_key!=keycode) {
+            if (last_meta_key != keycode) {
               // hyper/circle/menu functions
               int stay_meta = execute_meta_function(keycode);
               // don't repeat action while key is held down
@@ -727,6 +756,13 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
               // exit meta mode
               if (!stay_meta) {
                 active_meta_mode = 0;
+              }
+
+              // after wake-up from sleep mode, skip further keymap processing
+              if (stay_meta == 2) {
+                reset_keyboard_state();
+                enter_meta_mode();
+                return;
               }
             }
           } else if (!last_meta_key) {
@@ -784,6 +820,7 @@ int main(void)
 
   SetupHardware();
   GlobalInterruptEnable();
+  anim_hello();
 
   int counter = 0;
 
@@ -805,7 +842,7 @@ int main(void)
   }
 }
 
-void SetupHardware()
+void SetupHardware(void)
 {
   // Disable watchdog if enabled by bootloader/fuses
   MCUSR &= ~(1 << WDRF);
@@ -834,8 +871,6 @@ void SetupHardware()
 
   kbd_brightness_init();
   gfx_init(false);
-
-  anim_hello();
 
   Serial_Init(57600, false);
   USB_Init();
@@ -880,7 +915,7 @@ void EnterPowerOff(void)
   do {
     wdt_reset();
     WDTCSR = (1<<WDCE) | (1<<WDE); // Enable writes to watchdog
-    WDTCSR = (1<<WDIE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1) | (1<<WDP0); // Interrupt mode, 1s timeout
+    WDTCSR = (1<<WDIE) | (1<<WDE) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); // Interrupt mode, 1s timeout
 
     // Enter Power-save mode
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -1004,6 +1039,7 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
     // PWR0: shutdown (turn off power rails)
     remote_turn_off_som();
     EnterPowerOff();
+    reset_keyboard_state();
   }
   else if (data[0]=='P' && data[1]=='W' && data[2]=='R' && data[3]=='3') {
     // PWR3: aux power off
