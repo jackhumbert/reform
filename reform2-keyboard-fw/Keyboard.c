@@ -409,6 +409,7 @@ void remote_check_for_low_battery(void) {
         // The keyboard will then go to sleep accordingly.
 
         EnterPowerOff();
+        reset_keyboard_state();
       }
       remote_som_power_expected_state = is_computer_on;
     }
@@ -546,7 +547,7 @@ const MenuItem menu_items[] = {
   { "System Status       s", KEY_S }
 };
 #else
-#define MENU_NUM_ITEMS 10
+#define MENU_NUM_ITEMS 9
 const MenuItem menu_items[] = {
   { "Exit Menu         ESC", KEY_ESCAPE },
   { "Power On            1", KEY_1 },
