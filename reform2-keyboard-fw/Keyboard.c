@@ -469,7 +469,7 @@ void kbd_brightness_dec(void) {
 }
 
 void kbd_brightness_set(int brite) {
-  pwmval=brite;
+  pwmval = brite;
   if (pwmval<0) pwmval = 0;
   if (pwmval>=10) pwmval = 10;
   OCR0A = pwmval;
@@ -890,7 +890,9 @@ void EnterPowerOff(void)
 {
   USB_Disable(); // Stop USB stack so it doesn't wake us up
 
-  kbd_brightness_set(0);
+  // turn off backlight, but don't overwrite setting
+  OCR0A = 0;
+
   // Turn off OLED to save power
   gfx_clear_screen();
   gfx_off();
