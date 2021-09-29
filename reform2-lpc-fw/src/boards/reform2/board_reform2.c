@@ -183,7 +183,7 @@ uint8_t spir[64];
 #define UNDERVOLTAGE_VALUE 2.45
 #define UNDERVOLTAGE_CRITICAL_VALUE 2.3
 #define MISSING_VALUE_HI 4.3
-#define MISSING_VALUE_LO 0.2
+#define MISSING_VALUE_LO 0.4
 #if (REFORM_MOTHERBOARD_REV >= REFORM_MBREV_R3)
   #define FULLY_CHARGED_VOLTAGE 3.4
   #define FULLY_CHARGED_CURRENT -0.3
@@ -667,7 +667,7 @@ void handle_commands() {
         } else if (state == ST_UNDERVOLTED) {
           sprintf(uartBuffer,FW_REV"undervolted,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_MISSING) {
-          sprintf(uartBuffer,FW_REV"cell missing,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
+          sprintf(uartBuffer,FW_REV"cells missing:%d,%d,%d,%d\r",missing_reason,cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_FULLY_CHARGED) {
           sprintf(uartBuffer,FW_REV"full charge,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_POWERSAVE) {
@@ -813,6 +813,7 @@ void WDT_IRQHandler(void)
 
 // WARNING: take care not to overflow TC (11786 * secs)
 void deep_sleep_seconds(int secs) {
+
   // make WWDTINT wake the LPC up from sleep
   // STARTERP1 WWDTINT bit 12
   LPC_SYSCON->STARTERP1 |= (1 << 12);
@@ -872,6 +873,7 @@ int main(void)
 
   state = ST_CHARGE;
   cycles_in_state = 0;
+  powersave_holdoff_cycles = POWERSAVE_HOLDOFF_CYCLES;
 
   last_second = delayGetSecondsActive();
 
@@ -904,19 +906,21 @@ int main(void)
           next_state = ST_POWERSAVE;
           cycles_in_state = 0;
         }
-      } else if ((num_missing_cells >= 1) && (num_missing_cells <= 7)) {
-        missing_reason = missing_bits;
-        // if cells were unplugged, we don't know the capacity anymore.
-        reached_full_charge = 0;
-        next_state = ST_MISSING;
-        cycles_in_state = 0;
+      } else if (num_missing_cells >= 1) {
+        if (cycles_in_state > 5) {
+          missing_reason = num_missing_cells;
+          // if cells were unplugged, we don't know the capacity anymore.
+          reached_full_charge = 0;
+          next_state = ST_MISSING;
+          cycles_in_state = 0;
+        }
       }
-      else if (current >= 0 && num_undervolted_cells > 0) {
+      else if (num_missing_cells == 0 && current >= 0 && num_undervolted_cells > 0) {
         // when transitioning to undervoltage, we assume we reached the bottom
         // of usable capacity, so record it
         // but only if we reached top charge once, or our counter will
         // be off.
-        if (cycles_in_state > 2) {
+        if (cycles_in_state > 5) {
           if (reached_full_charge > 0) {
             capacity_min_ampsecs = capacity_accu_ampsecs;
           }
@@ -952,42 +956,31 @@ int main(void)
       reset_discharge_bits();
       deep_sleep_seconds(POWERSAVE_SLEEP_SECONDS);
 
-      if (cycles_in_state > 1) {
-        // TODO: find safe heuristic. here we turn off if half
-        // of the cells are undervolted and there's no wall power.
-        if (volts < WALLPOWER_DETECT_VOLTAGE && (num_undervolted_critical_cells >= 1 || num_undervolted_cells >= 4)) {
-          turn_som_power_off();
-        }
+      // TODO: find safe heuristic. here we turn off if half
+      // of the cells are undervolted and there's no wall power.
+      if (volts < WALLPOWER_DETECT_VOLTAGE && (num_undervolted_critical_cells >= 1 || num_undervolted_cells >= 4)) {
+        turn_som_power_off();
+      }
+
+      next_state = ST_CHARGE;
+      cycles_in_state = 0;
+    }
+    else if (state == ST_OVERVOLTED) {
+      discharge_overvolted_cells();
+
+      // discharge
+      if (cycles_in_state > 1 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
+        reset_discharge_bits();
 
         next_state = ST_CHARGE;
         cycles_in_state = 0;
       }
     }
-    else if (state == ST_OVERVOLTED) {
-      if (num_missing_cells > 0) {
-        missing_reason = missing_bits;
-        // if cells were unplugged, we don't know the capacity anymore.
-        reached_full_charge = 0;
-        next_state = ST_MISSING;
-        cycles_in_state = 0;
-      } else {
-        discharge_overvolted_cells();
-
-        // discharge
-        if (cycles_in_state > 1 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
-          reset_discharge_bits();
-
-          next_state = ST_CHARGE;
-          cycles_in_state = 0;
-        }
-      }
-    }
     else if (state == ST_MISSING) {
       reset_discharge_bits();
-      deep_sleep_seconds(POWERSAVE_SLEEP_SECONDS);
 
-      if (cycles_in_state > 1) {
-        if (num_missing_cells == 0 || num_missing_cells == 8) {
+      if (cycles_in_state > 5) {
+        if (num_missing_cells == 0) {
           next_state = ST_CHARGE;
           cycles_in_state = 0;
         }
@@ -1018,7 +1011,7 @@ int main(void)
     // this also resets powersave holdoff counter
     handle_commands();
 
-    if (state == ST_POWERSAVE || state == ST_MISSING || state == ST_UNDERVOLTED) {
+    if (state == ST_POWERSAVE || state == ST_UNDERVOLTED) {
       cur_second += POWERSAVE_SLEEP_SECONDS;
     } else {
       cur_second = delayGetSecondsActive();
