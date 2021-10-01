@@ -135,6 +135,7 @@ uint8_t calc_pec(uint8_t d, uint8_t pec) {
 enum state_t {
               ST_CHARGE,
               ST_OVERVOLTED,
+              ST_COOLDOWN,
               ST_UNDERVOLTED,
               ST_MISSING,
               ST_FULLY_CHARGED,
@@ -182,7 +183,7 @@ uint8_t spir[64];
 #endif
 #define UNDERVOLTAGE_VALUE 2.45
 #define UNDERVOLTAGE_CRITICAL_VALUE 2.3
-#define MISSING_VALUE_HI 4.3
+#define MISSING_VALUE_HI 4.5
 #define MISSING_VALUE_LO 0.4
 #if (REFORM_MOTHERBOARD_REV >= REFORM_MBREV_R3)
   #define FULLY_CHARGED_VOLTAGE 3.4
@@ -664,6 +665,8 @@ void handle_commands() {
           sprintf(uartBuffer,FW_REV"normal,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_OVERVOLTED) {
           sprintf(uartBuffer,FW_REV"balancing,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
+        } else if (state == ST_COOLDOWN) {
+          sprintf(uartBuffer,FW_REV"cooldown,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_UNDERVOLTED) {
           sprintf(uartBuffer,FW_REV"undervolted,%d,%d,%d\r",cycles_in_state,min_mah,acc_mah);
         } else if (state == ST_MISSING) {
@@ -938,7 +941,7 @@ int main(void)
         }
       }
       else if (num_overvolted_cells > 0) {
-        if (cycles_in_state > 5) {
+        if (cycles_in_state > 2) {
           // some cool-off time
           next_state = ST_OVERVOLTED;
           cycles_in_state = 0;
@@ -969,9 +972,22 @@ int main(void)
       discharge_overvolted_cells();
 
       // discharge
-      if (cycles_in_state > 1 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
+      if (cycles_in_state > 3 && (num_overvolted_cells==0 || num_undervolted_cells>0)) {
         reset_discharge_bits();
 
+        next_state = ST_COOLDOWN;
+        cycles_in_state = 0;
+      } else if (cycles_in_state > 5) {
+        // don't discharge for more than 5 cycles
+        next_state = ST_COOLDOWN;
+        cycles_in_state = 0;
+      }
+    }
+    else if (state == ST_COOLDOWN) {
+      // avoid overheating the resistors
+      reset_discharge_bits();
+
+      if (cycles_in_state > 3) {
         next_state = ST_CHARGE;
         cycles_in_state = 0;
       }
