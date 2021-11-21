@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>MNT Reform Keyboard Editor</title>
+  <link rel="stylesheet" href="style.css"></link>
+  <script src="base64binary.js"></script>
+  <script src="mnt-reform-keyboard-firmware.js"></script>
+  <script src="mnt-reform-keyboard.js"></script>
+</head>
+<body onload="initKeyboard()">
+<section>
+  <h1>MNT Reform Keyboard Editor</h1>
+  <h2>Layout</h2>
+
+  <div class="keyboard">
+    <div class="kbd-row">
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key key-1-5"></div>
+    </div>
+
+    <div class="kbd-row">
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key key-1-5"></div>
+    </div>
+
+    <div class="kbd-row">
+      <div class="kbd-key key-1-5"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+    </div>
+
+    <div class="kbd-row">
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key key-1-5"></div>
+    </div>
+
+    <div class="kbd-row">
+      <div class="kbd-key key-1-5"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+    </div>
+
+    <div class="kbd-row last-row">
+      <div class="kbd-key key-1-5"></div>
+      <div class="kbd-key key-1-5"></div>
+      <div class="kbd-key key-1-5"></div>
+      <div class="kbd-key key-1-5"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key key-1-5"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+      <div class="kbd-key"></div>
+    </div>
+  </div>
+
+</section>
+<section>
+  <h2>Key <span id="keyid"></span></h2>
+  <div>
+    <label>
+      Scancode:
+      <input id="key-scancodename" list="key-scancodes" onchange="applySettingsToKey()">
+      <datalist id="key-scancodes"></datalist>
+    </label>
+  </div>
+  <div>
+    <button onclick="enableSwapMode()">Swap with Key…</button>
+    <span id="swap-message"></span>
+  </div>
+</section>
+<section>
+  <h2>Export</h2>
+  <div>
+    <label>
+      Title:
+      <input id="title" type="text" value="" placeholder="Title">
+    </label>
+  </div>
+</section>
+<section>
+  <h2>Instructions</h2>
+  <button onclick="generateFirmware()">Download Customized Firmware</button>
+  <p>
+    After downloading the Keyboard.elf file, flash it like this:
+  </p>
+  <code>
+    objcopy -O ihex Keyboard.elf Keyboard.hex<br>
+    dfu-programmer atmega32u4 erase --suppress-bootloader-mem<br>
+    dfu-programmer atmega32u4 flash ./Keyboard.hex --suppress-bootloader-mem<br>
+    dfu-programmer atmega32u4 start
+  </code>
+</section>
+</body>
+</html>
