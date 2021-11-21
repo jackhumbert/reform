@@ -299,6 +299,21 @@ done:
   i2c_master_stop();
 }
 
+void matrix_render_direct(uint8_t* bitmap) {
+  gfx_on();
+
+  // Move to the home position
+  send_cmd3(PageAddr, 0, MatrixRows - 1);
+  send_cmd3(ColumnAddr, 0, (MatrixCols * FontWidth) - 1);
+
+  for (uint16_t i=0; i<(128/8)*32; i++) {
+    i2c_master_write(bitmap[i]);
+  }
+
+done:
+  i2c_master_stop();
+}
+
 void gfx_flush(void) {
   matrix_render(&display);
 }

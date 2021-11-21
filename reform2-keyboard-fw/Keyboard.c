@@ -42,7 +42,7 @@
 #include <avr/sleep.h>
 
 #define KBD_FW_REV "R1 20210927"
-//#define KBD_VARIANT_STANDALONE
+#define KBD_VARIANT_STANDALONE
 #define KBD_VARIANT_QWERTY_US
 //#define KBD_VARIANT_NEO2
 
@@ -1063,5 +1063,8 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
   else if (data[0]=='R' && data[1]=='P' && data[2]=='R' && data[3]=='T') {
     // RPRT: Report power stats to UART
     remote_report_voltages();
+  }
+  else if (data[0]=='B' && data[1]=='M' && data[2]=='A' && data[3]=='P') {
+    matrix_render_direct(data+4);
   }
 }
