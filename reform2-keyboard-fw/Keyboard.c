@@ -725,6 +725,15 @@ bool media_toggle = 0;
 bool fn_key = 0; // Am I holding FN?
 bool circle = 0; // Am I holding circle?
 
+/*void game(void) {
+  while (game_running) {
+    process_keyboard(0, NULL);
+    game_paint();
+    Delay_MS(100);
+  }
+}*/
+
+// usb_report_mode: if you pass 0, you can leave KeyboardReport NULL
 void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardReport) {
   // how many keys are pressed this round
   uint8_t total_pressed = 0;
@@ -857,6 +866,14 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
     case 3: output_high(PORTD, 7); break;
     case 4: output_high(PORTD, 6); break;
     case 5: output_high(PORTD, 4); break;
+    }
+  }
+
+  // example special casing code
+  if (special_pgup) {
+    for (int i=0; i<used_key_codes; i++) {
+      int k = KeyboardReport->KeyCode[i];
+      KeyboardReport->KeyCode[i] = k+1;
     }
   }
 
@@ -1139,5 +1156,9 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
   }
   else if (data[0]=='B' && data[1]=='M' && data[2]=='A' && data[3]=='P') {
     matrix_render_direct(data+4);
+  }
+  else if (data[0]=='J' && data[1]=='U' && data[2]=='M' && data[3]=='P') {
+    void (*trampoline)(void) = (void (*)(void))&data[4];
+    trampoline();
   }
 }

@@ -306,8 +306,24 @@ void matrix_render_direct(uint8_t* bitmap) {
   send_cmd3(PageAddr, 0, MatrixRows - 1);
   send_cmd3(ColumnAddr, 0, (MatrixCols * FontWidth) - 1);
 
-  for (uint16_t i=0; i<(128/8)*32; i++) {
-    i2c_master_write(bitmap[i]);
+  i2c_start_write(SSD1306_ADDRESS);
+  i2c_master_write(0x40);
+
+  //int t=0;
+
+  int c = 0;
+  for (uint16_t y=0; y<4; y++) {
+    //t = y % 2;
+    for (uint16_t x=0; x<126; x++) {
+      /*if (t==0) {
+        i2c_master_write(0xaa);
+      } else {
+        i2c_master_write(0x55);
+      }
+      t = 1 - t;*/
+
+      i2c_master_write(bitmap[c++]);
+    }
   }
 
 done:
