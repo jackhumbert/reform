@@ -93,4 +93,7 @@ void matrix_write_ln(struct CharacterMatrix *matrix, const char *data);
 void matrix_write_P(struct CharacterMatrix *matrix, const char *data);
 void matrix_render(struct CharacterMatrix *matrix);
 
-//bool process_record_gfx(uint16_t keycode, keyrecord_t *record);
+// new stuff here!
+void matrix_render_direct(uint8_t* bitmap);
+
+//bool process_record_gfx(uint16_t keycode, keyrecord_t *record); 

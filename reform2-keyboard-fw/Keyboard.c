@@ -49,6 +49,7 @@
 #define COLS 14
 #define ROWS 6
 
+// Every line of `matrix` is a row of the keyboard, starting from the top.
 uint8_t matrix[COLS*6+2] = {
   KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, HID_KEYBOARD_SC_EXSEL,
 
@@ -60,8 +61,46 @@ uint8_t matrix[COLS*6+2] = {
 
   HID_KEYBOARD_SC_LEFT_SHIFT, HID_KEYBOARD_SC_NON_US_BACKSLASH_AND_PIPE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT,
 
-  HID_KEYBOARD_SC_RIGHT_GUI, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_RIGHT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0xfe,0xed,0xca,0xfe
+  // HID_KEYBOARD_SC_RIGHT_GUI, HID_KEYBOARD_SC_LEFT_GUI, HID_KEYBOARD_SC_RIGHT_CONTROL, KEY_SPACE, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_RIGHT_ALT, KEY_SPACE, HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0xfe,0xed,0xca,0xfe
+
+  HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_LEFT_GUI, 
+  KEY_SPACE, KEY_SPACE, KEY_SPACE, KEY_SPACE, HID_KEYBOARD_SC_RIGHT_ALT, HID_KEYBOARD_SC_EXECUTE, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0xfe,0xed,0xca,0xfe
 };
+
+uint8_t matrix_fn[COLS*6+2] = {
+  KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, HID_KEYBOARD_SC_MEDIA_BACKWARD, HID_KEYBOARD_SC_MEDIA_PLAY, HID_KEYBOARD_SC_MEDIA_FORWARD, 173, 174, 175, HID_KEYBOARD_SC_EXSEL,
+
+// volumedown 174
+// volumeup 175
+// mute 173
+
+  KEY_GRAVE_ACCENT_AND_TILDE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS_AND_UNDERSCORE, KEY_EQUAL_AND_PLUS, HID_KEYBOARD_SC_DELETE,
+
+  KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_OPENING_BRACKET_AND_OPENING_BRACE, KEY_CLOSING_BRACKET_AND_CLOSING_BRACE, KEY_BACKSLASH_AND_PIPE,
+
+  HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_APPLICATION, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON_AND_COLON, KEY_APOSTROPHE_AND_QUOTE, KEY_ENTER,
+
+  HID_KEYBOARD_SC_LEFT_SHIFT, HID_KEYBOARD_SC_NON_US_BACKSLASH_AND_PIPE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_PAGE_UP, HID_KEYBOARD_SC_RIGHT_SHIFT,
+
+  HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_LEFT_GUI, 
+  KEY_SPACE, KEY_SPACE, KEY_SPACE, KEY_SPACE, HID_KEYBOARD_SC_RIGHT_ALT, HID_KEYBOARD_SC_EXECUTE, HID_KEYBOARD_SC_HOME, HID_KEYBOARD_SC_PAGE_DOWN, HID_KEYBOARD_SC_END,
+};
+
+uint8_t matrix_fn_toggled[COLS*6+2] = {
+  KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, HID_KEYBOARD_SC_MEDIA_BACKWARD, HID_KEYBOARD_SC_MEDIA_PLAY, HID_KEYBOARD_SC_MEDIA_FORWARD, 173, 174, 175, HID_KEYBOARD_SC_EXSEL,
+
+  KEY_GRAVE_ACCENT_AND_TILDE, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0, KEY_MINUS_AND_UNDERSCORE, KEY_EQUAL_AND_PLUS, HID_KEYBOARD_SC_DELETE,
+
+  KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_OPENING_BRACKET_AND_OPENING_BRACE, KEY_CLOSING_BRACKET_AND_CLOSING_BRACE, KEY_BACKSLASH_AND_PIPE,
+
+  HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_APPLICATION, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON_AND_COLON, KEY_APOSTROPHE_AND_QUOTE, KEY_ENTER,
+
+  HID_KEYBOARD_SC_LEFT_SHIFT, HID_KEYBOARD_SC_NON_US_BACKSLASH_AND_PIPE, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN, HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN, KEY_SLASH_AND_QUESTION_MARK,  HID_KEYBOARD_SC_UP_ARROW, HID_KEYBOARD_SC_RIGHT_SHIFT,
+
+  HID_KEYBOARD_SC_LEFT_CONTROL, HID_KEYBOARD_SC_LEFT_ALT, HID_KEYBOARD_SC_LEFT_GUI, 
+  KEY_SPACE, KEY_SPACE, KEY_SPACE, KEY_SPACE, HID_KEYBOARD_SC_RIGHT_ALT, HID_KEYBOARD_SC_EXECUTE, HID_KEYBOARD_SC_LEFT_ARROW, HID_KEYBOARD_SC_DOWN_ARROW, HID_KEYBOARD_SC_RIGHT_ARROW,  0xfe,0xed,0xca,0xfe
+};
+
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
@@ -681,10 +720,16 @@ void reset_keyboard_state(void) {
   last_meta_key = 0;
 }
 
+uint8_t* active_matrix = matrix;
+bool media_toggle = 0;
+bool fn_key = 0; // Am I holding FN?
+bool circle = 0; // Am I holding circle?
+
 void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardReport) {
   // how many keys are pressed this round
   uint8_t total_pressed = 0;
   uint8_t used_key_codes = 0;
+
 
   // pull ROWs low one after the other
   for (int y=0; y<ROWS; y++) {
@@ -703,8 +748,9 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
 
     // check input COLs
     for (int x=0; x<14; x++) {
+      uint16_t keycode;
       uint16_t loc = y*COLS+x;
-      uint16_t keycode = matrix[loc];
+      keycode = active_matrix[loc];
       uint8_t  pressed = 0;
       uint8_t  debounced_pressed = 0;
 
@@ -740,11 +786,18 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
       if (debounced_pressed) {
         total_pressed++;
 
-        // circle key?
+        // Is circle key pressed?
         if (keycode == HID_KEYBOARD_SC_EXSEL) {
-          if (!active_meta_mode && !last_meta_key) {
-            enter_meta_mode();
+          if (fn_key) {
+            circle = 1;
+          } else {
+            if (!active_meta_mode && !last_meta_key) {
+              enter_meta_mode();
+            }
           }
+        } else if (keycode == HID_KEYBOARD_SC_EXECUTE) {
+          fn_key = 1;
+          active_matrix = matrix_fn;
         } else {
           if (active_meta_mode) {
             // not holding the same key?
@@ -774,6 +827,26 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
             }
           }
         }
+      } else {
+        if (keycode == HID_KEYBOARD_SC_EXECUTE) {
+          fn_key = 0;
+          if (media_toggle) {
+            active_matrix = matrix_fn_toggled;
+          } else {
+            active_matrix = matrix;
+          }
+        } else if (keycode == HID_KEYBOARD_SC_EXSEL) {
+          if (fn_key && circle) {
+            if (!media_toggle) {
+              media_toggle = 1;
+              active_matrix = matrix_fn_toggled;
+            } else { 
+              media_toggle = 0;
+              active_matrix = matrix_fn; 
+            }
+          }
+          circle = 0;
+        } 
       }
     }
 
