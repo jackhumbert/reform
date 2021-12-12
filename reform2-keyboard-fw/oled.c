@@ -1,8 +1,19 @@
-#include "ssd1306.h"
+/*
+  MNT Reform 2.0 Keyboard Firmware
+  See keyboard.c for Copyright
+  SPDX-License-Identifier: MIT
+*/
+
+// OLED (SSD1306) rendering code. The OLED is interfaced via I2C.
+
+#include "oled.h"
 #include "i2c.h"
+#include <stdio.h>
 #include <string.h>
 #include <avr/pgmspace.h>
 #include "gfx/font.c"
+
+int oledbrt = 0;
 
 // Write command sequence.
 // Returns true on success.
@@ -10,18 +21,17 @@ static inline bool _send_cmd1(uint8_t cmd) {
   bool res = false;
 
   if (i2c_start_write(SSD1306_ADDRESS)) {
-    //xprintf("failed to start write to %d\n", SSD1306_ADDRESS);
+    // failed to start write
     goto done;
   }
 
   if (i2c_master_write(0x0 /* command byte follows */)) {
-    //print("failed to write control byte\n");
-
+    // failed to write control byte
     goto done;
   }
 
   if (i2c_master_write(cmd)) {
-    //xprintf("failed to write command %d\n", cmd);
+    //  failed to write command
     goto done;
   }
   res = true;
@@ -148,6 +158,15 @@ bool gfx_on(void) {
 
 done:
   return success;
+}
+
+void gfx_clear(void) {
+  for (int y=0; y<4; y++) {
+    for (int x=0; x<21; x++) {
+      gfx_poke(x,y,' ');
+    }
+  }
+  gfx_clear_invert();
 }
 
 void gfx_contrast(int c) {
@@ -309,19 +328,9 @@ void matrix_render_direct(uint8_t* bitmap) {
   i2c_start_write(SSD1306_ADDRESS);
   i2c_master_write(0x40);
 
-  //int t=0;
-
   int c = 0;
   for (uint16_t y=0; y<4; y++) {
-    //t = y % 2;
     for (uint16_t x=0; x<126; x++) {
-      /*if (t==0) {
-        i2c_master_write(0xaa);
-      } else {
-        i2c_master_write(0x55);
-      }
-      t = 1 - t;*/
-
       i2c_master_write(bitmap[c++]);
     }
   }
@@ -332,4 +341,16 @@ done:
 
 void gfx_flush(void) {
   matrix_render(&display);
+}
+
+void oled_brightness_inc(void) {
+  oledbrt+=10;
+  if (oledbrt>=0xff) oledbrt = 0xff;
+  gfx_contrast(oledbrt);
+}
+
+void oled_brightness_dec(void) {
+  oledbrt-=10;
+  if (oledbrt<0) oledbrt = 0;
+  gfx_contrast(oledbrt);
 }
