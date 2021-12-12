@@ -1,4 +1,11 @@
-#pragma once
+/*
+  MNT Reform 2.0 Keyboard Firmware
+  See keyboard.c for Copyright
+  SPDX-License-Identifier: MIT
+*/
+
+#ifndef _I2C_H_
+#define _I2C_H_
 
 #include <stdint.h>
 
@@ -36,7 +43,6 @@ static inline unsigned char i2c_start_write(unsigned char addr) {
   return i2c_master_start((addr << 1) | I2C_WRITE);
 }
 
-// from SSD1306 scrips
 extern unsigned char i2c_rep_start(unsigned char addr);
 extern void i2c_start_wait(unsigned char addr);
 extern unsigned char i2c_readAck(void);
@@ -44,3 +50,5 @@ extern unsigned char i2c_readNak(void);
 extern unsigned char i2c_read(unsigned char ack);
 
 #define i2c_read(ack)  (ack) ? i2c_readAck() : i2c_readNak();
+
+#endif

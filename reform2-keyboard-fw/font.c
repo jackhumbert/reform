@@ -1,3 +1,9 @@
+/*
+  MNT Reform 2.0 Keyboard Firmware
+  See keyboard.c for Copyright
+  SPDX-License-Identifier: MIT
+*/
+
 #include <avr/pgmspace.h>
 
 const unsigned char font[] PROGMEM = {
