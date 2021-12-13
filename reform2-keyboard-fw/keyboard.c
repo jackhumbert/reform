@@ -26,13 +26,14 @@
 #include "scancodes.h"
 
 #ifdef KBD_VARIANT_ELLEN
-#include "matrix_ellen.c"
+#include "matrix_ellen.h"
 #else
-#include "matrix.c"
+#include "matrix.h"
 #endif
 
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 static uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
+static uint8_t PrevMediaControlHIDReportBuffer[sizeof(USB_MediaReport_Data_t)];
 
 /** LUFA HID Class driver interface configuration and state information. This structure is
  *  passed to all HID Class driver functions, so that multiple instances of the same class
@@ -46,11 +47,28 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
         .ReportINEndpoint             =
           {
             .Address              = KEYBOARD_EPADDR,
-            .Size                 = KEYBOARD_EPSIZE,
+            .Size                 = HID_EPSIZE,
             .Banks                = 1,
           },
         .PrevReportINBuffer           = PrevKeyboardHIDReportBuffer,
         .PrevReportINBufferSize       = sizeof(PrevKeyboardHIDReportBuffer),
+      },
+  };
+
+/** LUFA HID Class driver interface configuration and state information for the Media Controller */
+USB_ClassInfo_HID_Device_t MediaControl_HID_Interface =
+  {
+    .Config =
+      {
+        .InterfaceNumber              = INTERFACE_ID_MediaControl,
+        .ReportINEndpoint             =
+          {
+            .Address              = MEDIACONTROL_EPADDR,
+            .Size                 = HID_EPSIZE,
+            .Banks                = 1,
+          },
+        .PrevReportINBuffer           = PrevMediaControlHIDReportBuffer,
+        .PrevReportINBufferSize       = sizeof(PrevMediaControlHIDReportBuffer),
       },
   };
 
@@ -79,8 +97,39 @@ void reset_keyboard_state(void) {
   last_meta_key = 0;
 }
 
+inline bool is_media_key(uint8_t keycode) {
+  return (keycode>=HID_KEYBOARD_SC_MEDIA_PLAY);
+}
+
+bool get_media_keys(uint8_t keycode, USB_MediaReport_Data_t* mcr) {
+  bool media_key = false;
+  if (keycode == HID_KEYBOARD_SC_MEDIA_MUTE) {
+    if (mcr) mcr->Mute = 1;
+    media_key = true;
+  } else if (keycode == HID_KEYBOARD_SC_MEDIA_VOLUME_UP) {
+    if (mcr) mcr->VolumeUp = 1;
+    media_key = true;
+  } else if (keycode == HID_KEYBOARD_SC_MEDIA_VOLUME_DOWN) {
+    if (mcr) mcr->VolumeDown = 1;
+    media_key = true;
+  } else if (keycode == HID_KEYBOARD_SC_MEDIA_BACKWARD) {
+    if (mcr) mcr->PreviousTrack = 1;
+    media_key = true;
+  } else if (keycode == HID_KEYBOARD_SC_MEDIA_FORWARD) {
+    if (mcr) mcr->NextTrack = 1;
+    media_key = true;
+  } else if (keycode == HID_KEYBOARD_SC_MEDIA_PLAY) {
+    if (mcr) mcr->PlayPause = 1;
+    media_key = true;
+  }
+  return media_key;
+}
+
+#define MAX_SCANCODES 6
+static uint8_t pressed_scancodes[MAX_SCANCODES] = {0,0,0,0,0,0};
+
 // usb_report_mode: if you pass 0, you can leave KeyboardReport NULL
-void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardReport) {
+int process_keyboard(uint8_t* resulting_scancodes) {
   // how many keys are pressed this round
   uint8_t total_pressed = 0;
   uint8_t used_key_codes = 0;
@@ -98,7 +147,7 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
 
     // wait for signal to stabilize
     // TODO maybe not necessary
-    _delay_us(10);
+    //_delay_us(10);
 
     // check input COLs
     for (int x=0; x<14; x++) {
@@ -170,14 +219,14 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
               if (stay_meta == 2) {
                 reset_keyboard_state();
                 enter_meta_mode();
-                return;
+                return 0;
               }
             }
           } else if (!last_meta_key) {
             // not meta mode, regular key: report keypress via USB
-            // 6 keys is a hard limit in the HID descriptor :/
-            if (usb_report_mode && KeyboardReport && used_key_codes<6) {
-              KeyboardReport->KeyCode[used_key_codes++] = keycode;
+            // 6 keys is the limit in the HID descriptor
+            if (used_key_codes < MAX_SCANCODES && resulting_scancodes) {
+              resulting_scancodes[used_key_codes++] = keycode;
             }
           }
         }
@@ -195,13 +244,13 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
             if (!media_toggle) {
               media_toggle = 1;
               active_matrix = matrix_fn_toggled;
-            } else { 
+            } else {
               media_toggle = 0;
-              active_matrix = matrix_fn; 
+              active_matrix = matrix_fn;
             }
           }
           circle = 0;
-        } 
+        }
       }
     }
 
@@ -217,6 +266,8 @@ void process_keyboard(char usb_report_mode, USB_KeyboardReport_Data_t* KeyboardR
 
   // if no more keys are held down, allow a new meta command
   if (total_pressed<1) last_meta_key = 0;
+
+  return used_key_codes;
 }
 
 int main(void)
@@ -238,8 +289,9 @@ int main(void)
 
   for (;;)
   {
-    process_keyboard(0, NULL);
+    process_keyboard(NULL);
     HID_Device_USBTask(&Keyboard_HID_Interface);
+    HID_Device_USBTask(&MediaControl_HID_Interface);
     USB_USBTask();
     counter++;
 #ifndef KBD_VARIANT_STANDALONE
@@ -309,6 +361,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
   bool ConfigSuccess = true;
 
   ConfigSuccess &= HID_Device_ConfigureEndpoints(&Keyboard_HID_Interface);
+	ConfigSuccess &= HID_Device_ConfigureEndpoints(&MediaControl_HID_Interface);
 
   USB_Device_EnableSOFEvents();
 }
@@ -317,12 +370,14 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 void EVENT_USB_Device_ControlRequest(void)
 {
   HID_Device_ProcessControlRequest(&Keyboard_HID_Interface);
+  HID_Device_ProcessControlRequest(&MediaControl_HID_Interface);
 }
 
 /** Event handler for the USB device Start Of Frame event. */
 void EVENT_USB_Device_StartOfFrame(void)
 {
   HID_Device_MillisecondElapsed(&Keyboard_HID_Interface);
+  HID_Device_MillisecondElapsed(&MediaControl_HID_Interface);
 }
 
 /** HID class driver callback function for the creation of HID reports to the host.
@@ -342,11 +397,30 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
                                          void* ReportData,
                                          uint16_t* const ReportSize)
 {
-  USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
+  int num_keys = process_keyboard(pressed_scancodes);
+  if (num_keys > MAX_SCANCODES) num_keys = MAX_SCANCODES;
 
-  process_keyboard(1, KeyboardReport);
-
-  *ReportSize = sizeof(USB_KeyboardReport_Data_t);
+  if (HIDInterfaceInfo == &Keyboard_HID_Interface) {
+    // host asks for a keyboard report
+    USB_KeyboardReport_Data_t* KeyboardReport = (USB_KeyboardReport_Data_t*)ReportData;
+    *ReportSize = sizeof(USB_KeyboardReport_Data_t);
+    for (int i=0; i<num_keys; i++) {
+      uint8_t sc = pressed_scancodes[i];
+      if (!is_media_key(sc)) {
+        KeyboardReport->KeyCode[i] = sc;
+      }
+    }
+  } else if (HIDInterfaceInfo == &MediaControl_HID_Interface) {
+    // host asks for a media control report
+    USB_MediaReport_Data_t* MediaControlReport = (USB_MediaReport_Data_t*)ReportData;
+    *ReportSize = sizeof(USB_MediaReport_Data_t);
+    for (int i=0; i<num_keys; i++) {
+      uint8_t sc = pressed_scancodes[i];
+      if (is_media_key(sc)) {
+        get_media_keys(sc, MediaControlReport);
+      }
+    }
+  }
   return false;
 }
 

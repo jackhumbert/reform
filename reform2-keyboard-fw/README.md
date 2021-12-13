@@ -4,8 +4,8 @@
 
 - `constants.h`: Define which keyboard variant you want to build for
 - `keyboard.c`: Main entrypoint that includes the chosen matrix file (keyboard layout)
-- `matrix.c`: Keyboard layout definition (default)
-- `matrix_*.c`: Alternative layouts
+- `matrix.h`: Keyboard layout definition (default)
+- `matrix_*.h`: Alternative layouts
 - `backlight.c`: Keyboard backlight control
 - `menu.c`: OLED Menu handling
 - `oled.c`: OLED graphics control
@@ -47,5 +47,3 @@ To build, type:
 
 To flash, put your keyboard into [flashing mode](https://mntre.com/reform2/handbook/parts.html#keyboard-firmware) and run:
 `sudo ./flash.sh`
-
-
