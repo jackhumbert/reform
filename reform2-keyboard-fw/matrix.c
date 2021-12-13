@@ -14,6 +14,7 @@ uint8_t matrix[KBD_MATRIX_SZ] = {
   MATRIX_DEFAULT_ROW_3,
   MATRIX_DEFAULT_ROW_4,
   MATRIX_DEFAULT_ROW_5,
+  MATRIX_DEFAULT_ROW_6,
 
   // Marker for layout editor (FIXME)
   KBD_EDITOR_MARKER
