@@ -76,6 +76,11 @@ int remote_try_wakeup(void) {
   int ok = 0;
   char buf[64];
 
+#ifdef KBD_VARIANT_STANDALONE
+  // there's no remote
+  return 0;
+#endif
+
   for (int i=0; i<1000; i++) {
     if (i%10 == 0) {
       gfx_clear();
@@ -106,6 +111,11 @@ int remote_try_wakeup(void) {
 
 int remote_try_command(char* cmd, int print_response) {
   int ok = 0;
+
+#ifdef KBD_VARIANT_STANDALONE
+  // there's no remote
+  return 0;
+#endif
 
   empty_serial();
   for (int tries=0; tries<2; tries++) {
@@ -282,7 +292,7 @@ int remote_check_for_low_battery(void) {
       remote_som_power_expected_state = is_computer_on;
     }
   }
-  
+
   return ok;
 }
 
@@ -310,7 +320,7 @@ int remote_turn_on_som(void) {
     // FIXME what is remote_som_power_expected_state?
     return ok;
   }
-  
+
   remote_som_power_expected_state = 1;
   return ok;
 }
