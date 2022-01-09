@@ -29,8 +29,8 @@ void oled_blit(uint8_t* src, uint8_t* dst) {
       uint8_t column = 0;
 
       for (int z = 0; z < 8; z++) {
-        // look up the pixel
-        uint8_t bit = src[((y * 8 + 7 - z)*COLS + x)] & 1;
+        // look up the pixel and threshold it to black and white at 127
+        uint8_t bit = src[((y * 8 + 7 - z)*COLS + x)] > 127;
 
         // bitshift the column byte to the left to make room for new pixel
         column <<= 1;
@@ -63,7 +63,7 @@ void draw_sine(float t, uint8_t* dst) {
     if (y < 0) y = 0;
     if (y > 31) y = 31;
 
-    dst[y*COLS + x] = 1;
+    dst[y*COLS + x] = 0xff;
   }
 }
 
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
   uint32_t t = 0;
 
   if (argc < 2) {
-    printf("Usage: sudo kbdgfx /dev/hidraw0\n");
+    printf("Usage: sudo kbdgfx /dev/hidraw0 [bitmap.raw]\n");
     exit(1);
   }
 
@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
     FILE* f = fopen(argv[1],"w");
 
     if (!f) {
-      printf("Couldn't open %s!\n", argv[1]);
+      printf("Couldn't open %s. Try sudo.\n", argv[1]);
       exit(1);
     }
 
@@ -95,10 +95,31 @@ int main(int argc, char** argv) {
     // clear
     memset(fb, 0, FBUFSZ);
 
-    // paint
-    draw_sine((float)t*0.03, fb);
-    draw_sine((float)t*0.05, fb);
+    if (argc == 3) {
+      // read bitmap from file
+      FILE* bmf = fopen(argv[2],"r");
+      if (!bmf) {
+        printf("Couldn't open bitmap %s!\n", argv[2]);
+        fclose(f);
+        exit(2);
+      }
 
+      int res = fread(fb, FBUFSZ, 1, bmf);
+      fclose(bmf);
+      
+      if (res<1) {
+        printf("Couldn't read bitmap or wrong size.\n", argv[2]);
+        fclose(f);
+        exit(3);
+      }
+    } else {
+      // graphics demo
+    
+      // paint
+      draw_sine((float)t*0.03, fb);
+      draw_sine((float)t*0.05, fb);
+    }
+    
     // convert to weird OLED buffer format
     oled_blit(fb, buf+5);
 
@@ -106,6 +127,9 @@ int main(int argc, char** argv) {
     fwrite(buf, BUFSZ, 1, f);
 
     fclose(f);
+
+    // if we're in bitmap file mode, exit now
+    if (argc == 3) exit(0);
 
     // ~50 FPS
     usleep(1000*20);
