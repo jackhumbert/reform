@@ -1,8 +1,14 @@
-#pragma once
+/*
+  MNT Reform 2.0 Keyboard Firmware
+  See keyboard.c for Copyright
+  SPDX-License-Identifier: MIT
+*/
+
+#ifndef _OLED_H_
+#define _OLED_H_
 
 #include <stdbool.h>
-#include <stdio.h>
-//#include "action.h"
+#include <stdint.h>
 
 enum ssd1306_cmds {
   DisplayOff = 0xAE,
@@ -44,11 +50,7 @@ enum ssd1306_cmds {
   VerticalAndLeftHorizontalScroll = 0x2a,
 };
 
-// Controls the SSD1306 128x32 OLED display via i2c
-
-#ifndef SSD1306_ADDRESS
 #define SSD1306_ADDRESS 0x3C
-#endif
 
 #define DisplayHeight 32
 #define DisplayWidth 128
@@ -77,13 +79,12 @@ void gfx_task(void);
 bool gfx_off(void);
 bool gfx_on(void);
 void gfx_flush(void);
+void gfx_clear(void);
 void gfx_write_char(uint8_t c);
 void gfx_write(const char *data);
 void gfx_write_P(const char *data);
 void gfx_clear_screen(void);
 void gfx_contrast(int c);
-
-void gfx_task_user(void);
 
 void matrix_clear(struct CharacterMatrix *matrix);
 void matrix_write_char_inner(struct CharacterMatrix *matrix, uint8_t c);
@@ -92,5 +93,9 @@ void matrix_write(struct CharacterMatrix *matrix, const char *data);
 void matrix_write_ln(struct CharacterMatrix *matrix, const char *data);
 void matrix_write_P(struct CharacterMatrix *matrix, const char *data);
 void matrix_render(struct CharacterMatrix *matrix);
+void matrix_render_direct(uint8_t* bitmap);
 
-//bool process_record_gfx(uint16_t keycode, keyrecord_t *record);
+void oled_brightness_inc(void);
+void oled_brightness_dec(void);
+
+#endif

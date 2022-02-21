@@ -1,3 +1,14 @@
+/*
+  MNT Reform 2.0 Keyboard Firmware
+  See keyboard.c for Copyright
+  SPDX-License-Identifier: MIT
+*/
+
+// Find additional codes in lufa-master/LUFA/Drivers/USB/Class/Common/HIDClassCommon.h
+
+#ifndef _SCANCODES_H_
+#define _SCANCODES_H_
+
 #define   KEY_A   0x04
 #define   KEY_B   0x05
 #define   KEY_C   0x06
@@ -114,3 +125,7 @@
 #define   KEY_MUTE   0x7F
 #define   KEY_VOLUME_UP   0x80
 #define   KEY_VOLUME_DOWN   0x81
+
+#define   KEY_CIRCLE 0xA4 // "EXSEL"
+
+#endif

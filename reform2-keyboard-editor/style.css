@@ -1,0 +1,75 @@
+@import url('inter_ui_webfont/inter-ui.css');
+
+* { font-family: 'Inter UI', sans-serif; }
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 40px;
+}
+
+h1 {
+    font-size: 75px;
+    font-weight: 800;
+    margin-left: -3px;
+    line-height: 1.0;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 34px;
+    font-weight: 800;
+    margin-bottom: 18px;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 1em;
+}
+
+section > div {
+    margin-bottom: 1em;
+}
+
+.kbd-key {
+    display: inline-block;
+    width: 60px;
+    height: 55px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    max-width: 60px;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    padding-top: 5px;
+    text-align: center;
+
+    border: 1px solid black;
+    border-radius: 3px;
+    box-shadow: 0px 2px 4px rgb(0 0 0 / 25%);
+}
+
+.kbd-key.key-1-5 {
+    width: 90px;
+    max-width: 90px;
+}
+
+.last-row .kbd-key.key-1-5 {
+    margin-right: 8.3px;
+}
+
+.kbd-key.selected {
+    background-color: black;
+    color: white;
+}
+
+input, button {
+    font-size: 14pt;
+}

@@ -1,31 +1,7 @@
 /*
-             LUFA Library
-     Copyright (C) Dean Camera, 2018.
-
-  dean [at] fourwalledcubicle [dot] com
-           www.lufa-lib.org
-*/
-
-/*
-  Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
-
-  Permission to use, copy, modify, distribute, and sell this
-  software and its documentation for any purpose is hereby granted
-  without fee, provided that the above copyright notice appear in
-  all copies and that both that the copyright notice and this
-  permission notice and warranty disclaimer appear in supporting
-  documentation, and that the name of the author not be used in
-  advertising or publicity pertaining to distribution of the
-  software without specific, written prior permission.
-
-  The author disclaims all warranties with regard to this
-  software, including all implied warranties of merchantability
-  and fitness.  In no event shall the author be liable for any
-  special, indirect or consequential damages or any damages
-  whatsoever resulting from loss of use, data or profits, whether
-  in an action of contract, negligence or other tortious action,
-  arising out of or in connection with the use or performance of
-  this software.
+  MNT Reform 2.0 Keyboard Firmware
+  See keyboard.c for Copyright
+  SPDX-License-Identifier: MIT
 */
 
 /** \file
@@ -51,9 +27,13 @@
 			USB_Descriptor_Configuration_Header_t Config;
 
 			// Keyboard HID Interface
-			USB_Descriptor_Interface_t            HID_Interface;
-			USB_HID_Descriptor_HID_t              HID_KeyboardHID;
-			USB_Descriptor_Endpoint_t             HID_ReportINEndpoint;
+			USB_Descriptor_Interface_t            HID1_KeyboardInterface;
+			USB_HID_Descriptor_HID_t              HID1_KeyboardHID;
+			USB_Descriptor_Endpoint_t             HID1_ReportINEndpoint;
+      // Media Control HID Interface
+			USB_Descriptor_Interface_t            HID2_MediaControlInterface;
+			USB_HID_Descriptor_HID_t              HID2_MediaControlHID;
+			USB_Descriptor_Endpoint_t             HID2_ReportINEndpoint;
 		} USB_Descriptor_Configuration_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
@@ -63,6 +43,7 @@
 		enum InterfaceDescriptors_t
 		{
 			INTERFACE_ID_Keyboard = 0, /**< Keyboard interface descriptor ID */
+			INTERFACE_ID_MediaControl = 1, /**< Media Control interface descriptor ID */
 		};
 
 		/** Enum for the device string descriptor IDs within the device. Each string descriptor should
@@ -80,8 +61,11 @@
 		/** Endpoint address of the Keyboard HID reporting IN endpoint. */
 		#define KEYBOARD_EPADDR              (ENDPOINT_DIR_IN | 1)
 
-		/** Size in bytes of the Keyboard HID reporting IN endpoint. */
-		#define KEYBOARD_EPSIZE              8
+		/** Endpoint address of the Media Control HID reporting IN endpoint. */
+		#define MEDIACONTROL_EPADDR          (ENDPOINT_DIR_IN | 3)
+
+		/** Size in bytes of HID reporting IN endpoints. */
+		#define HID_EPSIZE          8
 
 	/* Function Prototypes: */
 //uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
@@ -90,4 +74,3 @@
 //	                                    ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
 
 #endif
-
