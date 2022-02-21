@@ -7,11 +7,11 @@
 #ifndef _CONSTANTS_H_
 #define _CONSTANTS_H_
 
-#define KBD_FW_REV "R1 20211213"
-#define KBD_VARIANT_STANDALONE
+#define KBD_FW_REV "R1 20220221"
 #define KBD_VARIANT_QWERTY_US
+//#define KBD_VARIANT_STANDALONE
 //#define KBD_VARIANT_NEO2
-//#define KBD_VARIANT_ELLEN
+//#define KBD_VARIANT_V
 
 #define KBD_COLS 14
 #define KBD_ROWS 6

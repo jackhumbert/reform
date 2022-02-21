@@ -3,7 +3,7 @@
   Copyright 2019-2021  Lukas F. Hartmann / MNT Research GmbH, Berlin (lukas@mntre.com)
   And Contributors:
   Chartreuse
-  Ellen Körbes
+  V Körbes
   Robey Pointer (robey@lag.net)
 
   Based on code from LUFA Library (lufa-lib.org):
@@ -25,8 +25,8 @@
 #include "remote.h"
 #include "scancodes.h"
 
-#ifdef KBD_VARIANT_ELLEN
-#include "matrix_ellen.h"
+#ifdef KBD_VARIANT_V
+#include "matrix_v.h"
 #else
 #include "matrix.h"
 #endif
