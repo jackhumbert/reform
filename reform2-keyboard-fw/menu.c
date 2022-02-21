@@ -17,12 +17,13 @@ int current_menu_y = 0;
 int current_scroll_y = 0;
 
 #ifdef KBD_VARIANT_STANDALONE
-#define MENU_NUM_ITEMS 4
+#define MENU_NUM_ITEMS 5
 const MenuItem menu_items[] = {
   { "Exit Menu         ESC", KEY_ESCAPE },
   { "Key Backlight-     F1", KEY_F1 },
   { "Key Backlight+     F2", KEY_F2 },
-  { "System Status       s", KEY_S }
+  { "System Status       s", KEY_S },
+  { "USB Flashing Mode   x", KEY_X },
 };
 #else
 #define MENU_NUM_ITEMS 9
@@ -65,6 +66,11 @@ int execute_menu_function(int y) {
     return execute_meta_function(menu_items[y].keycode);
   }
   return execute_meta_function(KEY_ESCAPE);
+}
+
+#define BOOTLOADER_START_ADDRESS ((0x8000-0x1000) >> 1)
+void jump_to_bootloader(void) {
+  ((void (*)(void))BOOTLOADER_START_ADDRESS)();
 }
 
 // returns 1 for navigation function (stay in meta mode), 0 for terminal function
@@ -132,6 +138,9 @@ int execute_meta_function(int keycode) {
   else if (keycode == KEY_ESCAPE) {
     gfx_clear();
     gfx_flush();
+  }
+  else if (keycode == KEY_X) {
+    jump_to_bootloader();
   }
 
   gfx_clear();

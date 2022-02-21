@@ -22,7 +22,7 @@ uint8_t matrix[KBD_MATRIX_SZ] = {
 
 // When holding down HYPER
 uint8_t matrix_fn[KBD_MATRIX_SZ] = {
-  // Media keys (not working, FIXME)
+  // Media keys on Hyper + F7-F12
   KEY_ESCAPE,
   KEY_F1,
   KEY_F2,
