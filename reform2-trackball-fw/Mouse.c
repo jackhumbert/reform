@@ -108,20 +108,20 @@ static uint8_t PrevMouseHIDReportBuffer[sizeof(USB_WheelMouseReport_Data_t)];
  *  within a device can be differentiated from one another.
  */
 USB_ClassInfo_HID_Device_t Mouse_HID_Interface =
-	{
-		.Config =
-			{
-				.InterfaceNumber              = INTERFACE_ID_Mouse,
-				.ReportINEndpoint             =
-					{
-						.Address              = MOUSE_EPADDR,
-						.Size                 = MOUSE_EPSIZE,
-						.Banks                = 1,
-					},
-				.PrevReportINBuffer           = PrevMouseHIDReportBuffer,
-				.PrevReportINBufferSize       = sizeof(PrevMouseHIDReportBuffer),
-			},
-	};
+  {
+    .Config =
+      {
+        .InterfaceNumber              = INTERFACE_ID_Mouse,
+        .ReportINEndpoint             =
+          {
+            .Address              = MOUSE_EPADDR,
+            .Size                 = MOUSE_EPSIZE,
+            .Banks                = 1,
+          },
+        .PrevReportINBuffer           = PrevMouseHIDReportBuffer,
+        .PrevReportINBufferSize       = sizeof(PrevMouseHIDReportBuffer),
+      },
+  };
 
 void led_error(void) {
   DDRC = 0b11110100;
@@ -155,13 +155,13 @@ uint8_t twi_read_buf[10];
 
 void SetupHardware(void)
 {
-	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
+  /* Disable watchdog if enabled by bootloader/fuses */
+  MCUSR &= ~(1 << WDRF);
+  wdt_disable();
 
-	// Disable clock division
+  // Disable clock division
   // this should yield 8Mhz with internal osc
-	clock_prescale_set(clock_div_1);
+  clock_prescale_set(clock_div_1);
 
   DDRD = 0b00000000;
   //DDRB = 0b11000110;
@@ -177,13 +177,15 @@ void SetupHardware(void)
   //MCUCR |=(1<<JTD);
   //MCUCR |=(1<<JTD);
 
-  i2c_init();
-
   USB_Init();
 
-  Delay_MS(1000);
+  i2c_init();
+}
+
+void init_sensor(void) {
+  Delay_MS(100);
   led_error();
-  Delay_MS(1000);
+  Delay_MS(100);
 
   if (!i2c_start(ADDR_SENSOR|I2C_WRITE)) {
     i2c_write(0x7f);
@@ -199,7 +201,6 @@ void SetupHardware(void)
 
     led_ok();
   }
-  Delay_MS(100);
 }
 
 /** Event handler for the library USB Connection event. */
@@ -215,23 +216,23 @@ void EVENT_USB_Device_Disconnect(void)
 /** Event handler for the library USB Configuration Changed event. */
 void EVENT_USB_Device_ConfigurationChanged(void)
 {
-	bool ConfigSuccess = true;
+  bool ConfigSuccess = true;
 
-	ConfigSuccess &= HID_Device_ConfigureEndpoints(&Mouse_HID_Interface);
+  ConfigSuccess &= HID_Device_ConfigureEndpoints(&Mouse_HID_Interface);
 
-	USB_Device_EnableSOFEvents();
+  USB_Device_EnableSOFEvents();
 }
 
 /** Event handler for the library USB Control Request reception event. */
 void EVENT_USB_Device_ControlRequest(void)
 {
-	HID_Device_ProcessControlRequest(&Mouse_HID_Interface);
+  HID_Device_ProcessControlRequest(&Mouse_HID_Interface);
 }
 
 /** Event handler for the USB device Start Of Frame event. */
 void EVENT_USB_Device_StartOfFrame(void)
 {
-	HID_Device_MillisecondElapsed(&Mouse_HID_Interface);
+  HID_Device_MillisecondElapsed(&Mouse_HID_Interface);
 }
 
 /** HID class driver callback function for the creation of HID reports to the host.
@@ -254,14 +255,13 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
     if (*ReportID==0) {
       *ReportID=2;
     }
-    
+
     if (*ReportID==2) {
       USB_WheelMouseFeatureReport_Data_t* FeatureReport = (USB_WheelMouseFeatureReport_Data_t*)ReportData;
       FeatureReport->Multiplier = 2;
       *ReportSize = sizeof(USB_WheelMouseFeatureReport_Data_t);
       return true;
     } else {
-      led_set(0x2);
       return false;
     }
   }
@@ -269,9 +269,8 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
   if (*ReportID==0) {
     *ReportID=1;
   }
-  
+
   if (*ReportID!=1) {
-    led_set(0x1);
     return false;
   }
 
@@ -306,7 +305,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 
   MouseReport->Pan = 0;
   MouseReport->Wheel = 0;
-  
+
   if (!(PIND&1) || !(PIND&(1<<2))) {
     // wheel
     MouseReport->Pan = 2*nx;
@@ -345,12 +344,18 @@ void CALLBACK_HID_Device_ProcessHIDReport(USB_ClassInfo_HID_Device_t* const HIDI
 
 int main(void)
 {
-	SetupHardware();
-	GlobalInterruptEnable();
+  int sensor_initialized = 0;
 
-	for (;;)
-	{
-		HID_Device_USBTask(&Mouse_HID_Interface);
-		USB_USBTask();
-	}
+  SetupHardware();
+  GlobalInterruptEnable();
+
+  for (;;) {
+    HID_Device_USBTask(&Mouse_HID_Interface);
+    USB_USBTask();
+
+    if (!sensor_initialized) {
+      init_sensor();
+      sensor_initialized = 1;
+    }
+  }
 }
