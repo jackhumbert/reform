@@ -49,6 +49,10 @@ void keyboard_power_off(void)
   // We can use the Watchdog timer to do this.
 
   do {
+    // Setting WDT parameters must be done within 4 cycles of setting WDCE, so interrupts
+    // must be disabled.
+    cli();
+
     wdt_reset();
     WDTCSR = (1<<WDCE) | (1<<WDE); // Enable writes to watchdog
     WDTCSR = (1<<WDIE) | (1<<WDE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); // Interrupt mode, 1s timeout
