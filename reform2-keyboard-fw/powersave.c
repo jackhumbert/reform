@@ -60,6 +60,7 @@ void keyboard_power_off(void)
     sleep_cpu();        // Actually go to sleep
     // Zzzzzz
     sleep_disable();    // We've woken up
+    wdt_disable();      // Disable watchdog for now
     sei();
     // Check if circle key has been pressed (active-low)
     // If not reset the watchdog and try again
