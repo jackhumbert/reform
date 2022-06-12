@@ -321,6 +321,8 @@ int remote_turn_on_som(void) {
     return ok;
   }
 
+  if (strncmp(response, "system: already on", 18) == 0) ok = 0;
+
   remote_som_power_expected_state = 1;
   return ok;
 }
