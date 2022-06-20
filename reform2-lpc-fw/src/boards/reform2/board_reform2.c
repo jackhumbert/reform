@@ -39,6 +39,9 @@
 // don't forget to set this to the correct rev for your motherboard!
 #define REFORM_MOTHERBOARD_REV REFORM_MBREV_R3
 //#define REF2_DEBUG 1
+#define FW_STRING1 "MREF2LPC"
+#define FW_STRING2 "R3"
+#define FW_STRING3 "20210925"
 #define FW_REV "MREF2LPC R3 20210925"
 
 #define POWERSAVE_SLEEP_SECONDS 1
@@ -55,6 +58,7 @@
 #define ST_EXPECT_CMD     4
 #define ST_SYNTAX_ERROR   5
 #define ST_EXPECT_RETURN  6
+#define ST_EXPECT_MAGIC   7
 
 extern volatile uint8_t   i2c_write_buf[I2C_BUFSIZE];
 extern volatile uint8_t   i2c_read_buf[I2C_BUFSIZE];
@@ -781,6 +785,213 @@ void handle_commands() {
   }
 }
 
+unsigned char spi_cmd_state = ST_EXPECT_MAGIC;
+unsigned char spi_command = '\0';
+
+uint8_t spi_arg1 = 0;
+/**
+ * @brief SPI command from imx poll function
+ * Attempts to handle spi communication asynchronously and in a non-blocking way.
+ * 
+ */
+void handle_spi_commands() {
+  uint8_t spiBuf[8];
+  uint8_t len = 8;
+
+  // non blocking read
+  // read until requested buffer full or receive buffer empty 
+  for (uint8_t i = 0; i < len; i++ )
+  {
+    // No more data in receive buffer
+    if ((LPC_SSP0->SR & SSP0_SR_RNE_MASK) == SSP0_SR_RNE_EMPTY)
+    {
+      len = i;
+      break;
+    }
+
+    spiBuf[i] = LPC_SSP0->DR;
+  }
+
+  if (len > 0) {
+    sprintf(uartBuffer, "spi:%d,%d,%d,%d\r\n", spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3]);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+
+  // states:
+  // 0   arg1 byte expected
+  // 4   command byte expected
+  // 6   execute command
+  // 7   magic byte expected
+  for(uint8_t s = 0; s < len; s++)
+  {
+    if (spi_cmd_state == ST_EXPECT_MAGIC)
+    {
+      // magic byte found, prevents garbage data 
+      // in the bus from triggering a command
+      if(spiBuf[s] == 0xB5)
+      {
+        spi_cmd_state = ST_EXPECT_CMD;
+      }
+    }
+    else if (spi_cmd_state == ST_EXPECT_CMD) {
+      // read command
+      spi_command = spiBuf[s];
+      spi_cmd_state = ST_EXPECT_DIGIT_0;
+    }
+    else if (spi_cmd_state == ST_EXPECT_DIGIT_0) {
+      // read arg1 byte
+      spi_arg1 = spiBuf[s];
+      spi_cmd_state = ST_EXPECT_RETURN;
+    }
+  }
+  
+  if (spi_cmd_state != ST_EXPECT_RETURN) {
+    // waiting for more data
+    return;
+  }
+
+  sprintf(uartBuffer, "spi:exec:%d,%d\r\n", spi_command, spi_arg1);
+  uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+
+  // clear recieve buffer, reuse as send buffer
+  memset(spiBuf, 0, 8);
+  
+  // execute power state command
+  if (spi_command == 'p') {
+    // toggle system power and/or reset imx
+    if (spi_arg1 == 1) {
+      turn_som_power_off();
+    }
+    if (spi_arg1 == 2) {
+      turn_som_power_on();
+    }
+    if (spi_arg1 == 3) {
+      reset_som();
+    }
+    if (spi_arg1 == 4) {
+      turn_aux_power_off();
+    } 
+    if (spi_arg1 == 5) {
+      turn_aux_power_on();
+    } 
+
+    sprintf(uartBuffer,"spi:power: %d\r\n", spi_arg1);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+
+    spiBuf[0] = (som_is_powered > 0);
+  }
+  // execute test command
+  else if (spi_command == 'x') {
+    // test sleep
+    force_sleep = spi_arg1;
+
+    sprintf(uartBuffer,"spi:sleep: %d\r\n", force_sleep);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+  // return firmware version and api info
+  else if (spi_command == 'f')
+  {
+    if(spi_arg1 == 1) {
+      memcpy(spiBuf, FW_STRING2, 8);
+    }
+    else if (spi_arg1 == 2) {
+      memcpy(spiBuf, FW_STRING3, 8);
+    }
+    else {
+      memcpy(spiBuf, FW_STRING1, 8);
+    }
+    sprintf(uartBuffer,"spi:firm:\r\n");
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+  // execute status query command
+  else if (spi_command == 'q') {
+    uint8_t percentage = (uint8_t)capacity_percentage;
+    if (!reached_full_charge) {
+      percentage = 255;
+    }
+    uint16_t voltsInt = (uint16_t)(volts*1000.0);
+    uint16_t currentInt = (uint16_t)(current*1000.0);
+
+    spiBuf[0] = (uint8_t)voltsInt;
+    spiBuf[1] = (uint8_t)(voltsInt >> 8);
+    spiBuf[2] = (uint8_t)currentInt;
+    spiBuf[3] = (uint8_t)(currentInt >> 8);
+    spiBuf[4] = (uint8_t)percentage;
+    spiBuf[5] = (uint8_t)state;
+
+    sprintf(uartBuffer,"spi:status:%d,%d,%d,%d\r\n", voltsInt,
+            currentInt, percentage, state);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+  else if (spi_command == 'v' && spi_arg1>=0 && spi_arg1<=7) {
+    // get cell voltage
+    uint16_t volts = cells_v[spi_arg1]*1000.0;
+    spiBuf[0] = (uint8_t)volts;
+    spiBuf[1] = (uint8_t)(volts >> 8);
+
+    sprintf(uartBuffer,"spi:volt:%d-%d\r\n", spi_arg1, volts);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+  else if (spi_command == 'u') {
+    // turn reporting to i.MX on or off
+    if (spi_arg1 > 0) {
+      // turn i.MX UART output on
+      LPC_IOCON->PIO1_13 |= 0x3;
+    } else {
+      // turn i.MX UART output off
+      LPC_IOCON->PIO1_13 &= ~0x07;
+    }
+  }
+  else if (spi_command == 'c') {
+
+    uint16_t cap_accu = (uint16_t) capacity_accu_ampsecs / 3.6;
+    uint16_t cap_min = (uint16_t) capacity_min_ampsecs / 3.6;
+    uint16_t cap_max = (uint16_t) capacity_max_ampsecs / 3.6;
+
+    spiBuf[0] = (uint8_t) cap_accu;
+    spiBuf[1] = (uint8_t) (cap_accu >> 8);
+    spiBuf[2] = (uint8_t) cap_min;
+    spiBuf[3] = (uint8_t) (cap_min >> 8);
+    spiBuf[4] = (uint8_t) cap_max;
+    spiBuf[5] = (uint8_t) (cap_max >> 8);
+
+    // get battery capacity (mAh)
+    sprintf(uartBuffer,"spi:cap:%d/%d/%d\r\n",
+            cap_accu, cap_min, cap_max);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+  else if (spi_command == 'e') {
+    // toggle serial echo
+    cmd_echo = cmd_number?1:0;
+  }
+  else {
+    sprintf(uartBuffer, "spi:error:command\r\n");
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+
+  // Host must wait while the LPC prepares response buffer
+  // If host does not read 8 bytes the previous response buffer will be stuck in here. 
+  uint8_t Dummy = Dummy;
+  for (uint8_t i = 0; i < 8; i++)
+  {
+    /* Move on only if TX FIFO not full. */
+    // while ((LPC_SSP0->SR & SSP0_SR_TNF_MASK) == SSP0_SR_TNF_FULL);
+    LPC_SSP0->DR = spiBuf[i];
+
+    // while ( (LPC_SSP0->SR & SSP0_SR_RNE_MASK) == SSP0_SR_RNE_EMPTY );
+    /* Whenever a byte is written, MISO FIFO counter increments, Clear FIFO
+    on MISO. Otherwise, when sspReceive is called, previous data byte
+    is left in the FIFO. */
+    Dummy = LPC_SSP0->DR;
+  }
+
+  spi_cmd_state = ST_EXPECT_MAGIC;
+  spi_command = 0;
+  spi_arg1 = 0;
+
+  return;
+}
+
 void calculate_capacity_percentage()
 {
   if (capacity_accu_ampsecs <= capacity_min_ampsecs) {
@@ -790,21 +1001,6 @@ void calculate_capacity_percentage()
   } else {
     capacity_percentage = (int)(100.0*((float)(capacity_accu_ampsecs - capacity_min_ampsecs)) / (float)(capacity_max_ampsecs - capacity_min_ampsecs));
   }
-}
-
-#define REPORT_MAX 63
-void report_to_spi(void)
-{
-  char report[REPORT_MAX+1];
-  int percentage = capacity_percentage;
-  if (!reached_full_charge) {
-    percentage = -1;
-  }
-
-  snprintf(report, REPORT_MAX, "(%dmV %dmA %d%%)\n", (int)(volts*1000.0), (int)(current*1000.0), percentage);
-
-  report[63] = 0;
-  ssp0Send((uint8_t*)report, strlen(report));
 }
 
 void WDT_IRQHandler(void)
@@ -1027,6 +1223,9 @@ int main(void)
     // this also resets powersave holdoff counter
     handle_commands();
 
+    //TODO: if chip select high
+    handle_spi_commands();
+
     if (state == ST_POWERSAVE || state == ST_UNDERVOLTED) {
       cur_second += POWERSAVE_SLEEP_SECONDS;
     } else {
@@ -1038,9 +1237,6 @@ int main(void)
         // prevent rollovers
         cycles_in_state += cur_second-last_second;
 
-        // report to SPI0 controller
-        // TODO: not yet functional
-        // report_to_spi();
       }
       last_second = cur_second;
 
