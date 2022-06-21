@@ -1,5 +1,5 @@
 KPATH := /usr/src/linux-headers-`uname -r`
-obj-m := ./src/lpc-reform2.o
+obj-m := ./src/reform2-lpc.o
 
 .PHONY: all clean doc
 
@@ -11,16 +11,22 @@ clean:
 
 install:
 	mkdir -p /lib/modules/`uname -r`/misc
-	cp ./src/lpc-reform2.ko /lib/modules/`uname -r`/misc
+	cp ./src/reform2-lpc.ko /lib/modules/`uname -r`/misc
 	depmod -a
-	modprobe -r lpc-reform2
-	modprobe lpc-reform2
+	modprobe -r reform2-lpc
+	modprobe reform2-lpc
 
 remove:
-	modprobe -r lpc-reform2
-	$(RM) /lib/modules/`uname -r`/misc/lpc-reform2.ko
+	modprobe -r reform2-lpc
+	$(RM) /lib/modules/`uname -r`/misc/reform2-lpc.ko
 	depmod -a
 
 read:
-	cat /sys/bus/spi/drivers/lpc-reform2/spi1.0/status
-
+	cat /sys/bus/spi/drivers/reform2-lpc/spi1.0/status
+	@echo 
+	cat /sys/bus/spi/drivers/reform2-lpc/spi1.0/cells
+	@echo 
+	cat /sys/bus/spi/drivers/reform2-lpc/spi1.0/firmware
+	@echo 
+	cat /sys/bus/spi/drivers/reform2-lpc/spi1.0/capacity
+	@echo 
