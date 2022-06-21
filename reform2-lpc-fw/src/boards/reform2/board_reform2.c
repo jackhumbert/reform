@@ -41,8 +41,8 @@
 //#define REF2_DEBUG 1
 #define FW_STRING1 "MREF2LPC"
 #define FW_STRING2 "R3"
-#define FW_STRING3 "20210925"
-#define FW_REV "MREF2LPC R3 20210925"
+#define FW_STRING3 "20220621"
+#define FW_REV FW_STRING1 FW_STRING2 FW_STRING3
 
 #define POWERSAVE_SLEEP_SECONDS 1
 #define POWERSAVE_HOLDOFF_CYCLES (60*15)
@@ -884,11 +884,10 @@ void handle_spi_commands() {
   // return firmware version and api info
   else if (spi_command == 'f')
   {
-    if(spi_arg1 == 0)
-    {
+    if(spi_arg1 == 0) {
       memcpy(spiBuf, FW_STRING1, 8);
     }
-    if(spi_arg1 == 1) {
+    else if(spi_arg1 == 1) {
       memcpy(spiBuf, FW_STRING2, 8);
     }
     else {
@@ -923,17 +922,15 @@ void handle_spi_commands() {
   else if (spi_command == 'v') {
     uint16_t volts = 0;
     uint8_t cell1 = 0;
-    uint8_t cell4 = 4;
 
     if (spi_arg1 == 1)
     {
       cell1 = 4;
-      cell4 = 8;
     }
 
-    for(uint8_t c = cell1; c < cell4; c++)
+    for(uint8_t c = 0; c < 4; c++)
     {
-      volts = cells_v[c]*1000.0;
+      volts = cells_v[c + cell1]*1000.0;
       spiBuf[c*2] = (uint8_t)volts;
       spiBuf[(c*2)+1] = (uint8_t)(volts >> 8);
     }
