@@ -47,8 +47,7 @@ static enum power_supply_property bat_props[] = {
 };
 
 static struct power_supply_desc bat_desc = {
-    .name = "reform2_battery",
-    // .technology = POWER_SUPPLY_TECHNOLOGY_LiFe,
+    .name = "8xlifepo4",
     .properties = bat_props,
     .num_properties = ARRAY_SIZE(bat_props),
     .get_property = bat_get_property,
