@@ -795,8 +795,9 @@ uint8_t spi_arg1 = 0;
  * 
  */
 void handle_spi_commands() {
-  uint8_t spiBuf[8];
-  uint8_t len = 8;
+  STATIC_ASSERT(SSP0_FIFOSIZE >= 8);
+  uint8_t spiBuf[SSP0_FIFOSIZE];
+  uint8_t len = SSP0_FIFOSIZE;
 
   // non blocking read
   // read until requested buffer full or receive buffer empty 
@@ -880,35 +881,29 @@ void handle_spi_commands() {
 
     spiBuf[0] = (som_is_powered > 0);
   }
-  // execute test command
-  else if (spi_command == 'x') {
-    // test sleep
-    force_sleep = spi_arg1;
-
-    sprintf(uartBuffer,"spi:sleep: %d\r\n", force_sleep);
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-  }
   // return firmware version and api info
   else if (spi_command == 'f')
   {
+    if(spi_arg1 == 0)
+    {
+      memcpy(spiBuf, FW_STRING1, 8);
+    }
     if(spi_arg1 == 1) {
       memcpy(spiBuf, FW_STRING2, 8);
     }
-    else if (spi_arg1 == 2) {
+    else {
       memcpy(spiBuf, FW_STRING3, 8);
     }
-    else {
-      memcpy(spiBuf, FW_STRING1, 8);
-    }
+
     sprintf(uartBuffer,"spi:firm:\r\n");
     uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
   // execute status query command
   else if (spi_command == 'q') {
     uint8_t percentage = (uint8_t)capacity_percentage;
-    if (!reached_full_charge) {
-      percentage = 255;
-    }
+    // if (!reached_full_charge) {
+    //   percentage = 255;
+    // }
     uint16_t voltsInt = (uint16_t)(volts*1000.0);
     uint16_t currentInt = (uint16_t)(current*1000.0);
 
@@ -918,32 +913,36 @@ void handle_spi_commands() {
     spiBuf[3] = (uint8_t)(currentInt >> 8);
     spiBuf[4] = (uint8_t)percentage;
     spiBuf[5] = (uint8_t)state;
+    //spiBuf[6] = bitfield of power power rails
 
     sprintf(uartBuffer,"spi:status:%d,%d,%d,%d\r\n", voltsInt,
             currentInt, percentage, state);
     uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
-  else if (spi_command == 'v' && spi_arg1>=0 && spi_arg1<=7) {
-    // get cell voltage
-    uint16_t volts = cells_v[spi_arg1]*1000.0;
-    spiBuf[0] = (uint8_t)volts;
-    spiBuf[1] = (uint8_t)(volts >> 8);
+  // get cell voltage
+  else if (spi_command == 'v') {
+    uint16_t volts = 0;
+    uint8_t cell1 = 0;
+    uint8_t cell4 = 4;
+
+    if (spi_arg1 == 1)
+    {
+      cell1 = 4;
+      cell4 = 8;
+    }
+
+    for(uint8_t c = cell1; c < cell4; c++)
+    {
+      volts = cells_v[c]*1000.0;
+      spiBuf[c*2] = (uint8_t)volts;
+      spiBuf[(c*2)+1] = (uint8_t)(volts >> 8);
+    }
 
     sprintf(uartBuffer,"spi:volt:%d-%d\r\n", spi_arg1, volts);
     uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
-  else if (spi_command == 'u') {
-    // turn reporting to i.MX on or off
-    if (spi_arg1 > 0) {
-      // turn i.MX UART output on
-      LPC_IOCON->PIO1_13 |= 0x3;
-    } else {
-      // turn i.MX UART output off
-      LPC_IOCON->PIO1_13 &= ~0x07;
-    }
-  }
+  // get calculated capacity
   else if (spi_command == 'c') {
-
     uint16_t cap_accu = (uint16_t) capacity_accu_ampsecs / 3.6;
     uint16_t cap_min = (uint16_t) capacity_min_ampsecs / 3.6;
     uint16_t cap_max = (uint16_t) capacity_max_ampsecs / 3.6;
@@ -960,9 +959,15 @@ void handle_spi_commands() {
             cap_accu, cap_min, cap_max);
     uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
-  else if (spi_command == 'e') {
-    // toggle serial echo
-    cmd_echo = cmd_number?1:0;
+  else if (spi_command == 'u') {
+    // turn reporting to i.MX on or off
+    if (spi_arg1 == 1) {
+      // turn i.MX UART output on
+      LPC_IOCON->PIO1_13 |= 0x3;
+    } else {
+      // turn i.MX UART output off
+      LPC_IOCON->PIO1_13 &= ~0x07;
+    }
   }
   else {
     sprintf(uartBuffer, "spi:error:command\r\n");
@@ -972,7 +977,7 @@ void handle_spi_commands() {
   // Host must wait while the LPC prepares response buffer
   // If host does not read 8 bytes the previous response buffer will be stuck in here. 
   uint8_t Dummy = Dummy;
-  for (uint8_t i = 0; i < 8; i++)
+  for (uint8_t i = 0; i < SSP0_FIFOSIZE; i++)
   {
     /* Move on only if TX FIFO not full. */
     // while ((LPC_SSP0->SR & SSP0_SR_TNF_MASK) == SSP0_SR_TNF_FULL);
