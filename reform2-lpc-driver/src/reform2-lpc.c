@@ -51,6 +51,7 @@ static struct power_supply_desc bat_desc = {
     .properties = bat_props,
     .num_properties = ARRAY_SIZE(bat_props),
     .get_property = bat_get_property,
+    .type = POWER_SUPPLY_TYPE_BATTERY,
 };
 
 static int spiProbe(struct spi_device *spi)
