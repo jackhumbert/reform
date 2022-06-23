@@ -177,6 +177,8 @@ uint16_t undervoltage_bits = 0;
 uint16_t missing_bits = 0;
 uint16_t missing_reason = 0;
 uint8_t spir[64];
+bool som_is_powered = false;
+bool imx_uart_enabled = false;
 
 #if (REFORM_MOTHERBOARD_REV >= REFORM_MBREV_R3)
   #define OVERVOLTAGE_START_VALUE 3.8
@@ -379,16 +381,6 @@ void measure_and_accumulate_current() {
 #endif
 }
 
-uint16_t charger_state;
-uint16_t charge_status;
-uint16_t system_status;
-uint16_t limit_alerts;
-uint16_t charger_alerts;
-uint16_t status_alerts;
-float chg_vin;
-float chg_vbat;
-int som_is_powered = 0;
-
 void turn_som_power_on(void) {
   LPC_GPIO->CLR[1] = (1 << 28); // hold in reset
 
@@ -412,7 +404,7 @@ void turn_som_power_on(void) {
 
   LPC_GPIO->SET[1] = (1 << 28); // release reset
 
-  som_is_powered = 1;
+  som_is_powered = true;
 }
 
 void turn_som_power_off(void) {
@@ -431,7 +423,7 @@ void turn_som_power_off(void) {
   LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
   LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
 
-  som_is_powered = 0;
+  som_is_powered = false;
 }
 
 // just a reset pulse to IMX, no power toggling
@@ -530,6 +522,7 @@ void boardInit(void)
   // only send to reform, don't receive from it
   /* Set 0.13 UART TXD */
   LPC_IOCON->PIO1_13 &= ~0x07;
+  imx_uart_enabled = false;
 
 #ifdef REF2_DEBUG
   sprintf(uartBuffer, "\r\nMNT Reform 2.0 MCU initialized.\r\n");
@@ -689,9 +682,11 @@ void handle_commands() {
         // turn reporting to i.MX on or off
         if (cmd_number>0) {
           // turn i.MX UART output on
+          imx_uart_enabled = true;
           LPC_IOCON->PIO1_13 |= 0x3;
         } else {
           // turn i.MX UART output off
+          imx_uart_enabled = false;
           LPC_IOCON->PIO1_13 &= ~0x07;
         }
       }
@@ -813,8 +808,8 @@ void handle_spi_commands() {
     spiBuf[i] = LPC_SSP0->DR;
   }
 
-  if (len > 0) {
-    sprintf(uartBuffer, "spi:%d,%d,%d,%d\r\n", spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3]);
+  if (imx_uart_enabled && len > 0) {
+    sprintf(uartBuffer, "spi:%X,%X,%X,%X\r\n", spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3]);
     uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
 
@@ -851,8 +846,10 @@ void handle_spi_commands() {
     return;
   }
 
-  sprintf(uartBuffer, "spi:exec:%d,%d\r\n", spi_command, spi_arg1);
-  uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  if (imx_uart_enabled) {
+    sprintf(uartBuffer, "spi:exec:%X,%X\r\n", spi_command, spi_arg1);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
 
   // clear recieve buffer, reuse as send buffer
   memset(spiBuf, 0, 8);
@@ -876,10 +873,7 @@ void handle_spi_commands() {
       turn_aux_power_on();
     } 
 
-    sprintf(uartBuffer,"spi:power: %d\r\n", spi_arg1);
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-
-    spiBuf[0] = (som_is_powered > 0);
+    spiBuf[0] = som_is_powered;
   }
   // return firmware version and api info
   else if (spi_command == 'f')
@@ -893,9 +887,6 @@ void handle_spi_commands() {
     else {
       memcpy(spiBuf, FW_STRING3, 8);
     }
-
-    sprintf(uartBuffer,"spi:firm:\r\n");
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
   // execute status query command
   else if (spi_command == 'q') {
@@ -913,10 +904,6 @@ void handle_spi_commands() {
     spiBuf[4] = (uint8_t)percentage;
     spiBuf[5] = (uint8_t)state;
     //spiBuf[6] = bitfield of power power rails
-
-    sprintf(uartBuffer,"spi:status:%d,%d,%d,%d\r\n", voltsInt,
-            currentInt, percentage, state);
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
   // get cell voltage
   else if (spi_command == 'v') {
@@ -934,9 +921,6 @@ void handle_spi_commands() {
       spiBuf[c*2] = (uint8_t)volts;
       spiBuf[(c*2)+1] = (uint8_t)(volts >> 8);
     }
-
-    sprintf(uartBuffer,"spi:volt:%d-%d\r\n", spi_arg1, volts);
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
   // get calculated capacity
   else if (spi_command == 'c') {
@@ -950,25 +934,25 @@ void handle_spi_commands() {
     spiBuf[3] = (uint8_t) (cap_min >> 8);
     spiBuf[4] = (uint8_t) cap_max;
     spiBuf[5] = (uint8_t) (cap_max >> 8);
-
-    // get battery capacity (mAh)
-    sprintf(uartBuffer,"spi:cap:%d/%d/%d\r\n",
-            cap_accu, cap_min, cap_max);
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
+  // turn reporting to i.MX on or off
   else if (spi_command == 'u') {
-    // turn reporting to i.MX on or off
     if (spi_arg1 == 1) {
       // turn i.MX UART output on
+      imx_uart_enabled = true;
       LPC_IOCON->PIO1_13 |= 0x3;
     } else {
       // turn i.MX UART output off
+      imx_uart_enabled = false;
       LPC_IOCON->PIO1_13 &= ~0x07;
     }
   }
-  else {
-    sprintf(uartBuffer, "spi:error:command\r\n");
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+
+  if (imx_uart_enabled) {
+      sprintf(uartBuffer, "spi:res: %X %X %X %X %X %X %X %X\r\n", 
+          spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3],
+          spiBuf[4], spiBuf[5], spiBuf[6], spiBuf[7]);
+      uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
 
   // Host must wait while the LPC prepares response buffer
@@ -1007,8 +991,8 @@ void calculate_capacity_percentage()
 
 void WDT_IRQHandler(void)
 {
-	// Disable WDT interrupt
-	NVIC_DisableIRQ(WDT_IRQn);
+  // Disable WDT interrupt
+  NVIC_DisableIRQ(WDT_IRQn);
   NVIC_ClearPendingIRQ(WDT_IRQn);
 }
 
@@ -1248,7 +1232,6 @@ int main(void)
     }
 
     state = next_state;
-
   }
 }
 
