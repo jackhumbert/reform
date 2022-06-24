@@ -55,10 +55,11 @@ static struct power_supply_desc bat_desc = {
     .type = POWER_SUPPLY_TYPE_BATTERY,
 };
 
+static struct power_supply_config psy_cfg = {};
+
 static int lpcProbe(struct spi_device *spi)
 {
     struct lpc_driver_data *data;
-    struct power_supply_config psy_cfg = {};
     int ret;
 
     printk(KERN_INFO "%s: probing ...\n", "reform2-lpc");
@@ -169,7 +170,7 @@ static ssize_t showCells(struct device *dev, struct device_attribute *attr, char
     uint8_t buffer[8];
     uint16_t cells[8];
     ssize_t wroteChars = 0;
-	int ret = 0;
+    int ret = 0;
 
     ret = lpcCommand(dev, 'v', 0, buffer);
     if (ret)
@@ -274,24 +275,22 @@ static ssize_t lpcCommand(struct device *dev, char command, uint8_t arg1, uint8_
     {
         printk(KERN_INFO "%s: spi_write failed\n", __func__);
     }
-    // todo, replace with wait timer?
-    mdelay(70);
+    msleep(50);
 
     ret = spi_read(data->spi, responseBuffer, 8);
     if (ret)
     {
         printk(KERN_INFO "%s: spi_read failed\n", __func__);
     }
-    // todo, replace with wait timer?
-    mdelay(70);
+    msleep(50);
     mutex_unlock(&data->lock);
 
     return ret;
 }
 
 static int getBatProperty(struct power_supply *psy,
-					enum power_supply_property psp,
-					union power_supply_propval *val)
+                    enum power_supply_property psp,
+                    union power_supply_propval *val)
 {
     int ret = 0;
     uint8_t buffer[8];
@@ -359,8 +358,8 @@ static int getBatProperty(struct power_supply *psy,
             // reporting a negative value is out of spec
             if(amp < 0)
             {
-				amp = 0;
-			}
+                amp = 0;
+            }
             val->intval = amp * 1000;
             break;
             
