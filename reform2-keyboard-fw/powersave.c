@@ -49,9 +49,19 @@ void keyboard_power_off(void)
   // We can use the Watchdog timer to do this.
 
   do {
+    // Setting WDT parameters must be done within 4 cycles of setting WDCE, so interrupts
+    // must be disabled.
+    cli();
+
     wdt_reset();
-    WDTCSR = (1<<WDCE) | (1<<WDE); // Enable writes to watchdog
-    WDTCSR = (1<<WDIE) | (1<<WDE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); // Interrupt mode, 1s timeout
+
+    // Enable writes to watchdog, then set interrupt-only mode, 1s timeout.
+    // (Interrupt-only mode is preferred to interrupt-and-reset mode, because
+    // the latter has the risk of WDT-induced bootloops if the bootloader doesn't
+    // correctly handle WDT resets. Whereas we have a physical reset button, if
+    // a hard reset is actually needed.)
+    WDTCSR = (1<<WDCE) | (1<<WDE);
+    WDTCSR = (1<<WDIE) | (0<<WDE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
 
     // Enter Power-save mode
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -60,6 +70,7 @@ void keyboard_power_off(void)
     sleep_cpu();        // Actually go to sleep
     // Zzzzzz
     sleep_disable();    // We've woken up
+    wdt_disable();      // Disable watchdog for now
     sei();
     // Check if circle key has been pressed (active-low)
     // If not reset the watchdog and try again
