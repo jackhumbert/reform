@@ -2,7 +2,7 @@
 <export version="D">
   <design>
     <source>/home/mntmn/code/reform/reform2-keyboard-pcb/reform2-keyboard.sch</source>
-    <date>2022-03-18T16:37:20 CET</date>
+    <date>2022-03-22T14:45:22 CET</date>
     <tool>Eeschema 5.99.0+really5.1.10+dfsg1-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -2880,7 +2880,7 @@
       <fields>
         <field name="Alt MPN">B250-13-F</field>
         <field name="Alt Manuf">Diodes</field>
-        <field name="LCSC">C2758510</field>
+        <field name="LCSC">C719400</field>
         <field name="Manufacturer">UMW</field>
         <field name="Manufacturer_No">SS26</field>
       </fields>
@@ -3761,19 +3761,6 @@
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D05</tstamp>
     </comp>
-    <comp ref="D93">
-      <value>WLED</value>
-      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
-      <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C389521</field>
-        <field name="Manufacturer">Meihua</field>
-        <field name="Manufacturer_No">MHT192WDT-C2</field>
-      </fields>
-      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
-      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5E819D0F</tstamp>
-    </comp>
     <comp ref="D102">
       <value>WLED</value>
       <footprint>LED_SMD:LED_0603_1608Metric</footprint>
@@ -3786,19 +3773,6 @@
       <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D19</tstamp>
-    </comp>
-    <comp ref="D103">
-      <value>WLED</value>
-      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
-      <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C389521</field>
-        <field name="Manufacturer">Meihua</field>
-        <field name="Manufacturer_No">MHT192WDT-C2</field>
-      </fields>
-      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
-      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5E819D23</tstamp>
     </comp>
     <comp ref="D112">
       <value>WLED</value>
@@ -3813,19 +3787,6 @@
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D2D</tstamp>
     </comp>
-    <comp ref="D113">
-      <value>WLED</value>
-      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
-      <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C389521</field>
-        <field name="Manufacturer">Meihua</field>
-        <field name="Manufacturer_No">MHT192WDT-C2</field>
-      </fields>
-      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
-      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5E819D37</tstamp>
-    </comp>
     <comp ref="D122">
       <value>WLED</value>
       <footprint>LED_SMD:LED_0603_1608Metric</footprint>
@@ -3838,19 +3799,6 @@
       <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D41</tstamp>
-    </comp>
-    <comp ref="D123">
-      <value>WLED</value>
-      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
-      <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C389521</field>
-        <field name="Manufacturer">Meihua</field>
-        <field name="Manufacturer_No">MHT192WDT-C2</field>
-      </fields>
-      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
-      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5E819D4B</tstamp>
     </comp>
     <comp ref="D132">
       <value>WLED</value>
@@ -3865,19 +3813,6 @@
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D55</tstamp>
     </comp>
-    <comp ref="D133">
-      <value>WLED</value>
-      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
-      <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C389521</field>
-        <field name="Manufacturer">Meihua</field>
-        <field name="Manufacturer_No">MHT192WDT-C2</field>
-      </fields>
-      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
-      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5E819D5F</tstamp>
-    </comp>
     <comp ref="D142">
       <value>WLED</value>
       <footprint>LED_SMD:LED_0603_1608Metric</footprint>
@@ -3890,19 +3825,6 @@
       <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D69</tstamp>
-    </comp>
-    <comp ref="D143">
-      <value>WLED</value>
-      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
-      <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C389521</field>
-        <field name="Manufacturer">Meihua</field>
-        <field name="Manufacturer_No">MHT192WDT-C2</field>
-      </fields>
-      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
-      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5E819D73</tstamp>
     </comp>
     <comp ref="D152">
       <value>WLED</value>
@@ -3917,19 +3839,6 @@
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D7D</tstamp>
     </comp>
-    <comp ref="D153">
-      <value>WLED</value>
-      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
-      <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C389521</field>
-        <field name="Manufacturer">Meihua</field>
-        <field name="Manufacturer_No">MHT192WDT-C2</field>
-      </fields>
-      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
-      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5E819D87</tstamp>
-    </comp>
     <comp ref="D162">
       <value>WLED</value>
       <footprint>LED_SMD:LED_0603_1608Metric</footprint>
@@ -3942,6 +3851,110 @@
       <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D91</tstamp>
+    </comp>
+    <comp ref="C13">
+      <value>1uF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C14664</field>
+        <field name="Manufacturer">Yageo</field>
+        <field name="Manufacturer_No">CC0603KRX5R8BB105</field>
+      </fields>
+      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5F62A0D8</tstamp>
+    </comp>
+    <comp ref="D93">
+      <value>WLED</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C389521</field>
+        <field name="Manufacturer">Meihua</field>
+        <field name="Manufacturer_No">MHT192WDT-C2</field>
+      </fields>
+      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5E819D0F</tstamp>
+    </comp>
+    <comp ref="D103">
+      <value>WLED</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C389521</field>
+        <field name="Manufacturer">Meihua</field>
+        <field name="Manufacturer_No">MHT192WDT-C2</field>
+      </fields>
+      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5E819D23</tstamp>
+    </comp>
+    <comp ref="D113">
+      <value>WLED</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C389521</field>
+        <field name="Manufacturer">Meihua</field>
+        <field name="Manufacturer_No">MHT192WDT-C2</field>
+      </fields>
+      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5E819D37</tstamp>
+    </comp>
+    <comp ref="D123">
+      <value>WLED</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C389521</field>
+        <field name="Manufacturer">Meihua</field>
+        <field name="Manufacturer_No">MHT192WDT-C2</field>
+      </fields>
+      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5E819D4B</tstamp>
+    </comp>
+    <comp ref="D133">
+      <value>WLED</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C389521</field>
+        <field name="Manufacturer">Meihua</field>
+        <field name="Manufacturer_No">MHT192WDT-C2</field>
+      </fields>
+      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5E819D5F</tstamp>
+    </comp>
+    <comp ref="D143">
+      <value>WLED</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C389521</field>
+        <field name="Manufacturer">Meihua</field>
+        <field name="Manufacturer_No">MHT192WDT-C2</field>
+      </fields>
+      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5E819D73</tstamp>
+    </comp>
+    <comp ref="D153">
+      <value>WLED</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <datasheet>~</datasheet>
+      <fields>
+        <field name="LCSC">C389521</field>
+        <field name="Manufacturer">Meihua</field>
+        <field name="Manufacturer_No">MHT192WDT-C2</field>
+      </fields>
+      <libsource lib="Device" part="LED_Small" description="Light emitting diode, small symbol"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>5E819D87</tstamp>
     </comp>
     <comp ref="D163">
       <value>WLED</value>
@@ -3956,18 +3969,653 @@
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
       <tstamp>5E819D9B</tstamp>
     </comp>
-    <comp ref="C13">
-      <value>1uF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+    <comp ref="TP73">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
       <datasheet>~</datasheet>
-      <fields>
-        <field name="LCSC">C14664</field>
-        <field name="Manufacturer">Yageo</field>
-        <field name="Manufacturer_No">CC0603KRX5R8BB105</field>
-      </fields>
-      <libsource lib="Device" part="C_Small" description="Unpolarized capacitor, small symbol"/>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
       <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
-      <tstamp>5F62A0D8</tstamp>
+      <tstamp>62B992DB</tstamp>
+    </comp>
+    <comp ref="TP74">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62B9B74E</tstamp>
+    </comp>
+    <comp ref="TP75">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62BC1E07</tstamp>
+    </comp>
+    <comp ref="TP76">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62BC2695</tstamp>
+    </comp>
+    <comp ref="TP77">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62BF1A52</tstamp>
+    </comp>
+    <comp ref="TP78">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62BF2308</tstamp>
+    </comp>
+    <comp ref="TP79">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62BF2312</tstamp>
+    </comp>
+    <comp ref="TP80">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62BF231C</tstamp>
+    </comp>
+    <comp ref="TP81">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08178</tstamp>
+    </comp>
+    <comp ref="TP82">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08ACE</tstamp>
+    </comp>
+    <comp ref="TP83">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08AD8</tstamp>
+    </comp>
+    <comp ref="TP84">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08AE2</tstamp>
+    </comp>
+    <comp ref="TP85">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08AEC</tstamp>
+    </comp>
+    <comp ref="TP86">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08AF6</tstamp>
+    </comp>
+    <comp ref="TP87">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08B00</tstamp>
+    </comp>
+    <comp ref="TP88">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C08B0A</tstamp>
+    </comp>
+    <comp ref="TP65">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C29686</tstamp>
+    </comp>
+    <comp ref="TP66">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C2A04C</tstamp>
+    </comp>
+    <comp ref="TP67">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C2A056</tstamp>
+    </comp>
+    <comp ref="TP68">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C2A060</tstamp>
+    </comp>
+    <comp ref="TP69">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C2A06A</tstamp>
+    </comp>
+    <comp ref="TP70">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C2A074</tstamp>
+    </comp>
+    <comp ref="TP71">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C2A07E</tstamp>
+    </comp>
+    <comp ref="TP72">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62C2A088</tstamp>
+    </comp>
+    <comp ref="TP57">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA5B5E</tstamp>
+    </comp>
+    <comp ref="TP58">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA65C8</tstamp>
+    </comp>
+    <comp ref="TP59">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA65D2</tstamp>
+    </comp>
+    <comp ref="TP60">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA65DC</tstamp>
+    </comp>
+    <comp ref="TP61">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA65E6</tstamp>
+    </comp>
+    <comp ref="TP62">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA65F0</tstamp>
+    </comp>
+    <comp ref="TP63">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA65FA</tstamp>
+    </comp>
+    <comp ref="TP64">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CA6604</tstamp>
+    </comp>
+    <comp ref="TP49">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB6F4E</tstamp>
+    </comp>
+    <comp ref="TP50">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB7A28</tstamp>
+    </comp>
+    <comp ref="TP51">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB7A32</tstamp>
+    </comp>
+    <comp ref="TP52">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB7A3C</tstamp>
+    </comp>
+    <comp ref="TP53">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB7A46</tstamp>
+    </comp>
+    <comp ref="TP54">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB7A50</tstamp>
+    </comp>
+    <comp ref="TP55">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB7A5A</tstamp>
+    </comp>
+    <comp ref="TP56">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CB7A64</tstamp>
+    </comp>
+    <comp ref="TP41">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD4EE2</tstamp>
+    </comp>
+    <comp ref="TP42">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD5A2C</tstamp>
+    </comp>
+    <comp ref="TP43">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD5A36</tstamp>
+    </comp>
+    <comp ref="TP44">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD5A40</tstamp>
+    </comp>
+    <comp ref="TP45">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD5A4A</tstamp>
+    </comp>
+    <comp ref="TP46">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD5A54</tstamp>
+    </comp>
+    <comp ref="TP47">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD5A5E</tstamp>
+    </comp>
+    <comp ref="TP48">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CD5A68</tstamp>
+    </comp>
+    <comp ref="TP33">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE821A</tstamp>
+    </comp>
+    <comp ref="TP34">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE8C60</tstamp>
+    </comp>
+    <comp ref="TP35">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE8C6A</tstamp>
+    </comp>
+    <comp ref="TP36">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE8C74</tstamp>
+    </comp>
+    <comp ref="TP37">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE8C7E</tstamp>
+    </comp>
+    <comp ref="TP38">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE8C88</tstamp>
+    </comp>
+    <comp ref="TP39">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE8C92</tstamp>
+    </comp>
+    <comp ref="TP40">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CE8C9C</tstamp>
+    </comp>
+    <comp ref="TP25">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFA054</tstamp>
+    </comp>
+    <comp ref="TP26">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFAB0A</tstamp>
+    </comp>
+    <comp ref="TP27">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFAB14</tstamp>
+    </comp>
+    <comp ref="TP28">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFAB1E</tstamp>
+    </comp>
+    <comp ref="TP29">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFAB28</tstamp>
+    </comp>
+    <comp ref="TP30">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFAB32</tstamp>
+    </comp>
+    <comp ref="TP31">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFAB3C</tstamp>
+    </comp>
+    <comp ref="TP32">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62CFAB46</tstamp>
+    </comp>
+    <comp ref="TP17">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D07C14</tstamp>
+    </comp>
+    <comp ref="TP18">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D0873A</tstamp>
+    </comp>
+    <comp ref="TP19">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D08744</tstamp>
+    </comp>
+    <comp ref="TP20">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D0874E</tstamp>
+    </comp>
+    <comp ref="TP21">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D08758</tstamp>
+    </comp>
+    <comp ref="TP22">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D08762</tstamp>
+    </comp>
+    <comp ref="TP23">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D0876C</tstamp>
+    </comp>
+    <comp ref="TP24">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D08776</tstamp>
+    </comp>
+    <comp ref="TP9">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D16776</tstamp>
+    </comp>
+    <comp ref="TP10">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D1730C</tstamp>
+    </comp>
+    <comp ref="TP11">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D17316</tstamp>
+    </comp>
+    <comp ref="TP12">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D17320</tstamp>
+    </comp>
+    <comp ref="TP13">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D1732A</tstamp>
+    </comp>
+    <comp ref="TP14">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D17334</tstamp>
+    </comp>
+    <comp ref="TP15">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D1733E</tstamp>
+    </comp>
+    <comp ref="TP16">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D17348</tstamp>
+    </comp>
+    <comp ref="TP1">
+      <value>TP</value>
+      <footprint>TestPoint:TestPoint_Pad_1.0x1.0mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint_Small" description="test point"/>
+      <sheetpath names="/Reform KBD Backlight/" tstamps="/5E649921/"/>
+      <tstamp>62D8680D</tstamp>
     </comp>
   </components>
   <libparts>
@@ -3989,6 +4637,21 @@
         <pin num="4" name="MOSI" type="passive"/>
         <pin num="5" name="~RST" type="passive"/>
         <pin num="6" name="GND" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector" part="TestPoint_Small">
+      <description>test point</description>
+      <docs>~</docs>
+      <footprints>
+        <fp>Pin*</fp>
+        <fp>Test*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">TP</field>
+        <field name="Value">TestPoint_Small</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Connector_Generic" part="Conn_01x04">
@@ -4434,36 +5097,36 @@
   </libraries>
   <nets>
     <net code="1" name="ROW1">
-      <node ref="D43" pin="1"/>
+      <node ref="D73" pin="1"/>
+      <node ref="D78" pin="1"/>
+      <node ref="D61" pin="1"/>
       <node ref="D31" pin="1"/>
+      <node ref="U1" pin="30"/>
       <node ref="D25" pin="1"/>
       <node ref="D19" pin="1"/>
       <node ref="D13" pin="1"/>
       <node ref="D7" pin="1"/>
       <node ref="D1" pin="1"/>
       <node ref="D67" pin="1"/>
-      <node ref="D61" pin="1"/>
       <node ref="D55" pin="1"/>
       <node ref="D49" pin="1"/>
-      <node ref="U1" pin="30"/>
+      <node ref="D43" pin="1"/>
       <node ref="D37" pin="1"/>
-      <node ref="D73" pin="1"/>
-      <node ref="D78" pin="1"/>
     </net>
     <net code="2" name="Net-(D60-Pad2)">
-      <node ref="D60" pin="2"/>
       <node ref="SW60" pin="2"/>
+      <node ref="D60" pin="2"/>
     </net>
     <net code="3" name="Net-(D66-Pad2)">
       <node ref="SW66" pin="2"/>
       <node ref="D66" pin="2"/>
     </net>
     <net code="4" name="COL14">
+      <node ref="SW81" pin="1"/>
+      <node ref="SW82" pin="1"/>
       <node ref="U1" pin="31"/>
       <node ref="SW79" pin="1"/>
       <node ref="SW78" pin="1"/>
-      <node ref="SW82" pin="1"/>
-      <node ref="SW81" pin="1"/>
       <node ref="SW80" pin="1"/>
     </net>
     <net code="5" name="Net-(D72-Pad2)">
@@ -4471,74 +5134,74 @@
       <node ref="D72" pin="2"/>
     </net>
     <net code="6" name="COL1">
-      <node ref="SW4" pin="1"/>
       <node ref="SW1" pin="1"/>
-      <node ref="SW3" pin="1"/>
-      <node ref="U1" pin="22"/>
-      <node ref="SW6" pin="1"/>
-      <node ref="SW2" pin="1"/>
+      <node ref="SW4" pin="1"/>
       <node ref="SW5" pin="1"/>
+      <node ref="SW6" pin="1"/>
+      <node ref="U1" pin="22"/>
+      <node ref="SW2" pin="1"/>
+      <node ref="SW3" pin="1"/>
     </net>
     <net code="7" name="ROW4">
+      <node ref="D22" pin="1"/>
+      <node ref="D52" pin="1"/>
+      <node ref="D28" pin="1"/>
       <node ref="D46" pin="1"/>
-      <node ref="D64" pin="1"/>
+      <node ref="D10" pin="1"/>
       <node ref="D40" pin="1"/>
       <node ref="D34" pin="1"/>
-      <node ref="D16" pin="1"/>
-      <node ref="D28" pin="1"/>
-      <node ref="D22" pin="1"/>
+      <node ref="D58" pin="1"/>
+      <node ref="D64" pin="1"/>
+      <node ref="D4" pin="1"/>
       <node ref="D70" pin="1"/>
       <node ref="D76" pin="1"/>
       <node ref="D81" pin="1"/>
-      <node ref="D58" pin="1"/>
-      <node ref="D10" pin="1"/>
       <node ref="U1" pin="27"/>
-      <node ref="D52" pin="1"/>
-      <node ref="D4" pin="1"/>
+      <node ref="D16" pin="1"/>
     </net>
     <net code="8" name="Net-(D1-Pad2)">
-      <node ref="SW1" pin="2"/>
       <node ref="D1" pin="2"/>
+      <node ref="SW1" pin="2"/>
     </net>
     <net code="9" name="Net-(D27-Pad2)">
-      <node ref="D27" pin="2"/>
       <node ref="SW27" pin="2"/>
+      <node ref="D27" pin="2"/>
     </net>
     <net code="10" name="Net-(D33-Pad2)">
-      <node ref="D33" pin="2"/>
       <node ref="SW33" pin="2"/>
+      <node ref="D33" pin="2"/>
     </net>
     <net code="11" name="Net-(D39-Pad2)">
-      <node ref="SW39" pin="2"/>
       <node ref="D39" pin="2"/>
+      <node ref="SW39" pin="2"/>
     </net>
     <net code="12" name="Net-(D45-Pad2)">
-      <node ref="D45" pin="2"/>
       <node ref="SW45" pin="2"/>
+      <node ref="D45" pin="2"/>
     </net>
     <net code="13" name="Net-(D21-Pad2)">
-      <node ref="SW21" pin="2"/>
       <node ref="D21" pin="2"/>
+      <node ref="SW21" pin="2"/>
     </net>
     <net code="14" name="Net-(D51-Pad2)">
-      <node ref="D51" pin="2"/>
       <node ref="SW51" pin="2"/>
+      <node ref="D51" pin="2"/>
     </net>
     <net code="15" name="Net-(D57-Pad2)">
-      <node ref="D57" pin="2"/>
       <node ref="SW57" pin="2"/>
+      <node ref="D57" pin="2"/>
     </net>
     <net code="16" name="Net-(D63-Pad2)">
       <node ref="SW63" pin="2"/>
       <node ref="D63" pin="2"/>
     </net>
     <net code="17" name="Net-(D9-Pad2)">
-      <node ref="D9" pin="2"/>
       <node ref="SW9" pin="2"/>
+      <node ref="D9" pin="2"/>
     </net>
     <net code="18" name="Net-(D74-Pad2)">
-      <node ref="SW74" pin="2"/>
       <node ref="D74" pin="2"/>
+      <node ref="SW74" pin="2"/>
     </net>
     <net code="19" name="Net-(D68-Pad2)">
       <node ref="SW68" pin="2"/>
@@ -4549,52 +5212,52 @@
       <node ref="D79" pin="2"/>
     </net>
     <net code="21" name="Net-(D15-Pad2)">
-      <node ref="D15" pin="2"/>
       <node ref="SW15" pin="2"/>
+      <node ref="D15" pin="2"/>
     </net>
     <net code="22" name="Net-(D16-Pad2)">
-      <node ref="D16" pin="2"/>
       <node ref="SW16" pin="2"/>
+      <node ref="D16" pin="2"/>
     </net>
     <net code="23" name="Net-(D22-Pad2)">
-      <node ref="D22" pin="2"/>
       <node ref="SW22" pin="2"/>
+      <node ref="D22" pin="2"/>
     </net>
     <net code="24" name="Net-(D28-Pad2)">
-      <node ref="D28" pin="2"/>
       <node ref="SW28" pin="2"/>
+      <node ref="D28" pin="2"/>
     </net>
     <net code="25" name="Net-(D34-Pad2)">
       <node ref="SW34" pin="2"/>
       <node ref="D34" pin="2"/>
     </net>
     <net code="26" name="Net-(D40-Pad2)">
-      <node ref="SW40" pin="2"/>
       <node ref="D40" pin="2"/>
+      <node ref="SW40" pin="2"/>
     </net>
     <net code="27" name="Net-(D46-Pad2)">
       <node ref="SW46" pin="2"/>
       <node ref="D46" pin="2"/>
     </net>
     <net code="28" name="Net-(D52-Pad2)">
-      <node ref="SW52" pin="2"/>
       <node ref="D52" pin="2"/>
+      <node ref="SW52" pin="2"/>
     </net>
     <net code="29" name="Net-(D69-Pad2)">
-      <node ref="D69" pin="2"/>
       <node ref="SW69" pin="2"/>
+      <node ref="D69" pin="2"/>
     </net>
     <net code="30" name="Net-(D75-Pad2)">
-      <node ref="D75" pin="2"/>
       <node ref="SW75" pin="2"/>
+      <node ref="D75" pin="2"/>
     </net>
     <net code="31" name="Net-(D80-Pad2)">
       <node ref="SW80" pin="2"/>
       <node ref="D80" pin="2"/>
     </net>
     <net code="32" name="Net-(D4-Pad2)">
-      <node ref="D4" pin="2"/>
       <node ref="SW4" pin="2"/>
+      <node ref="D4" pin="2"/>
     </net>
     <net code="33" name="Net-(D10-Pad2)">
       <node ref="D10" pin="2"/>
@@ -4609,42 +5272,42 @@
       <node ref="D43" pin="2"/>
     </net>
     <net code="36" name="Net-(D37-Pad2)">
-      <node ref="SW37" pin="2"/>
       <node ref="D37" pin="2"/>
+      <node ref="SW37" pin="2"/>
     </net>
     <net code="37" name="COL9">
-      <node ref="SW53" pin="1"/>
       <node ref="SW54" pin="1"/>
-      <node ref="U1" pin="41"/>
+      <node ref="SW53" pin="1"/>
       <node ref="SW51" pin="1"/>
+      <node ref="U1" pin="41"/>
+      <node ref="SW49" pin="1"/>
       <node ref="SW52" pin="1"/>
       <node ref="SW50" pin="1"/>
-      <node ref="SW49" pin="1"/>
     </net>
     <net code="38" name="COL10">
-      <node ref="SW56" pin="1"/>
-      <node ref="SW60" pin="1"/>
-      <node ref="SW55" pin="1"/>
       <node ref="SW58" pin="1"/>
       <node ref="SW57" pin="1"/>
-      <node ref="SW59" pin="1"/>
+      <node ref="SW60" pin="1"/>
+      <node ref="SW55" pin="1"/>
+      <node ref="SW56" pin="1"/>
       <node ref="U1" pin="40"/>
+      <node ref="SW59" pin="1"/>
     </net>
     <net code="39" name="Net-(D55-Pad2)">
-      <node ref="D55" pin="2"/>
       <node ref="SW55" pin="2"/>
+      <node ref="D55" pin="2"/>
     </net>
     <net code="40" name="Net-(D61-Pad2)">
-      <node ref="SW61" pin="2"/>
       <node ref="D61" pin="2"/>
+      <node ref="SW61" pin="2"/>
     </net>
     <net code="41" name="Net-(D67-Pad2)">
-      <node ref="SW67" pin="2"/>
       <node ref="D67" pin="2"/>
+      <node ref="SW67" pin="2"/>
     </net>
     <net code="42" name="Net-(D13-Pad2)">
-      <node ref="D13" pin="2"/>
       <node ref="SW13" pin="2"/>
+      <node ref="D13" pin="2"/>
     </net>
     <net code="43" name="Net-(D7-Pad2)">
       <node ref="D7" pin="2"/>
@@ -4655,38 +5318,38 @@
       <node ref="D19" pin="2"/>
     </net>
     <net code="45" name="Net-(D73-Pad2)">
-      <node ref="SW73" pin="2"/>
       <node ref="D73" pin="2"/>
+      <node ref="SW73" pin="2"/>
     </net>
     <net code="46" name="COL5">
-      <node ref="SW25" pin="1"/>
-      <node ref="R17" pin="1"/>
-      <node ref="U1" pin="11"/>
-      <node ref="SW27" pin="1"/>
-      <node ref="SW30" pin="1"/>
-      <node ref="SW29" pin="1"/>
       <node ref="SW28" pin="1"/>
+      <node ref="SW30" pin="1"/>
+      <node ref="SW27" pin="1"/>
       <node ref="SW26" pin="1"/>
+      <node ref="U1" pin="11"/>
+      <node ref="R17" pin="1"/>
+      <node ref="SW29" pin="1"/>
+      <node ref="SW25" pin="1"/>
     </net>
     <net code="47" name="Net-(D25-Pad2)">
-      <node ref="SW25" pin="2"/>
       <node ref="D25" pin="2"/>
+      <node ref="SW25" pin="2"/>
     </net>
     <net code="48" name="Net-(D31-Pad2)">
-      <node ref="SW31" pin="2"/>
       <node ref="D31" pin="2"/>
+      <node ref="SW31" pin="2"/>
     </net>
     <net code="49" name="Net-(D44-Pad2)">
       <node ref="D44" pin="2"/>
       <node ref="SW44" pin="2"/>
     </net>
     <net code="50" name="Net-(D38-Pad2)">
-      <node ref="SW38" pin="2"/>
       <node ref="D38" pin="2"/>
+      <node ref="SW38" pin="2"/>
     </net>
     <net code="51" name="Net-(D32-Pad2)">
-      <node ref="D32" pin="2"/>
       <node ref="SW32" pin="2"/>
+      <node ref="D32" pin="2"/>
     </net>
     <net code="52" name="Net-(D50-Pad2)">
       <node ref="D50" pin="2"/>
@@ -4701,39 +5364,39 @@
       <node ref="SW62" pin="2"/>
     </net>
     <net code="55" name="Net-(D8-Pad2)">
-      <node ref="D8" pin="2"/>
       <node ref="SW8" pin="2"/>
+      <node ref="D8" pin="2"/>
     </net>
     <net code="56" name="Net-(D78-Pad2)">
-      <node ref="SW78" pin="2"/>
       <node ref="D78" pin="2"/>
+      <node ref="SW78" pin="2"/>
     </net>
     <net code="57" name="Net-(D14-Pad2)">
       <node ref="D14" pin="2"/>
       <node ref="SW14" pin="2"/>
     </net>
     <net code="58" name="COL12">
+      <node ref="U1" pin="38"/>
+      <node ref="SW68" pin="1"/>
       <node ref="SW69" pin="1"/>
       <node ref="SW71" pin="1"/>
-      <node ref="U1" pin="38"/>
-      <node ref="SW67" pin="1"/>
-      <node ref="SW72" pin="1"/>
-      <node ref="SW68" pin="1"/>
       <node ref="SW70" pin="1"/>
+      <node ref="SW72" pin="1"/>
+      <node ref="SW67" pin="1"/>
     </net>
     <net code="59" name="Net-(D20-Pad2)">
       <node ref="SW20" pin="2"/>
       <node ref="D20" pin="2"/>
     </net>
     <net code="60" name="Net-(D26-Pad2)">
-      <node ref="D26" pin="2"/>
       <node ref="SW26" pin="2"/>
+      <node ref="D26" pin="2"/>
     </net>
     <net code="61" name="COL3">
+      <node ref="U1" pin="1"/>
+      <node ref="SW15" pin="1"/>
       <node ref="SW18" pin="1"/>
       <node ref="SW14" pin="1"/>
-      <node ref="SW15" pin="1"/>
-      <node ref="U1" pin="1"/>
       <node ref="SW16" pin="1"/>
       <node ref="SW17" pin="1"/>
       <node ref="SW13" pin="1"/>
@@ -4741,74 +5404,74 @@
     <net code="62" name="COL4">
       <node ref="U1" pin="32"/>
       <node ref="SW23" pin="1"/>
-      <node ref="SW24" pin="1"/>
-      <node ref="SW20" pin="1"/>
       <node ref="SW19" pin="1"/>
-      <node ref="SW22" pin="1"/>
       <node ref="SW21" pin="1"/>
+      <node ref="SW22" pin="1"/>
+      <node ref="SW20" pin="1"/>
+      <node ref="SW24" pin="1"/>
     </net>
     <net code="63" name="COL6">
-      <node ref="SW34" pin="1"/>
-      <node ref="SW31" pin="1"/>
-      <node ref="SW36" pin="1"/>
-      <node ref="SW35" pin="1"/>
       <node ref="SW32" pin="1"/>
-      <node ref="SW33" pin="1"/>
+      <node ref="SW34" pin="1"/>
       <node ref="R18" pin="1"/>
+      <node ref="SW36" pin="1"/>
+      <node ref="SW31" pin="1"/>
+      <node ref="SW35" pin="1"/>
+      <node ref="SW33" pin="1"/>
       <node ref="U1" pin="10"/>
     </net>
     <net code="64" name="COL7">
+      <node ref="SW42" pin="1"/>
       <node ref="SW38" pin="1"/>
       <node ref="SW37" pin="1"/>
-      <node ref="U1" pin="9"/>
-      <node ref="SW42" pin="1"/>
       <node ref="SW41" pin="1"/>
+      <node ref="SW40" pin="1"/>
       <node ref="SW39" pin="1"/>
       <node ref="R19" pin="1"/>
-      <node ref="SW40" pin="1"/>
+      <node ref="U1" pin="9"/>
     </net>
     <net code="65" name="COL8">
-      <node ref="U1" pin="8"/>
+      <node ref="SW48" pin="1"/>
+      <node ref="SW47" pin="1"/>
+      <node ref="SW45" pin="1"/>
       <node ref="SW44" pin="1"/>
       <node ref="SW43" pin="1"/>
-      <node ref="SW47" pin="1"/>
-      <node ref="SW48" pin="1"/>
-      <node ref="SW45" pin="1"/>
+      <node ref="U1" pin="8"/>
       <node ref="SW46" pin="1"/>
     </net>
     <net code="66" name="COL11">
-      <node ref="SW62" pin="1"/>
-      <node ref="U1" pin="39"/>
       <node ref="SW63" pin="1"/>
+      <node ref="U1" pin="39"/>
       <node ref="SW65" pin="1"/>
+      <node ref="SW62" pin="1"/>
       <node ref="SW64" pin="1"/>
       <node ref="SW66" pin="1"/>
       <node ref="SW61" pin="1"/>
     </net>
     <net code="67" name="COL13">
+      <node ref="SW77" pin="1"/>
       <node ref="SW76" pin="1"/>
       <node ref="U1" pin="37"/>
-      <node ref="SW77" pin="1"/>
-      <node ref="SW75" pin="1"/>
       <node ref="SW74" pin="1"/>
+      <node ref="SW75" pin="1"/>
       <node ref="SW73" pin="1"/>
     </net>
     <net code="68" name="COL2">
-      <node ref="SW11" pin="1"/>
-      <node ref="SW12" pin="1"/>
-      <node ref="SW8" pin="1"/>
-      <node ref="SW9" pin="1"/>
       <node ref="U1" pin="36"/>
       <node ref="SW10" pin="1"/>
+      <node ref="SW12" pin="1"/>
       <node ref="SW7" pin="1"/>
+      <node ref="SW9" pin="1"/>
+      <node ref="SW11" pin="1"/>
+      <node ref="SW8" pin="1"/>
     </net>
     <net code="69" name="Net-(D48-Pad2)">
       <node ref="SW48" pin="2"/>
       <node ref="D48" pin="2"/>
     </net>
     <net code="70" name="Net-(D54-Pad2)">
-      <node ref="SW54" pin="2"/>
       <node ref="D54" pin="2"/>
+      <node ref="SW54" pin="2"/>
     </net>
     <net code="71" name="Net-(D3-Pad2)">
       <node ref="D3" pin="2"/>
@@ -4819,82 +5482,82 @@
       <node ref="SW36" pin="2"/>
     </net>
     <net code="73" name="Net-(D42-Pad2)">
-      <node ref="D42" pin="2"/>
       <node ref="SW42" pin="2"/>
+      <node ref="D42" pin="2"/>
     </net>
     <net code="74" name="Net-(D2-Pad2)">
       <node ref="D2" pin="2"/>
       <node ref="SW2" pin="2"/>
     </net>
     <net code="75" name="ROW2">
-      <node ref="D32" pin="1"/>
-      <node ref="U1" pin="29"/>
       <node ref="D2" pin="1"/>
+      <node ref="U1" pin="29"/>
+      <node ref="D56" pin="1"/>
+      <node ref="D62" pin="1"/>
       <node ref="D26" pin="1"/>
       <node ref="D20" pin="1"/>
+      <node ref="D32" pin="1"/>
       <node ref="D14" pin="1"/>
       <node ref="D8" pin="1"/>
-      <node ref="D68" pin="1"/>
-      <node ref="D74" pin="1"/>
-      <node ref="D38" pin="1"/>
       <node ref="D79" pin="1"/>
-      <node ref="D50" pin="1"/>
+      <node ref="D74" pin="1"/>
+      <node ref="D68" pin="1"/>
       <node ref="D44" pin="1"/>
-      <node ref="D62" pin="1"/>
-      <node ref="D56" pin="1"/>
+      <node ref="D50" pin="1"/>
+      <node ref="D38" pin="1"/>
     </net>
     <net code="76" name="ROW3">
+      <node ref="D9" pin="1"/>
+      <node ref="D57" pin="1"/>
+      <node ref="D51" pin="1"/>
       <node ref="D80" pin="1"/>
-      <node ref="D69" pin="1"/>
-      <node ref="U1" pin="28"/>
+      <node ref="D63" pin="1"/>
       <node ref="D75" pin="1"/>
-      <node ref="D21" pin="1"/>
       <node ref="D15" pin="1"/>
-      <node ref="D27" pin="1"/>
+      <node ref="D69" pin="1"/>
+      <node ref="D21" pin="1"/>
+      <node ref="D45" pin="1"/>
+      <node ref="D3" pin="1"/>
+      <node ref="U1" pin="28"/>
       <node ref="D33" pin="1"/>
       <node ref="D39" pin="1"/>
-      <node ref="D45" pin="1"/>
-      <node ref="D51" pin="1"/>
-      <node ref="D57" pin="1"/>
-      <node ref="D9" pin="1"/>
-      <node ref="D63" pin="1"/>
-      <node ref="D3" pin="1"/>
+      <node ref="D27" pin="1"/>
     </net>
     <net code="77" name="ROW5">
-      <node ref="D47" pin="1"/>
-      <node ref="D65" pin="1"/>
-      <node ref="D71" pin="1"/>
-      <node ref="D59" pin="1"/>
-      <node ref="D53" pin="1"/>
-      <node ref="D77" pin="1"/>
-      <node ref="D41" pin="1"/>
       <node ref="D82" pin="1"/>
-      <node ref="D5" pin="1"/>
       <node ref="U1" pin="26"/>
-      <node ref="D23" pin="1"/>
-      <node ref="D11" pin="1"/>
       <node ref="D29" pin="1"/>
+      <node ref="D65" pin="1"/>
+      <node ref="D53" pin="1"/>
+      <node ref="D71" pin="1"/>
+      <node ref="D41" pin="1"/>
+      <node ref="D59" pin="1"/>
+      <node ref="D77" pin="1"/>
+      <node ref="D47" pin="1"/>
+      <node ref="D23" pin="1"/>
       <node ref="D17" pin="1"/>
+      <node ref="D11" pin="1"/>
+      <node ref="D5" pin="1"/>
       <node ref="D35" pin="1"/>
     </net>
     <net code="78" name="ROW6">
-      <node ref="D54" pin="1"/>
-      <node ref="D48" pin="1"/>
-      <node ref="D72" pin="1"/>
-      <node ref="D30" pin="1"/>
-      <node ref="D60" pin="1"/>
-      <node ref="U1" pin="25"/>
-      <node ref="D12" pin="1"/>
-      <node ref="D6" pin="1"/>
-      <node ref="D66" pin="1"/>
-      <node ref="D42" pin="1"/>
-      <node ref="D18" pin="1"/>
       <node ref="D36" pin="1"/>
+      <node ref="D30" pin="1"/>
+      <node ref="D72" pin="1"/>
+      <node ref="D42" pin="1"/>
+      <node ref="D60" pin="1"/>
+      <node ref="D66" pin="1"/>
+      <node ref="U1" pin="25"/>
+      <node ref="D6" pin="1"/>
+      <node ref="D12" pin="1"/>
+      <node ref="D48" pin="1"/>
+      <node ref="D18" pin="1"/>
+      <node ref="D54" pin="1"/>
       <node ref="D24" pin="1"/>
     </net>
     <net code="79" name="Net-(D23-Pad2)">
-      <node ref="D23" pin="2"/>
       <node ref="SW23" pin="2"/>
+      <node ref="D23" pin="2"/>
     </net>
     <net code="80" name="Net-(D11-Pad2)">
       <node ref="D11" pin="2"/>
@@ -4905,12 +5568,12 @@
       <node ref="SW5" pin="2"/>
     </net>
     <net code="82" name="Net-(D17-Pad2)">
-      <node ref="D17" pin="2"/>
       <node ref="SW17" pin="2"/>
+      <node ref="D17" pin="2"/>
     </net>
     <net code="83" name="Net-(D29-Pad2)">
-      <node ref="D29" pin="2"/>
       <node ref="SW29" pin="2"/>
+      <node ref="D29" pin="2"/>
     </net>
     <net code="84" name="Net-(D35-Pad2)">
       <node ref="D35" pin="2"/>
@@ -4921,16 +5584,16 @@
       <node ref="SW41" pin="2"/>
     </net>
     <net code="86" name="Net-(D30-Pad2)">
-      <node ref="SW30" pin="2"/>
       <node ref="D30" pin="2"/>
+      <node ref="SW30" pin="2"/>
     </net>
     <net code="87" name="Net-(D58-Pad2)">
-      <node ref="D58" pin="2"/>
       <node ref="SW58" pin="2"/>
+      <node ref="D58" pin="2"/>
     </net>
     <net code="88" name="Net-(D64-Pad2)">
-      <node ref="SW64" pin="2"/>
       <node ref="D64" pin="2"/>
+      <node ref="SW64" pin="2"/>
     </net>
     <net code="89" name="Net-(D70-Pad2)">
       <node ref="SW70" pin="2"/>
@@ -4941,20 +5604,20 @@
       <node ref="D76" pin="2"/>
     </net>
     <net code="91" name="Net-(D81-Pad2)">
-      <node ref="SW81" pin="2"/>
       <node ref="D81" pin="2"/>
+      <node ref="SW81" pin="2"/>
     </net>
     <net code="92" name="Net-(D18-Pad2)">
       <node ref="SW18" pin="2"/>
       <node ref="D18" pin="2"/>
     </net>
     <net code="93" name="Net-(D82-Pad2)">
-      <node ref="SW82" pin="2"/>
       <node ref="D82" pin="2"/>
+      <node ref="SW82" pin="2"/>
     </net>
     <net code="94" name="Net-(D6-Pad2)">
-      <node ref="SW6" pin="2"/>
       <node ref="D6" pin="2"/>
+      <node ref="SW6" pin="2"/>
     </net>
     <net code="95" name="Net-(D12-Pad2)">
       <node ref="SW12" pin="2"/>
@@ -4965,24 +5628,24 @@
       <node ref="SW24" pin="2"/>
     </net>
     <net code="97" name="Net-(D47-Pad2)">
-      <node ref="D47" pin="2"/>
       <node ref="SW47" pin="2"/>
+      <node ref="D47" pin="2"/>
     </net>
     <net code="98" name="Net-(D77-Pad2)">
       <node ref="D77" pin="2"/>
       <node ref="SW77" pin="2"/>
     </net>
     <net code="99" name="Net-(D53-Pad2)">
-      <node ref="SW53" pin="2"/>
       <node ref="D53" pin="2"/>
+      <node ref="SW53" pin="2"/>
     </net>
     <net code="100" name="Net-(D59-Pad2)">
-      <node ref="SW59" pin="2"/>
       <node ref="D59" pin="2"/>
+      <node ref="SW59" pin="2"/>
     </net>
     <net code="101" name="Net-(D71-Pad2)">
-      <node ref="SW71" pin="2"/>
       <node ref="D71" pin="2"/>
+      <node ref="SW71" pin="2"/>
     </net>
     <net code="102" name="Net-(D65-Pad2)">
       <node ref="D65" pin="2"/>
@@ -4990,13 +5653,13 @@
     </net>
     <net code="103" name="HD+">
       <node ref="J4" pin="B6"/>
-      <node ref="J4" pin="A6"/>
       <node ref="J1" pin="3"/>
+      <node ref="J4" pin="A6"/>
       <node ref="U4" pin="6"/>
     </net>
     <net code="104" name="Net-(J4-PadA5)">
-      <node ref="R13" pin="2"/>
       <node ref="J4" pin="A5"/>
+      <node ref="R13" pin="2"/>
     </net>
     <net code="105" name="Net-(J4-PadB5)">
       <node ref="R14" pin="1"/>
@@ -5009,562 +5672,643 @@
       <node ref="J4" pin="B8"/>
     </net>
     <net code="108" name="HD-">
-      <node ref="U4" pin="4"/>
       <node ref="J1" pin="2"/>
-      <node ref="J4" pin="B7"/>
+      <node ref="U4" pin="4"/>
       <node ref="J4" pin="A7"/>
+      <node ref="J4" pin="B7"/>
     </net>
-    <net code="109" name="+3V3">
-      <node ref="U1" pin="14"/>
-      <node ref="U1" pin="24"/>
-      <node ref="J5" pin="2"/>
+    <net code="109" name="GND">
+      <node ref="U4" pin="2"/>
+      <node ref="R15" pin="1"/>
+      <node ref="U1" pin="35"/>
+      <node ref="SW83" pin="2"/>
+      <node ref="SW84" pin="2"/>
+      <node ref="C11" pin="2"/>
+      <node ref="C12" pin="2"/>
+      <node ref="J3" pin="1"/>
+      <node ref="Y1" pin="4"/>
+      <node ref="U1" pin="23"/>
+      <node ref="U3" pin="1"/>
+      <node ref="C6" pin="2"/>
+      <node ref="U1" pin="15"/>
+      <node ref="C10" pin="2"/>
+      <node ref="J2" pin="4"/>
+      <node ref="C13" pin="2"/>
+      <node ref="U1" pin="43"/>
+      <node ref="U1" pin="5"/>
+      <node ref="H6" pin="1"/>
+      <node ref="H5" pin="1"/>
+      <node ref="H4" pin="1"/>
+      <node ref="Y1" pin="2"/>
+      <node ref="H1" pin="1"/>
+      <node ref="J5" pin="6"/>
+      <node ref="U2" pin="22"/>
+      <node ref="C1" pin="2"/>
+      <node ref="R10" pin="2"/>
+      <node ref="C4" pin="2"/>
+      <node ref="H2" pin="1"/>
+      <node ref="R12" pin="2"/>
+      <node ref="U2" pin="25"/>
+      <node ref="C5" pin="2"/>
+      <node ref="H3" pin="1"/>
+      <node ref="U2" pin="18"/>
+      <node ref="C7" pin="2"/>
+      <node ref="C3" pin="2"/>
+      <node ref="D164" pin="2"/>
+      <node ref="U2" pin="17"/>
+      <node ref="C8" pin="2"/>
+      <node ref="C9" pin="2"/>
+      <node ref="U2" pin="5"/>
+      <node ref="R8" pin="2"/>
+      <node ref="C2" pin="2"/>
+      <node ref="R7" pin="2"/>
+    </net>
+    <net code="110" name="+3V3">
+      <node ref="C5" pin="1"/>
       <node ref="R3" pin="1"/>
-      <node ref="R16" pin="1"/>
+      <node ref="J3" pin="4"/>
+      <node ref="J5" pin="2"/>
+      <node ref="U1" pin="14"/>
+      <node ref="R5" pin="1"/>
+      <node ref="R6" pin="1"/>
+      <node ref="U3" pin="2"/>
       <node ref="C12" pin="1"/>
       <node ref="U1" pin="44"/>
-      <node ref="J3" pin="4"/>
-      <node ref="R6" pin="1"/>
-      <node ref="C5" pin="1"/>
-      <node ref="R5" pin="1"/>
       <node ref="U1" pin="34"/>
-      <node ref="U3" pin="2"/>
-      <node ref="R4" pin="2"/>
-      <node ref="C6" pin="1"/>
       <node ref="J2" pin="1"/>
+      <node ref="R4" pin="2"/>
+      <node ref="U1" pin="24"/>
+      <node ref="C6" pin="1"/>
+      <node ref="R16" pin="1"/>
     </net>
-    <net code="110" name="DISP_SCL">
-      <node ref="J3" pin="3"/>
+    <net code="111" name="DISP_SCL">
       <node ref="R6" pin="2"/>
       <node ref="U1" pin="18"/>
+      <node ref="J3" pin="3"/>
     </net>
-    <net code="111" name="DISP_SDA">
-      <node ref="R5" pin="2"/>
+    <net code="112" name="DISP_SDA">
       <node ref="U1" pin="19"/>
       <node ref="J3" pin="2"/>
+      <node ref="R5" pin="2"/>
     </net>
-    <net code="112" name="RESET">
-      <node ref="SW83" pin="1"/>
+    <net code="113" name="RESET">
       <node ref="R3" pin="2"/>
       <node ref="U1" pin="13"/>
       <node ref="J5" pin="5"/>
+      <node ref="SW83" pin="1"/>
     </net>
-    <net code="113" name="PROG">
+    <net code="114" name="PROG">
+      <node ref="SW84" pin="1"/>
       <node ref="U1" pin="33"/>
       <node ref="R16" pin="2"/>
-      <node ref="SW84" pin="1"/>
     </net>
-    <net code="114" name="/Reform KBD MCU/SCK">
+    <net code="115" name="/Reform KBD MCU/SCK">
       <node ref="R19" pin="2"/>
       <node ref="J5" pin="3"/>
     </net>
-    <net code="115" name="/Reform KBD MCU/MOSI">
-      <node ref="R18" pin="2"/>
+    <net code="116" name="/Reform KBD MCU/MOSI">
       <node ref="J5" pin="4"/>
+      <node ref="R18" pin="2"/>
     </net>
-    <net code="116" name="/Reform KBD MCU/MISO">
-      <node ref="R17" pin="2"/>
+    <net code="117" name="/Reform KBD MCU/MISO">
       <node ref="J5" pin="1"/>
+      <node ref="R17" pin="2"/>
     </net>
-    <net code="117" name="Net-(F1-Pad1)">
-      <node ref="J4" pin="A9"/>
-      <node ref="J4" pin="A4"/>
-      <node ref="J4" pin="B4"/>
-      <node ref="F1" pin="1"/>
-      <node ref="J4" pin="B9"/>
+    <net code="118" name="Net-(F1-Pad1)">
       <node ref="J1" pin="1"/>
+      <node ref="J4" pin="B9"/>
+      <node ref="J4" pin="B4"/>
+      <node ref="J4" pin="A9"/>
+      <node ref="F1" pin="1"/>
+      <node ref="J4" pin="A4"/>
     </net>
-    <net code="118" name="D+">
+    <net code="119" name="D+">
       <node ref="R1" pin="2"/>
       <node ref="U4" pin="1"/>
     </net>
-    <net code="119" name="D-">
+    <net code="120" name="D-">
       <node ref="R2" pin="2"/>
       <node ref="U4" pin="3"/>
     </net>
-    <net code="120" name="GND">
-      <node ref="SW84" pin="2"/>
-      <node ref="J3" pin="1"/>
-      <node ref="C12" pin="2"/>
-      <node ref="C8" pin="2"/>
-      <node ref="H4" pin="1"/>
-      <node ref="U2" pin="18"/>
-      <node ref="SW83" pin="2"/>
-      <node ref="C4" pin="2"/>
-      <node ref="U2" pin="17"/>
-      <node ref="H3" pin="1"/>
-      <node ref="H6" pin="1"/>
-      <node ref="U1" pin="5"/>
-      <node ref="H5" pin="1"/>
-      <node ref="U1" pin="43"/>
-      <node ref="J2" pin="4"/>
-      <node ref="U1" pin="35"/>
-      <node ref="U3" pin="1"/>
-      <node ref="H2" pin="1"/>
-      <node ref="H1" pin="1"/>
-      <node ref="C7" pin="2"/>
-      <node ref="C9" pin="2"/>
-      <node ref="D164" pin="2"/>
-      <node ref="R10" pin="2"/>
-      <node ref="J5" pin="6"/>
-      <node ref="C6" pin="2"/>
-      <node ref="R15" pin="1"/>
-      <node ref="U1" pin="23"/>
-      <node ref="U1" pin="15"/>
-      <node ref="Y1" pin="4"/>
-      <node ref="Y1" pin="2"/>
-      <node ref="R12" pin="2"/>
-      <node ref="C10" pin="2"/>
-      <node ref="C11" pin="2"/>
-      <node ref="R7" pin="2"/>
-      <node ref="U2" pin="5"/>
-      <node ref="U2" pin="25"/>
-      <node ref="R8" pin="2"/>
-      <node ref="C2" pin="2"/>
-      <node ref="C3" pin="2"/>
-      <node ref="C5" pin="2"/>
-      <node ref="U2" pin="22"/>
-      <node ref="U4" pin="2"/>
-      <node ref="C13" pin="2"/>
-      <node ref="C1" pin="2"/>
-    </net>
     <net code="121" name="+5V">
+      <node ref="U3" pin="3"/>
+      <node ref="C4" pin="1"/>
+      <node ref="U2" pin="23"/>
+      <node ref="D164" pin="1"/>
+      <node ref="C8" pin="1"/>
       <node ref="C7" pin="1"/>
       <node ref="L1" pin="1"/>
-      <node ref="C8" pin="1"/>
       <node ref="R9" pin="1"/>
-      <node ref="U2" pin="23"/>
-      <node ref="C4" pin="1"/>
-      <node ref="U3" pin="3"/>
       <node ref="C11" pin="1"/>
-      <node ref="D164" pin="1"/>
       <node ref="U4" pin="5"/>
-      <node ref="U1" pin="2"/>
       <node ref="FB1" pin="1"/>
       <node ref="U1" pin="7"/>
+      <node ref="U1" pin="2"/>
     </net>
     <net code="122" name="Net-(J1-Pad4)">
-      <node ref="R13" pin="1"/>
-      <node ref="R15" pin="2"/>
+      <node ref="J4" pin="A1"/>
+      <node ref="J4" pin="B1"/>
+      <node ref="J4" pin="B12"/>
       <node ref="J4" pin="S1"/>
       <node ref="J1" pin="4"/>
+      <node ref="R13" pin="1"/>
       <node ref="R14" pin="2"/>
-      <node ref="J4" pin="A1"/>
-      <node ref="J4" pin="B12"/>
-      <node ref="J4" pin="B1"/>
       <node ref="J4" pin="A12"/>
+      <node ref="R15" pin="2"/>
     </net>
     <net code="123" name="Net-(F1-Pad2)">
       <node ref="FB1" pin="2"/>
       <node ref="F1" pin="2"/>
     </net>
-    <net code="124" name="UART_RX">
-      <node ref="U1" pin="20"/>
-      <node ref="J2" pin="2"/>
-    </net>
-    <net code="125" name="Net-(C1-Pad1)">
-      <node ref="Y1" pin="1"/>
-      <node ref="C1" pin="1"/>
-      <node ref="U1" pin="17"/>
-    </net>
-    <net code="126" name="Net-(C2-Pad1)">
-      <node ref="U1" pin="16"/>
-      <node ref="Y1" pin="3"/>
-      <node ref="C2" pin="1"/>
-    </net>
-    <net code="127" name="PWM">
+    <net code="124" name="PWM">
       <node ref="U1" pin="12"/>
       <node ref="U2" pin="6"/>
     </net>
-    <net code="128" name="Net-(C3-Pad1)">
+    <net code="125" name="Net-(C1-Pad1)">
+      <node ref="U1" pin="17"/>
+      <node ref="C1" pin="1"/>
+      <node ref="Y1" pin="1"/>
+    </net>
+    <net code="126" name="Net-(C2-Pad1)">
+      <node ref="C2" pin="1"/>
+      <node ref="U1" pin="16"/>
+      <node ref="Y1" pin="3"/>
+    </net>
+    <net code="127" name="Net-(C3-Pad1)">
       <node ref="C3" pin="1"/>
       <node ref="U1" pin="6"/>
     </net>
-    <net code="129" name="/Reform KBD MCU/UD-">
-      <node ref="U1" pin="3"/>
+    <net code="128" name="/Reform KBD MCU/UD-">
       <node ref="R2" pin="1"/>
+      <node ref="U1" pin="3"/>
     </net>
-    <net code="130" name="/Reform KBD MCU/UD+">
-      <node ref="U1" pin="4"/>
+    <net code="129" name="/Reform KBD MCU/UD+">
       <node ref="R1" pin="1"/>
+      <node ref="U1" pin="4"/>
     </net>
-    <net code="131" name="Net-(R4-Pad1)">
+    <net code="130" name="Net-(R4-Pad1)">
       <node ref="R4" pin="1"/>
       <node ref="U1" pin="42"/>
     </net>
-    <net code="132" name="UART_TX">
-      <node ref="U1" pin="21"/>
+    <net code="131" name="UART_TX">
       <node ref="J2" pin="3"/>
+      <node ref="U1" pin="21"/>
     </net>
-    <net code="133" name="Net-(D149-Pad1)">
-      <node ref="D149" pin="1"/>
-      <node ref="D150" pin="2"/>
+    <net code="132" name="UART_RX">
+      <node ref="U1" pin="20"/>
+      <node ref="J2" pin="2"/>
     </net>
-    <net code="134" name="Net-(D150-Pad1)">
-      <node ref="D151" pin="2"/>
-      <node ref="D150" pin="1"/>
+    <net code="133" name="Net-(D106-Pad1)">
+      <node ref="D106" pin="1"/>
+      <node ref="TP27" pin="1"/>
+      <node ref="D107" pin="2"/>
     </net>
-    <net code="135" name="Net-(D148-Pad1)">
-      <node ref="D148" pin="1"/>
-      <node ref="D149" pin="2"/>
+    <net code="134" name="Net-(D105-Pad1)">
+      <node ref="D105" pin="1"/>
+      <node ref="TP19" pin="1"/>
+      <node ref="D106" pin="2"/>
     </net>
-    <net code="136" name="Net-(D147-Pad1)">
-      <node ref="D148" pin="2"/>
-      <node ref="D147" pin="1"/>
-    </net>
-    <net code="137" name="Net-(D146-Pad1)">
-      <node ref="D147" pin="2"/>
-      <node ref="D146" pin="1"/>
-    </net>
-    <net code="138" name="Net-(D145-Pad1)">
-      <node ref="D145" pin="1"/>
-      <node ref="D146" pin="2"/>
-    </net>
-    <net code="139" name="Net-(D144-Pad1)">
-      <node ref="D145" pin="2"/>
-      <node ref="D144" pin="1"/>
-    </net>
-    <net code="140" name="Net-(D140-Pad1)">
-      <node ref="D140" pin="1"/>
-      <node ref="D141" pin="2"/>
-    </net>
-    <net code="141" name="Net-(D141-Pad1)">
-      <node ref="D142" pin="2"/>
-      <node ref="D141" pin="1"/>
-    </net>
-    <net code="142" name="Net-(D139-Pad1)">
-      <node ref="D139" pin="1"/>
-      <node ref="D140" pin="2"/>
-    </net>
-    <net code="143" name="Net-(D138-Pad1)">
-      <node ref="D139" pin="2"/>
-      <node ref="D138" pin="1"/>
-    </net>
-    <net code="144" name="Net-(D158-Pad1)">
-      <node ref="D159" pin="2"/>
-      <node ref="D158" pin="1"/>
-    </net>
-    <net code="145" name="Net-(D160-Pad1)">
-      <node ref="D160" pin="1"/>
-      <node ref="D161" pin="2"/>
-    </net>
-    <net code="146" name="Net-(D161-Pad1)">
-      <node ref="D161" pin="1"/>
-      <node ref="D162" pin="2"/>
-    </net>
-    <net code="147" name="Net-(D159-Pad1)">
-      <node ref="D159" pin="1"/>
-      <node ref="D160" pin="2"/>
-    </net>
-    <net code="148" name="Net-(D157-Pad1)">
-      <node ref="D158" pin="2"/>
-      <node ref="D157" pin="1"/>
-    </net>
-    <net code="149" name="Net-(D151-Pad1)">
-      <node ref="D151" pin="1"/>
-      <node ref="D152" pin="2"/>
-    </net>
-    <net code="150" name="Net-(D156-Pad1)">
-      <node ref="D156" pin="1"/>
-      <node ref="D157" pin="2"/>
-    </net>
-    <net code="151" name="Net-(D155-Pad1)">
-      <node ref="D155" pin="1"/>
-      <node ref="D156" pin="2"/>
-    </net>
-    <net code="152" name="Net-(D154-Pad1)">
-      <node ref="D154" pin="1"/>
-      <node ref="D155" pin="2"/>
-    </net>
-    <net code="153" name="Net-(D118-Pad1)">
-      <node ref="D118" pin="1"/>
-      <node ref="D119" pin="2"/>
-    </net>
-    <net code="154" name="Net-(D126-Pad1)">
-      <node ref="D126" pin="1"/>
-      <node ref="D127" pin="2"/>
-    </net>
-    <net code="155" name="Net-(D124-Pad1)">
-      <node ref="D125" pin="2"/>
-      <node ref="D124" pin="1"/>
-    </net>
-    <net code="156" name="Net-(D125-Pad1)">
-      <node ref="D125" pin="1"/>
-      <node ref="D126" pin="2"/>
-    </net>
-    <net code="157" name="Net-(D120-Pad1)">
-      <node ref="D121" pin="2"/>
-      <node ref="D120" pin="1"/>
-    </net>
-    <net code="158" name="Net-(D121-Pad1)">
-      <node ref="D122" pin="2"/>
-      <node ref="D121" pin="1"/>
-    </net>
-    <net code="159" name="Net-(D119-Pad1)">
-      <node ref="D119" pin="1"/>
-      <node ref="D120" pin="2"/>
-    </net>
-    <net code="160" name="Net-(D117-Pad1)">
-      <node ref="D117" pin="1"/>
-      <node ref="D118" pin="2"/>
-    </net>
-    <net code="161" name="Net-(D116-Pad1)">
-      <node ref="D117" pin="2"/>
-      <node ref="D116" pin="1"/>
-    </net>
-    <net code="162" name="Net-(D115-Pad1)">
+    <net code="135" name="Net-(D115-Pad1)">
       <node ref="D115" pin="1"/>
       <node ref="D116" pin="2"/>
+      <node ref="TP20" pin="1"/>
     </net>
-    <net code="163" name="Net-(D114-Pad1)">
+    <net code="136" name="Net-(D125-Pad1)">
+      <node ref="D125" pin="1"/>
+      <node ref="D126" pin="2"/>
+      <node ref="TP21" pin="1"/>
+    </net>
+    <net code="137" name="Net-(D126-Pad1)">
+      <node ref="D126" pin="1"/>
+      <node ref="D127" pin="2"/>
+      <node ref="TP29" pin="1"/>
+    </net>
+    <net code="138" name="Net-(D116-Pad1)">
+      <node ref="D116" pin="1"/>
+      <node ref="TP28" pin="1"/>
+      <node ref="D117" pin="2"/>
+    </net>
+    <net code="139" name="Net-(D117-Pad1)">
+      <node ref="D118" pin="2"/>
+      <node ref="TP36" pin="1"/>
+      <node ref="D117" pin="1"/>
+    </net>
+    <net code="140" name="Net-(D88-Pad1)">
+      <node ref="D89" pin="2"/>
+      <node ref="D88" pin="1"/>
+      <node ref="TP41" pin="1"/>
+    </net>
+    <net code="141" name="Net-(D104-Pad1)">
+      <node ref="TP11" pin="1"/>
+      <node ref="D105" pin="2"/>
+      <node ref="D104" pin="1"/>
+    </net>
+    <net code="142" name="Net-(D114-Pad1)">
+      <node ref="TP12" pin="1"/>
       <node ref="D114" pin="1"/>
       <node ref="D115" pin="2"/>
     </net>
-    <net code="164" name="Net-(D130-Pad1)">
-      <node ref="D130" pin="1"/>
-      <node ref="D131" pin="2"/>
+    <net code="143" name="Net-(D87-Pad1)">
+      <node ref="D87" pin="1"/>
+      <node ref="D88" pin="2"/>
+      <node ref="TP33" pin="1"/>
     </net>
-    <net code="165" name="Net-(D136-Pad1)">
-      <node ref="D137" pin="2"/>
-      <node ref="D136" pin="1"/>
+    <net code="144" name="Net-(D98-Pad1)">
+      <node ref="TP42" pin="1"/>
+      <node ref="D98" pin="1"/>
+      <node ref="D99" pin="2"/>
     </net>
-    <net code="166" name="Net-(D137-Pad1)">
-      <node ref="D138" pin="2"/>
-      <node ref="D137" pin="1"/>
+    <net code="145" name="Net-(D97-Pad1)">
+      <node ref="TP34" pin="1"/>
+      <node ref="D97" pin="1"/>
+      <node ref="D98" pin="2"/>
     </net>
-    <net code="167" name="Net-(D135-Pad1)">
-      <node ref="D135" pin="1"/>
+    <net code="146" name="Net-(D107-Pad1)">
+      <node ref="D107" pin="1"/>
+      <node ref="D108" pin="2"/>
+      <node ref="TP35" pin="1"/>
+    </net>
+    <net code="147" name="Net-(D157-Pad1)">
+      <node ref="TP40" pin="1"/>
+      <node ref="D158" pin="2"/>
+      <node ref="D157" pin="1"/>
+    </net>
+    <net code="148" name="Net-(D144-Pad1)">
+      <node ref="TP15" pin="1"/>
+      <node ref="D145" pin="2"/>
+      <node ref="D144" pin="1"/>
+    </net>
+    <net code="149" name="Net-(D145-Pad1)">
+      <node ref="D146" pin="2"/>
+      <node ref="D145" pin="1"/>
+      <node ref="TP23" pin="1"/>
+    </net>
+    <net code="150" name="Net-(D155-Pad1)">
+      <node ref="D156" pin="2"/>
+      <node ref="D155" pin="1"/>
+      <node ref="TP24" pin="1"/>
+    </net>
+    <net code="151" name="Net-(D156-Pad1)">
+      <node ref="TP32" pin="1"/>
+      <node ref="D157" pin="2"/>
+      <node ref="D156" pin="1"/>
+    </net>
+    <net code="152" name="Net-(D146-Pad1)">
+      <node ref="D146" pin="1"/>
+      <node ref="TP31" pin="1"/>
+      <node ref="D147" pin="2"/>
+    </net>
+    <net code="153" name="Net-(D147-Pad1)">
+      <node ref="TP39" pin="1"/>
+      <node ref="D148" pin="2"/>
+      <node ref="D147" pin="1"/>
+    </net>
+    <net code="154" name="Net-(D135-Pad1)">
+      <node ref="TP22" pin="1"/>
       <node ref="D136" pin="2"/>
+      <node ref="D135" pin="1"/>
     </net>
-    <net code="168" name="Net-(D134-Pad1)">
+    <net code="155" name="Net-(D127-Pad1)">
+      <node ref="TP37" pin="1"/>
+      <node ref="D128" pin="2"/>
+      <node ref="D127" pin="1"/>
+    </net>
+    <net code="156" name="Net-(D137-Pad1)">
+      <node ref="D137" pin="1"/>
+      <node ref="D138" pin="2"/>
+      <node ref="TP38" pin="1"/>
+    </net>
+    <net code="157" name="Net-(D136-Pad1)">
+      <node ref="D136" pin="1"/>
+      <node ref="D137" pin="2"/>
+      <node ref="TP30" pin="1"/>
+    </net>
+    <net code="158" name="Net-(D134-Pad1)">
       <node ref="D135" pin="2"/>
       <node ref="D134" pin="1"/>
+      <node ref="TP14" pin="1"/>
     </net>
-    <net code="169" name="Net-(D131-Pad1)">
-      <node ref="D132" pin="2"/>
-      <node ref="D131" pin="1"/>
+    <net code="159" name="Net-(D124-Pad1)">
+      <node ref="TP13" pin="1"/>
+      <node ref="D124" pin="1"/>
+      <node ref="D125" pin="2"/>
     </net>
-    <net code="170" name="Net-(D129-Pad1)">
-      <node ref="D129" pin="1"/>
-      <node ref="D130" pin="2"/>
+    <net code="160" name="Net-(D154-Pad1)">
+      <node ref="TP16" pin="1"/>
+      <node ref="D154" pin="1"/>
+      <node ref="D155" pin="2"/>
     </net>
-    <net code="171" name="Net-(D128-Pad1)">
+    <net code="161" name="Net-(D108-Pad1)">
+      <node ref="D108" pin="1"/>
+      <node ref="D109" pin="2"/>
+      <node ref="TP43" pin="1"/>
+    </net>
+    <net code="162" name="Net-(D118-Pad1)">
+      <node ref="TP44" pin="1"/>
+      <node ref="D118" pin="1"/>
+      <node ref="D119" pin="2"/>
+    </net>
+    <net code="163" name="Net-(D128-Pad1)">
       <node ref="D128" pin="1"/>
       <node ref="D129" pin="2"/>
+      <node ref="TP45" pin="1"/>
     </net>
-    <net code="172" name="Net-(D127-Pad1)">
-      <node ref="D127" pin="1"/>
-      <node ref="D128" pin="2"/>
+    <net code="164" name="Net-(D138-Pad1)">
+      <node ref="D139" pin="2"/>
+      <node ref="D138" pin="1"/>
+      <node ref="TP46" pin="1"/>
     </net>
-    <net code="173" name="Net-(D123-Pad1)">
-      <node ref="U2" pin="12"/>
-      <node ref="D123" pin="1"/>
+    <net code="165" name="Net-(D148-Pad1)">
+      <node ref="D148" pin="1"/>
+      <node ref="TP47" pin="1"/>
+      <node ref="D149" pin="2"/>
     </net>
-    <net code="174" name="Net-(D152-Pad1)">
-      <node ref="D152" pin="1"/>
-      <node ref="D153" pin="2"/>
+    <net code="166" name="Net-(D158-Pad1)">
+      <node ref="TP48" pin="1"/>
+      <node ref="D159" pin="2"/>
+      <node ref="D158" pin="1"/>
     </net>
-    <net code="175" name="Net-(D142-Pad1)">
-      <node ref="D143" pin="2"/>
+    <net code="167" name="Net-(D86-Pad1)">
+      <node ref="D86" pin="1"/>
+      <node ref="TP25" pin="1"/>
+      <node ref="D87" pin="2"/>
+    </net>
+    <net code="168" name="Net-(D96-Pad1)">
+      <node ref="D96" pin="1"/>
+      <node ref="D97" pin="2"/>
+      <node ref="TP26" pin="1"/>
+    </net>
+    <net code="169" name="Net-(D150-Pad1)">
+      <node ref="D150" pin="1"/>
+      <node ref="D151" pin="2"/>
+      <node ref="TP63" pin="1"/>
+    </net>
+    <net code="170" name="Net-(D141-Pad1)">
+      <node ref="D142" pin="2"/>
+      <node ref="TP70" pin="1"/>
+      <node ref="D141" pin="1"/>
+    </net>
+    <net code="171" name="Net-(D151-Pad1)">
+      <node ref="D152" pin="2"/>
+      <node ref="D151" pin="1"/>
+      <node ref="TP71" pin="1"/>
+    </net>
+    <net code="172" name="Net-(D161-Pad1)">
+      <node ref="TP72" pin="1"/>
+      <node ref="D161" pin="1"/>
+      <node ref="D162" pin="2"/>
+    </net>
+    <net code="173" name="Net-(D90-Pad1)">
+      <node ref="D90" pin="1"/>
+      <node ref="D91" pin="2"/>
+      <node ref="TP57" pin="1"/>
+    </net>
+    <net code="174" name="Net-(D100-Pad1)">
+      <node ref="D100" pin="1"/>
+      <node ref="D101" pin="2"/>
+      <node ref="TP58" pin="1"/>
+    </net>
+    <net code="175" name="Net-(D110-Pad1)">
+      <node ref="D110" pin="1"/>
+      <node ref="TP59" pin="1"/>
+      <node ref="D111" pin="2"/>
+    </net>
+    <net code="176" name="Net-(D120-Pad1)">
+      <node ref="D121" pin="2"/>
+      <node ref="D120" pin="1"/>
+      <node ref="TP60" pin="1"/>
+    </net>
+    <net code="177" name="Net-(D130-Pad1)">
+      <node ref="D130" pin="1"/>
+      <node ref="TP61" pin="1"/>
+      <node ref="D131" pin="2"/>
+    </net>
+    <net code="178" name="Net-(D140-Pad1)">
+      <node ref="D140" pin="1"/>
+      <node ref="D141" pin="2"/>
+      <node ref="TP62" pin="1"/>
+    </net>
+    <net code="179" name="Net-(D160-Pad1)">
+      <node ref="D161" pin="2"/>
+      <node ref="D160" pin="1"/>
+      <node ref="TP64" pin="1"/>
+    </net>
+    <net code="180" name="Net-(D89-Pad1)">
+      <node ref="TP49" pin="1"/>
+      <node ref="D89" pin="1"/>
+      <node ref="D90" pin="2"/>
+    </net>
+    <net code="181" name="Net-(D100-Pad2)">
+      <node ref="TP50" pin="1"/>
+      <node ref="D100" pin="2"/>
+      <node ref="D99" pin="1"/>
+    </net>
+    <net code="182" name="Net-(D109-Pad1)">
+      <node ref="D110" pin="2"/>
+      <node ref="D109" pin="1"/>
+      <node ref="TP51" pin="1"/>
+    </net>
+    <net code="183" name="Net-(D119-Pad1)">
+      <node ref="D120" pin="2"/>
+      <node ref="TP52" pin="1"/>
+      <node ref="D119" pin="1"/>
+    </net>
+    <net code="184" name="Net-(D129-Pad1)">
+      <node ref="TP53" pin="1"/>
+      <node ref="D130" pin="2"/>
+      <node ref="D129" pin="1"/>
+    </net>
+    <net code="185" name="Net-(D139-Pad1)">
+      <node ref="TP54" pin="1"/>
+      <node ref="D140" pin="2"/>
+      <node ref="D139" pin="1"/>
+    </net>
+    <net code="186" name="Net-(D149-Pad1)">
+      <node ref="D149" pin="1"/>
+      <node ref="TP55" pin="1"/>
+      <node ref="D150" pin="2"/>
+    </net>
+    <net code="187" name="Net-(D159-Pad1)">
+      <node ref="TP56" pin="1"/>
+      <node ref="D159" pin="1"/>
+      <node ref="D160" pin="2"/>
+    </net>
+    <net code="188" name="Net-(D84-Pad1)">
+      <node ref="D84" pin="1"/>
+      <node ref="D85" pin="2"/>
+      <node ref="TP9" pin="1"/>
+    </net>
+    <net code="189" name="Net-(D85-Pad1)">
+      <node ref="D85" pin="1"/>
+      <node ref="TP17" pin="1"/>
+      <node ref="D86" pin="2"/>
+    </net>
+    <net code="190" name="Net-(D95-Pad1)">
+      <node ref="D96" pin="2"/>
+      <node ref="D95" pin="1"/>
+      <node ref="TP18" pin="1"/>
+    </net>
+    <net code="191" name="Net-(D94-Pad1)">
+      <node ref="D95" pin="2"/>
+      <node ref="TP10" pin="1"/>
+      <node ref="D94" pin="1"/>
+    </net>
+    <net code="192" name="Net-(D142-Pad1)">
       <node ref="D142" pin="1"/>
+      <node ref="D143" pin="2"/>
+      <node ref="TP78" pin="1"/>
     </net>
-    <net code="176" name="Net-(D143-Pad1)">
-      <node ref="U2" pin="9"/>
-      <node ref="D143" pin="1"/>
+    <net code="193" name="Net-(D102-Pad1)">
+      <node ref="D102" pin="1"/>
+      <node ref="D103" pin="2"/>
+      <node ref="TP74" pin="1"/>
     </net>
-    <net code="177" name="Net-(D132-Pad1)">
-      <node ref="D132" pin="1"/>
-      <node ref="D133" pin="2"/>
-    </net>
-    <net code="178" name="Net-(D133-Pad1)">
-      <node ref="D133" pin="1"/>
-      <node ref="U2" pin="10"/>
-    </net>
-    <net code="179" name="Net-(D122-Pad1)">
-      <node ref="D122" pin="1"/>
-      <node ref="D123" pin="2"/>
-    </net>
-    <net code="180" name="Net-(D112-Pad1)">
+    <net code="194" name="Net-(D112-Pad1)">
       <node ref="D113" pin="2"/>
+      <node ref="TP75" pin="1"/>
       <node ref="D112" pin="1"/>
     </net>
-    <net code="181" name="Net-(D113-Pad1)">
-      <node ref="U2" pin="13"/>
-      <node ref="D113" pin="1"/>
+    <net code="195" name="Net-(D122-Pad1)">
+      <node ref="D123" pin="2"/>
+      <node ref="TP76" pin="1"/>
+      <node ref="D122" pin="1"/>
     </net>
-    <net code="182" name="Net-(D111-Pad1)">
-      <node ref="D111" pin="1"/>
-      <node ref="D112" pin="2"/>
+    <net code="196" name="Net-(D132-Pad1)">
+      <node ref="D133" pin="2"/>
+      <node ref="TP77" pin="1"/>
+      <node ref="D132" pin="1"/>
     </net>
-    <net code="183" name="Net-(D102-Pad1)">
-      <node ref="D103" pin="2"/>
-      <node ref="D102" pin="1"/>
-    </net>
-    <net code="184" name="Net-(D103-Pad1)">
-      <node ref="D103" pin="1"/>
-      <node ref="U2" pin="14"/>
-    </net>
-    <net code="185" name="Net-(D101-Pad1)">
-      <node ref="D101" pin="1"/>
-      <node ref="D102" pin="2"/>
-    </net>
-    <net code="186" name="Net-(D92-Pad1)">
-      <node ref="D93" pin="2"/>
-      <node ref="D92" pin="1"/>
-    </net>
-    <net code="187" name="Net-(D162-Pad1)">
-      <node ref="D162" pin="1"/>
-      <node ref="D163" pin="2"/>
-    </net>
-    <net code="188" name="Net-(D153-Pad1)">
-      <node ref="U2" pin="8"/>
-      <node ref="D153" pin="1"/>
-    </net>
-    <net code="189" name="Net-(D163-Pad1)">
-      <node ref="U2" pin="7"/>
-      <node ref="D163" pin="1"/>
-    </net>
-    <net code="190" name="Net-(C13-Pad1)">
-      <node ref="C13" pin="1"/>
-      <node ref="U2" pin="1"/>
-      <node ref="R9" pin="2"/>
-    </net>
-    <net code="191" name="Net-(D93-Pad1)">
+    <net code="197" name="Net-(D93-Pad1)">
       <node ref="D93" pin="1"/>
+      <node ref="TP81" pin="1"/>
       <node ref="U2" pin="15"/>
     </net>
-    <net code="192" name="Net-(D91-Pad1)">
+    <net code="198" name="Net-(D103-Pad1)">
+      <node ref="D103" pin="1"/>
+      <node ref="TP82" pin="1"/>
+      <node ref="U2" pin="14"/>
+    </net>
+    <net code="199" name="Net-(D121-Pad1)">
+      <node ref="D122" pin="2"/>
+      <node ref="TP68" pin="1"/>
+      <node ref="D121" pin="1"/>
+    </net>
+    <net code="200" name="Net-(D152-Pad1)">
+      <node ref="D152" pin="1"/>
+      <node ref="D153" pin="2"/>
+      <node ref="TP79" pin="1"/>
+    </net>
+    <net code="201" name="Net-(D131-Pad1)">
+      <node ref="TP69" pin="1"/>
+      <node ref="D131" pin="1"/>
+      <node ref="D132" pin="2"/>
+    </net>
+    <net code="202" name="Net-(D111-Pad1)">
+      <node ref="D112" pin="2"/>
+      <node ref="TP67" pin="1"/>
+      <node ref="D111" pin="1"/>
+    </net>
+    <net code="203" name="Net-(D101-Pad1)">
+      <node ref="D101" pin="1"/>
+      <node ref="D102" pin="2"/>
+      <node ref="TP66" pin="1"/>
+    </net>
+    <net code="204" name="Net-(D163-Pad1)">
+      <node ref="U2" pin="7"/>
+      <node ref="D163" pin="1"/>
+      <node ref="TP88" pin="1"/>
+    </net>
+    <net code="205" name="Net-(D113-Pad1)">
+      <node ref="TP83" pin="1"/>
+      <node ref="D113" pin="1"/>
+      <node ref="U2" pin="13"/>
+    </net>
+    <net code="206" name="Net-(D123-Pad1)">
+      <node ref="TP84" pin="1"/>
+      <node ref="D123" pin="1"/>
+      <node ref="U2" pin="12"/>
+    </net>
+    <net code="207" name="Net-(D133-Pad1)">
+      <node ref="D133" pin="1"/>
+      <node ref="U2" pin="10"/>
+      <node ref="TP85" pin="1"/>
+    </net>
+    <net code="208" name="Net-(D143-Pad1)">
+      <node ref="U2" pin="9"/>
+      <node ref="D143" pin="1"/>
+      <node ref="TP86" pin="1"/>
+    </net>
+    <net code="209" name="Net-(D153-Pad1)">
+      <node ref="U2" pin="8"/>
+      <node ref="TP87" pin="1"/>
+      <node ref="D153" pin="1"/>
+    </net>
+    <net code="210" name="Net-(D162-Pad1)">
+      <node ref="D162" pin="1"/>
+      <node ref="D163" pin="2"/>
+      <node ref="TP80" pin="1"/>
+    </net>
+    <net code="211" name="Net-(D92-Pad1)">
+      <node ref="D93" pin="2"/>
+      <node ref="TP73" pin="1"/>
+      <node ref="D92" pin="1"/>
+    </net>
+    <net code="212" name="Net-(D91-Pad1)">
       <node ref="D92" pin="2"/>
       <node ref="D91" pin="1"/>
+      <node ref="TP65" pin="1"/>
     </net>
-    <net code="193" name="Net-(C9-Pad1)">
-      <node ref="U2" pin="24"/>
-      <node ref="C9" pin="1"/>
+    <net code="213" name="Net-(R8-Pad1)">
+      <node ref="U2" pin="2"/>
+      <node ref="R8" pin="1"/>
     </net>
-    <net code="194" name="Net-(C10-Pad1)">
-      <node ref="D154" pin="2"/>
-      <node ref="D114" pin="2"/>
-      <node ref="D83" pin="1"/>
-      <node ref="D84" pin="2"/>
-      <node ref="D124" pin="2"/>
-      <node ref="D134" pin="2"/>
-      <node ref="D94" pin="2"/>
-      <node ref="C10" pin="1"/>
-      <node ref="D104" pin="2"/>
-      <node ref="R11" pin="1"/>
-      <node ref="D144" pin="2"/>
+    <net code="214" name="Net-(R7-Pad1)">
+      <node ref="R7" pin="1"/>
+      <node ref="U2" pin="11"/>
     </net>
-    <net code="195" name="Net-(R11-Pad2)">
-      <node ref="R11" pin="2"/>
-      <node ref="U2" pin="16"/>
-      <node ref="R12" pin="1"/>
-    </net>
-    <net code="196" name="Net-(U2-Pad4)">
-      <node ref="U2" pin="4"/>
-    </net>
-    <net code="197" name="Net-(U2-Pad21)">
-      <node ref="U2" pin="21"/>
-    </net>
-    <net code="198" name="Net-(R10-Pad1)">
-      <node ref="R10" pin="1"/>
-      <node ref="U2" pin="3"/>
-    </net>
-    <net code="199" name="Net-(D83-Pad2)">
+    <net code="215" name="Net-(D83-Pad2)">
       <node ref="D83" pin="2"/>
       <node ref="U2" pin="19"/>
       <node ref="L1" pin="2"/>
       <node ref="U2" pin="20"/>
     </net>
-    <net code="200" name="Net-(D98-Pad1)">
-      <node ref="D99" pin="2"/>
-      <node ref="D98" pin="1"/>
+    <net code="216" name="Net-(C13-Pad1)">
+      <node ref="R9" pin="2"/>
+      <node ref="U2" pin="1"/>
+      <node ref="C13" pin="1"/>
     </net>
-    <net code="201" name="Net-(D100-Pad2)">
-      <node ref="D99" pin="1"/>
-      <node ref="D100" pin="2"/>
+    <net code="217" name="Net-(U2-Pad21)">
+      <node ref="U2" pin="21"/>
     </net>
-    <net code="202" name="Net-(D97-Pad1)">
-      <node ref="D98" pin="2"/>
-      <node ref="D97" pin="1"/>
+    <net code="218" name="Net-(C9-Pad1)">
+      <node ref="C9" pin="1"/>
+      <node ref="U2" pin="24"/>
     </net>
-    <net code="203" name="Net-(D96-Pad1)">
-      <node ref="D96" pin="1"/>
-      <node ref="D97" pin="2"/>
+    <net code="219" name="Net-(R10-Pad1)">
+      <node ref="U2" pin="3"/>
+      <node ref="R10" pin="1"/>
     </net>
-    <net code="204" name="Net-(D95-Pad1)">
-      <node ref="D95" pin="1"/>
-      <node ref="D96" pin="2"/>
+    <net code="220" name="Net-(U2-Pad4)">
+      <node ref="U2" pin="4"/>
     </net>
-    <net code="205" name="Net-(D94-Pad1)">
-      <node ref="D94" pin="1"/>
-      <node ref="D95" pin="2"/>
+    <net code="221" name="Net-(R11-Pad2)">
+      <node ref="U2" pin="16"/>
+      <node ref="R12" pin="1"/>
+      <node ref="R11" pin="2"/>
     </net>
-    <net code="206" name="Net-(D100-Pad1)">
-      <node ref="D100" pin="1"/>
-      <node ref="D101" pin="2"/>
-    </net>
-    <net code="207" name="Net-(D90-Pad1)">
-      <node ref="D91" pin="2"/>
-      <node ref="D90" pin="1"/>
-    </net>
-    <net code="208" name="Net-(D89-Pad1)">
-      <node ref="D90" pin="2"/>
-      <node ref="D89" pin="1"/>
-    </net>
-    <net code="209" name="Net-(D88-Pad1)">
-      <node ref="D88" pin="1"/>
-      <node ref="D89" pin="2"/>
-    </net>
-    <net code="210" name="Net-(D107-Pad1)">
-      <node ref="D107" pin="1"/>
-      <node ref="D108" pin="2"/>
-    </net>
-    <net code="211" name="Net-(D110-Pad1)">
-      <node ref="D111" pin="2"/>
-      <node ref="D110" pin="1"/>
-    </net>
-    <net code="212" name="Net-(D109-Pad1)">
-      <node ref="D110" pin="2"/>
-      <node ref="D109" pin="1"/>
-    </net>
-    <net code="213" name="Net-(D108-Pad1)">
-      <node ref="D109" pin="2"/>
-      <node ref="D108" pin="1"/>
-    </net>
-    <net code="214" name="Net-(D106-Pad1)">
-      <node ref="D106" pin="1"/>
-      <node ref="D107" pin="2"/>
-    </net>
-    <net code="215" name="Net-(D87-Pad1)">
-      <node ref="D87" pin="1"/>
-      <node ref="D88" pin="2"/>
-    </net>
-    <net code="216" name="Net-(D105-Pad1)">
-      <node ref="D105" pin="1"/>
-      <node ref="D106" pin="2"/>
-    </net>
-    <net code="217" name="Net-(D104-Pad1)">
-      <node ref="D105" pin="2"/>
-      <node ref="D104" pin="1"/>
-    </net>
-    <net code="218" name="Net-(R7-Pad1)">
-      <node ref="U2" pin="11"/>
-      <node ref="R7" pin="1"/>
-    </net>
-    <net code="219" name="Net-(R8-Pad1)">
-      <node ref="U2" pin="2"/>
-      <node ref="R8" pin="1"/>
-    </net>
-    <net code="220" name="Net-(D86-Pad1)">
-      <node ref="D86" pin="1"/>
-      <node ref="D87" pin="2"/>
-    </net>
-    <net code="221" name="Net-(D85-Pad1)">
-      <node ref="D85" pin="1"/>
-      <node ref="D86" pin="2"/>
-    </net>
-    <net code="222" name="Net-(D84-Pad1)">
-      <node ref="D84" pin="1"/>
-      <node ref="D85" pin="2"/>
+    <net code="222" name="Net-(C10-Pad1)">
+      <node ref="C10" pin="1"/>
+      <node ref="D144" pin="2"/>
+      <node ref="TP1" pin="1"/>
+      <node ref="D104" pin="2"/>
+      <node ref="D94" pin="2"/>
+      <node ref="D83" pin="1"/>
+      <node ref="D134" pin="2"/>
+      <node ref="D114" pin="2"/>
+      <node ref="D124" pin="2"/>
+      <node ref="R11" pin="1"/>
+      <node ref="D84" pin="2"/>
+      <node ref="D154" pin="2"/>
     </net>
   </nets>
 </export>
