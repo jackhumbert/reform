@@ -342,7 +342,7 @@ void setup_hardware(void)
 ISR(WDT_vect)
 {
   // WDT interrupt enable and flag cleared on entry
-  wdt_disable(); // Disable watchdog for now
+  Delay_MS(1);
 }
 
 /** Event handler for the library USB Connection event. */
