@@ -12,8 +12,14 @@ typedef struct MenuItem {
   int keycode;
 } MenuItem;
 
+#define MENU_PAGE_NONE 0
+#define MENU_PAGE_OTHER 1
+#define MENU_PAGE_BATTERY_STATUS 2
+
 void reset_and_render_menu(void);
+void reset_menu(void);
 void render_menu(int y);
+void refresh_menu_page(void);
 int execute_menu_function(int y);
 int execute_meta_function(int keycode);
 void anim_hello(void);

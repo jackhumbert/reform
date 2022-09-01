@@ -255,6 +255,7 @@ int remote_check_for_low_battery(void) {
 
   for (int i=0; i<8; i++) {
     // TODO: only accept digits
+    // FIXME: duplication from remote_get_voltages()
     voltages[i] = ((float)((response[i*3]-'0')*10 + (response[i*3+1]-'0')))/10.0;
     if (voltages[i]<0) voltages[i]=0;
     if (voltages[i]>=10) voltages[i]=9.9;

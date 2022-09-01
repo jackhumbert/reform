@@ -95,6 +95,7 @@ void reset_keyboard_state(void) {
     matrix_state[i] = 0;
   }
   last_meta_key = 0;
+  reset_menu();
 }
 
 inline bool is_media_key(uint8_t keycode) {
@@ -298,6 +299,9 @@ int main(void)
       if (counter>=100000) {
         remote_check_for_low_battery();
         counter = 0;
+      }
+      if (counter%2048 == 0) {
+        refresh_menu_page();
       }
       if (counter%750 == 0) {
         remote_process_alerts();

@@ -15,6 +15,7 @@
 
 int current_menu_y = 0;
 int current_scroll_y = 0;
+int current_menu_page = 0;
 
 #ifdef KBD_VARIANT_STANDALONE
 #define MENU_NUM_ITEMS 5
@@ -43,11 +44,16 @@ const MenuItem menu_items[] = {
   // main system power.
   { "KBD Power-Off       p", KEY_P },
 };
-#endif 
+#endif
 
-void reset_and_render_menu() {
+void reset_menu() {
   current_scroll_y = 0;
   current_menu_y = 0;
+  current_menu_page = MENU_PAGE_NONE;
+}
+
+void reset_and_render_menu() {
+  reset_menu();
   render_menu(current_scroll_y);
 }
 
@@ -61,8 +67,18 @@ void render_menu(int y) {
   gfx_flush();
 }
 
+// automatically refresh the current menu page if needed
+void refresh_menu_page() {
+  if (current_menu_page == MENU_PAGE_BATTERY_STATUS) {
+    remote_get_voltages();
+  }
+}
+
 int execute_menu_function(int y) {
+  current_menu_page = MENU_PAGE_NONE;
+
   if (y>=0 && y<MENU_NUM_ITEMS) {
+    current_menu_page = MENU_PAGE_OTHER;
     return execute_meta_function(menu_items[y].keycode);
   }
   return execute_meta_function(KEY_ESCAPE);
@@ -102,6 +118,7 @@ int execute_meta_function(int keycode) {
     remote_turn_off_aux();
   }*/
   else if (keycode == KEY_B) {
+    current_menu_page = MENU_PAGE_BATTERY_STATUS;
     remote_get_voltages();
     return 0;
   }

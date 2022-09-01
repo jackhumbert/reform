@@ -27,7 +27,7 @@
 
 void hid_report_cmd(uint8_t* data) {
   const uint32_t command = *(uint32_t *)data;
-  
+
   if (command == CMD_TEXT_FRAME) {
     gfx_on();
     for (int y=0; y<4; y++) {
@@ -49,6 +49,7 @@ void hid_report_cmd(uint8_t* data) {
     kbd_brightness_set(brite);
   }
   else if (command == CMD_POWER_OFF) {
+    reset_menu();
     anim_goodbye();
     remote_turn_off_som();
     keyboard_power_off();
