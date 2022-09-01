@@ -1,3 +1,4 @@
 bin
 *.o
 tests_host
+tools/lpcrc/lpcrc

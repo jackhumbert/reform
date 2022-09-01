@@ -19,7 +19,7 @@ else
 endif
 
 # Set OPTIMIZATION to '0', '1', '2', '3' or 's'
-OPTIMIZATION = s
+OPTIMIZATION = 2
 
 ##########################################################################
 # Output directories
@@ -335,7 +335,7 @@ GCFLAGS += -std=gnu99
 GCFLAGS += -g 
 GCFLAGS += -O$(OPTIMIZATION) 
 GCFLAGS += $(INCLUDE_PATHS) 
-GCFLAGS += -Wall 
+GCFLAGS += -Wall
 GCFLAGS += -mthumb 
 GCFLAGS += -ffunction-sections 
 GCFLAGS += -fdata-sections 

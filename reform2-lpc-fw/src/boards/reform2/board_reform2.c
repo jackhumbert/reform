@@ -39,7 +39,10 @@
 // don't forget to set this to the correct rev for your motherboard!
 #define REFORM_MOTHERBOARD_REV REFORM_MBREV_R3
 //#define REF2_DEBUG 1
-#define FW_REV "MREF2LPC R3 20210925"
+#define FW_STRING1 "MREF2LPC"
+#define FW_STRING2 "R3"
+#define FW_STRING3 "20220621"
+#define FW_REV FW_STRING1 FW_STRING2 FW_STRING3
 
 #define POWERSAVE_SLEEP_SECONDS 1
 #define POWERSAVE_HOLDOFF_CYCLES (60*15)
@@ -55,6 +58,7 @@
 #define ST_EXPECT_CMD     4
 #define ST_SYNTAX_ERROR   5
 #define ST_EXPECT_RETURN  6
+#define ST_EXPECT_MAGIC   7
 
 extern volatile uint8_t   i2c_write_buf[I2C_BUFSIZE];
 extern volatile uint8_t   i2c_read_buf[I2C_BUFSIZE];
@@ -173,6 +177,8 @@ uint16_t undervoltage_bits = 0;
 uint16_t missing_bits = 0;
 uint16_t missing_reason = 0;
 uint8_t spir[64];
+bool som_is_powered = false;
+bool imx_uart_enabled = false;
 
 #if (REFORM_MOTHERBOARD_REV >= REFORM_MBREV_R3)
   #define OVERVOLTAGE_START_VALUE 3.8
@@ -375,16 +381,6 @@ void measure_and_accumulate_current() {
 #endif
 }
 
-uint16_t charger_state;
-uint16_t charge_status;
-uint16_t system_status;
-uint16_t limit_alerts;
-uint16_t charger_alerts;
-uint16_t status_alerts;
-float chg_vin;
-float chg_vbat;
-int som_is_powered = 0;
-
 void turn_som_power_on(void) {
   LPC_GPIO->CLR[1] = (1 << 28); // hold in reset
 
@@ -408,7 +404,7 @@ void turn_som_power_on(void) {
 
   LPC_GPIO->SET[1] = (1 << 28); // release reset
 
-  som_is_powered = 1;
+  som_is_powered = true;
 }
 
 void turn_som_power_off(void) {
@@ -427,7 +423,7 @@ void turn_som_power_off(void) {
   LPC_GPIO->CLR[1] = (1 << 31); // USB 5v off (R1+)
   LPC_GPIO->CLR[0] = (1 << 7);  // AUX 3v3 off (R1+)
 
-  som_is_powered = 0;
+  som_is_powered = false;
 }
 
 // just a reset pulse to IMX, no power toggling
@@ -526,6 +522,7 @@ void boardInit(void)
   // only send to reform, don't receive from it
   /* Set 0.13 UART TXD */
   LPC_IOCON->PIO1_13 &= ~0x07;
+  imx_uart_enabled = false;
 
 #ifdef REF2_DEBUG
   sprintf(uartBuffer, "\r\nMNT Reform 2.0 MCU initialized.\r\n");
@@ -685,9 +682,11 @@ void handle_commands() {
         // turn reporting to i.MX on or off
         if (cmd_number>0) {
           // turn i.MX UART output on
+          imx_uart_enabled = true;
           LPC_IOCON->PIO1_13 |= 0x3;
         } else {
           // turn i.MX UART output off
+          imx_uart_enabled = false;
           LPC_IOCON->PIO1_13 &= ~0x07;
         }
       }
@@ -781,6 +780,204 @@ void handle_commands() {
   }
 }
 
+unsigned char spi_cmd_state = ST_EXPECT_MAGIC;
+unsigned char spi_command = '\0';
+
+uint8_t spi_arg1 = 0;
+/**
+ * @brief SPI command from imx poll function
+ * Attempts to handle spi communication asynchronously and in a non-blocking way.
+ * 
+ */
+void handle_spi_commands() {
+  STATIC_ASSERT(SSP0_FIFOSIZE >= 8);
+  uint8_t spiBuf[SSP0_FIFOSIZE];
+  uint8_t len = SSP0_FIFOSIZE;
+
+  // non blocking read
+  // read until requested buffer full or receive buffer empty 
+  for (uint8_t i = 0; i < len; i++ )
+  {
+    // No more data in receive buffer
+    if ((LPC_SSP0->SR & SSP0_SR_RNE_MASK) == SSP0_SR_RNE_EMPTY)
+    {
+      len = i;
+      break;
+    }
+
+    spiBuf[i] = LPC_SSP0->DR;
+  }
+
+  if (imx_uart_enabled && len > 0) {
+    sprintf(uartBuffer, "spi:%X,%X,%X,%X\r\n", spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3]);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+
+  // states:
+  // 0   arg1 byte expected
+  // 4   command byte expected
+  // 6   execute command
+  // 7   magic byte expected
+  for(uint8_t s = 0; s < len; s++)
+  {
+    if (spi_cmd_state == ST_EXPECT_MAGIC)
+    {
+      // magic byte found, prevents garbage data 
+      // in the bus from triggering a command
+      if(spiBuf[s] == 0xB5)
+      {
+        spi_cmd_state = ST_EXPECT_CMD;
+      }
+    }
+    else if (spi_cmd_state == ST_EXPECT_CMD) {
+      // read command
+      spi_command = spiBuf[s];
+      spi_cmd_state = ST_EXPECT_DIGIT_0;
+    }
+    else if (spi_cmd_state == ST_EXPECT_DIGIT_0) {
+      // read arg1 byte
+      spi_arg1 = spiBuf[s];
+      spi_cmd_state = ST_EXPECT_RETURN;
+    }
+  }
+  
+  if (spi_cmd_state != ST_EXPECT_RETURN) {
+    // waiting for more data
+    return;
+  }
+
+  if (imx_uart_enabled) {
+    sprintf(uartBuffer, "spi:exec:%X,%X\r\n", spi_command, spi_arg1);
+    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+
+  // clear recieve buffer, reuse as send buffer
+  memset(spiBuf, 0, 8);
+  
+  // execute power state command
+  if (spi_command == 'p') {
+    // toggle system power and/or reset imx
+    if (spi_arg1 == 1) {
+      turn_som_power_off();
+    }
+    if (spi_arg1 == 2) {
+      turn_som_power_on();
+    }
+    if (spi_arg1 == 3) {
+      reset_som();
+    }
+    if (spi_arg1 == 4) {
+      turn_aux_power_off();
+    } 
+    if (spi_arg1 == 5) {
+      turn_aux_power_on();
+    } 
+
+    spiBuf[0] = som_is_powered;
+  }
+  // return firmware version and api info
+  else if (spi_command == 'f')
+  {
+    if(spi_arg1 == 0) {
+      memcpy(spiBuf, FW_STRING1, 8);
+    }
+    else if(spi_arg1 == 1) {
+      memcpy(spiBuf, FW_STRING2, 8);
+    }
+    else {
+      memcpy(spiBuf, FW_STRING3, 8);
+    }
+  }
+  // execute status query command
+  else if (spi_command == 'q') {
+    uint8_t percentage = (uint8_t)capacity_percentage;
+    // if (!reached_full_charge) {
+    //   percentage = 255;
+    // }
+    uint16_t voltsInt = (uint16_t)(volts*1000.0);
+    uint16_t currentInt = (uint16_t)(current*1000.0);
+
+    spiBuf[0] = (uint8_t)voltsInt;
+    spiBuf[1] = (uint8_t)(voltsInt >> 8);
+    spiBuf[2] = (uint8_t)currentInt;
+    spiBuf[3] = (uint8_t)(currentInt >> 8);
+    spiBuf[4] = (uint8_t)percentage;
+    spiBuf[5] = (uint8_t)state;
+    //spiBuf[6] = bitfield of power power rails
+  }
+  // get cell voltage
+  else if (spi_command == 'v') {
+    uint16_t volts = 0;
+    uint8_t cell1 = 0;
+
+    if (spi_arg1 == 1)
+    {
+      cell1 = 4;
+    }
+
+    for(uint8_t c = 0; c < 4; c++)
+    {
+      volts = cells_v[c + cell1]*1000.0;
+      spiBuf[c*2] = (uint8_t)volts;
+      spiBuf[(c*2)+1] = (uint8_t)(volts >> 8);
+    }
+  }
+  // get calculated capacity
+  else if (spi_command == 'c') {
+    uint16_t cap_accu = (uint16_t) capacity_accu_ampsecs / 3.6;
+    uint16_t cap_min = (uint16_t) capacity_min_ampsecs / 3.6;
+    uint16_t cap_max = (uint16_t) capacity_max_ampsecs / 3.6;
+
+    spiBuf[0] = (uint8_t) cap_accu;
+    spiBuf[1] = (uint8_t) (cap_accu >> 8);
+    spiBuf[2] = (uint8_t) cap_min;
+    spiBuf[3] = (uint8_t) (cap_min >> 8);
+    spiBuf[4] = (uint8_t) cap_max;
+    spiBuf[5] = (uint8_t) (cap_max >> 8);
+  }
+  // turn reporting to i.MX on or off
+  else if (spi_command == 'u') {
+    if (spi_arg1 == 1) {
+      // turn i.MX UART output on
+      imx_uart_enabled = true;
+      LPC_IOCON->PIO1_13 |= 0x3;
+    } else {
+      // turn i.MX UART output off
+      imx_uart_enabled = false;
+      LPC_IOCON->PIO1_13 &= ~0x07;
+    }
+  }
+
+  if (imx_uart_enabled) {
+      sprintf(uartBuffer, "spi:res: %X %X %X %X %X %X %X %X\r\n", 
+          spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3],
+          spiBuf[4], spiBuf[5], spiBuf[6], spiBuf[7]);
+      uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+  }
+
+  // Host must wait while the LPC prepares response buffer
+  // If host does not read 8 bytes the previous response buffer will be stuck in here. 
+  uint8_t Dummy = Dummy;
+  for (uint8_t i = 0; i < SSP0_FIFOSIZE; i++)
+  {
+    /* Move on only if TX FIFO not full. */
+    // while ((LPC_SSP0->SR & SSP0_SR_TNF_MASK) == SSP0_SR_TNF_FULL);
+    LPC_SSP0->DR = spiBuf[i];
+
+    // while ( (LPC_SSP0->SR & SSP0_SR_RNE_MASK) == SSP0_SR_RNE_EMPTY );
+    /* Whenever a byte is written, MISO FIFO counter increments, Clear FIFO
+    on MISO. Otherwise, when sspReceive is called, previous data byte
+    is left in the FIFO. */
+    Dummy = LPC_SSP0->DR;
+  }
+
+  spi_cmd_state = ST_EXPECT_MAGIC;
+  spi_command = 0;
+  spi_arg1 = 0;
+
+  return;
+}
+
 void calculate_capacity_percentage()
 {
   if (capacity_accu_ampsecs <= capacity_min_ampsecs) {
@@ -792,25 +989,10 @@ void calculate_capacity_percentage()
   }
 }
 
-#define REPORT_MAX 63
-void report_to_spi(void)
-{
-  char report[REPORT_MAX+1];
-  int percentage = capacity_percentage;
-  if (!reached_full_charge) {
-    percentage = -1;
-  }
-
-  snprintf(report, REPORT_MAX, "(%dmV %dmA %d%%)\n", (int)(volts*1000.0), (int)(current*1000.0), percentage);
-
-  report[63] = 0;
-  ssp0Send((uint8_t*)report, strlen(report));
-}
-
 void WDT_IRQHandler(void)
 {
-	// Disable WDT interrupt
-	NVIC_DisableIRQ(WDT_IRQn);
+  // Disable WDT interrupt
+  NVIC_DisableIRQ(WDT_IRQn);
   NVIC_ClearPendingIRQ(WDT_IRQn);
 }
 
@@ -1027,6 +1209,9 @@ int main(void)
     // this also resets powersave holdoff counter
     handle_commands();
 
+    //TODO: if chip select high
+    handle_spi_commands();
+
     if (state == ST_POWERSAVE || state == ST_UNDERVOLTED) {
       cur_second += POWERSAVE_SLEEP_SECONDS;
     } else {
@@ -1038,9 +1223,6 @@ int main(void)
         // prevent rollovers
         cycles_in_state += cur_second-last_second;
 
-        // report to SPI0 controller
-        // TODO: not yet functional
-        // report_to_spi();
       }
       last_second = cur_second;
 
@@ -1050,7 +1232,6 @@ int main(void)
     }
 
     state = next_state;
-
   }
 }
 
