@@ -68,8 +68,6 @@ struct CharacterMatrix {
   bool dirty;
 };
 
-struct CharacterMatrix display;
-
 void gfx_poke(uint8_t x, uint8_t y, uint8_t c);
 void gfx_poke_str(uint8_t x, uint8_t y, char* str);
 void gfx_clear_invert(void);

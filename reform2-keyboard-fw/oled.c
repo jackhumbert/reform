@@ -13,6 +13,7 @@
 #include <avr/pgmspace.h>
 #include "gfx/font.c"
 
+struct CharacterMatrix display;
 int oledbrt = 0;
 
 // Write command sequence.
