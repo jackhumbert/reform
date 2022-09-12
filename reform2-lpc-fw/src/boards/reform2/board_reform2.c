@@ -627,9 +627,14 @@ void handle_commands() {
           sprintf(uartBuffer,"system: auxpwr on\r\n");
           uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
         } else {
-          turn_som_power_on();
-          sprintf(uartBuffer,"system: on\r\n");
-          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          if (som_is_powered) {
+              sprintf(uartBuffer,"system: already on\r\n");
+              uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          } else {
+              turn_som_power_on();
+              sprintf(uartBuffer,"system: on\r\n");
+              uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          }
         }
       }
       else if (remote_cmd == 'x') {
