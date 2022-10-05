@@ -40,8 +40,8 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MediaControlReport[] =
 	HID_RI_USAGE_PAGE(8, 0x0C), /* Consumer Page */
 	HID_RI_USAGE(8, 0x01), /* Consumer Controls */
 	HID_RI_COLLECTION(8, 0x01), /* Application */
-		HID_RI_USAGE(8, 0xB0), /* Play */
-		HID_RI_USAGE(8, 0xB1), /* Pause */
+		HID_RI_USAGE(8, 0x70), /* Display Brightness Increment */
+		HID_RI_USAGE(8, 0x6F), /* Display Brightness Decrement */
 		HID_RI_USAGE(8, 0xB3), /* Fast Forward */
 		HID_RI_USAGE(8, 0xB4), /* Rewind */
 		HID_RI_USAGE(8, 0xB5), /* Next Track */

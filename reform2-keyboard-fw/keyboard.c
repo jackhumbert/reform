@@ -122,6 +122,12 @@ bool get_media_keys(uint8_t keycode, USB_MediaReport_Data_t* mcr) {
   } else if (keycode == HID_KEYBOARD_SC_MEDIA_PLAY) {
     if (mcr) mcr->PlayPause = 1;
     media_key = true;
+  } else if (keycode == HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_DOWN) {
+    if (mcr) mcr->BrightnessDown = 1;
+    media_key = true;
+  } else if (keycode == HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_UP) {
+    if (mcr) mcr->BrightnessUp = 1;
+    media_key = true;
   }
   return media_key;
 }

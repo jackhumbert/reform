@@ -25,6 +25,10 @@
 #define set_input(portdir,pin) portdir &= ~(1<<pin)
 #define set_output(portdir,pin) portdir |= (1<<pin)
 
+// Reuse existing key codes
+#define HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_DOWN HID_KEYBOARD_SC_MEDIA_RELOAD
+#define HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_UP HID_KEYBOARD_SC_MEDIA_CALCULATOR
+
 // Top row, left to right
 #define MATRIX_DEFAULT_ROW_1 \
   KEY_ESCAPE,\
@@ -128,8 +132,8 @@
 // MediaController USB Report
 typedef struct
 {
-  unsigned Play           : 1;
-  unsigned Pause          : 1;
+  unsigned BrightnessUp   : 1;
+  unsigned BrightnessDown : 1;
   unsigned FForward       : 1;
   unsigned Rewind         : 1;
   unsigned NextTrack      : 1;

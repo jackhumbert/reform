@@ -37,8 +37,8 @@ uint8_t matrix[KBD_MATRIX_SZ] = {
 uint8_t matrix_fn[KBD_MATRIX_SZ] = {
   // Custom top row
   KEY_ESCAPE,
-  KEY_F1,
-  KEY_F2,
+  HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_DOWN,
+  HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_UP,
   KEY_F3,
   KEY_F4,
   KEY_F5,
@@ -90,8 +90,8 @@ uint8_t matrix_fn[KBD_MATRIX_SZ] = {
 uint8_t matrix_fn_toggled[KBD_MATRIX_SZ] = {
   // Custom top row
   KEY_ESCAPE,
-  KEY_F1,
-  KEY_F2,
+  HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_DOWN,
+  HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_UP,
   KEY_F3,
   KEY_F4,
   KEY_F5,
