@@ -507,7 +507,7 @@ void boardInit(void)
 
   // SPI0 connected to the main SOM (they're controller)
   ssp0Init();
-  ssp0ClockSlow();
+  ssp0ClockFast();
 
   // SPI chip select
   LPC_GPIO->DIR[1] |= (1 << 23);
