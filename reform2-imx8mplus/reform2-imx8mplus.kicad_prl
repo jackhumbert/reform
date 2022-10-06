@@ -63,7 +63,7 @@
       36
     ],
     "visible_layers": "ffcffff_ffffffff",
-    "zone_display_mode": 0
+    "zone_display_mode": 1
   },
   "meta": {
     "filename": "reform2-imx8mplus.kicad_prl",
