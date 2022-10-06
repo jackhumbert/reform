@@ -132,14 +132,14 @@
 // MediaController USB Report
 typedef struct
 {
-  unsigned BrightnessUp   : 1;
   unsigned BrightnessDown : 1;
-  unsigned NextTrack      : 1;
+  unsigned BrightnessUp   : 1;
   unsigned PreviousTrack  : 1;
   unsigned PlayPause      : 1;
+  unsigned NextTrack      : 1;
   unsigned Mute           : 1;
-  unsigned VolumeUp       : 1;
   unsigned VolumeDown     : 1;
+  unsigned VolumeUp       : 1;
 } ATTR_PACKED USB_MediaReport_Data_t;
 
 void setup_hardware(void);
