@@ -104,14 +104,14 @@ inline bool is_media_key(uint8_t keycode) {
 
 void get_media_keys(uint8_t keycode, USB_MediaReport_Data_t* mcr) {
   switch (keycode) {
-  case HID_KEYBOARD_SC_MEDIA_MUTE: mcr->Mute = 1; break;
-  case HID_KEYBOARD_SC_MEDIA_VOLUME_UP: mcr->VolumeUp = 1; break;
-  case HID_KEYBOARD_SC_MEDIA_VOLUME_DOWN: mcr->VolumeDown = 1; break;
-  case HID_KEYBOARD_SC_MEDIA_BACKWARD: mcr->PreviousTrack = 1; break;
-  case HID_KEYBOARD_SC_MEDIA_FORWARD: mcr->NextTrack = 1; break;
-  case HID_KEYBOARD_SC_MEDIA_PLAY: mcr->PlayPause = 1; break;
   case HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_DOWN: mcr->BrightnessDown = 1; break;
   case HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_UP: mcr->BrightnessUp = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_PREVIOUS_TRACK: mcr->PreviousTrack = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_PLAY: mcr->PlayPause = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_NEXT_TRACK: mcr->NextTrack = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_MUTE: mcr->Mute = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_VOLUME_DOWN: mcr->VolumeDown = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_VOLUME_UP: mcr->VolumeUp = 1; break;
   }
 }
 
