@@ -102,28 +102,17 @@ inline bool is_media_key(uint8_t keycode) {
   return (keycode>=HID_KEYBOARD_SC_MEDIA_PLAY);
 }
 
-bool get_media_keys(uint8_t keycode, USB_MediaReport_Data_t* mcr) {
-  bool media_key = false;
-  if (keycode == HID_KEYBOARD_SC_MEDIA_MUTE) {
-    if (mcr) mcr->Mute = 1;
-    media_key = true;
-  } else if (keycode == HID_KEYBOARD_SC_MEDIA_VOLUME_UP) {
-    if (mcr) mcr->VolumeUp = 1;
-    media_key = true;
-  } else if (keycode == HID_KEYBOARD_SC_MEDIA_VOLUME_DOWN) {
-    if (mcr) mcr->VolumeDown = 1;
-    media_key = true;
-  } else if (keycode == HID_KEYBOARD_SC_MEDIA_BACKWARD) {
-    if (mcr) mcr->PreviousTrack = 1;
-    media_key = true;
-  } else if (keycode == HID_KEYBOARD_SC_MEDIA_FORWARD) {
-    if (mcr) mcr->NextTrack = 1;
-    media_key = true;
-  } else if (keycode == HID_KEYBOARD_SC_MEDIA_PLAY) {
-    if (mcr) mcr->PlayPause = 1;
-    media_key = true;
+void get_media_keys(uint8_t keycode, USB_MediaReport_Data_t* mcr) {
+  switch (keycode) {
+  case HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_DOWN: mcr->BrightnessDown = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_BRIGHTNESS_UP: mcr->BrightnessUp = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_PREVIOUS_TRACK: mcr->PreviousTrack = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_PLAY: mcr->PlayPause = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_NEXT_TRACK: mcr->NextTrack = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_MUTE: mcr->Mute = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_VOLUME_DOWN: mcr->VolumeDown = 1; break;
+  case HID_KEYBOARD_SC_MEDIA_VOLUME_UP: mcr->VolumeUp = 1; break;
   }
-  return media_key;
 }
 
 #define MAX_SCANCODES 6
