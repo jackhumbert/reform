@@ -264,6 +264,8 @@ int main(void)
 {
 #ifdef KBD_VARIANT_QWERTY_US
   matrix[KBD_COLS*4+1]=KEY_DELETE;
+  matrix_fn[KBD_COLS*4+1]=KEY_DELETE;
+  matrix_fn_toggled[KBD_COLS*4+1]=KEY_DELETE;
 #endif
 #ifdef KBD_VARIANT_NEO2
   matrix[KBD_COLS*3+0]=HID_KEYBOARD_SC_CAPS_LOCK; // M3
