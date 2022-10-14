@@ -1,0 +1,44 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#(c) SnapEDA 2016 (snapeda.com)
+#This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA) with Design Exception 1.0
+#
+# 1775059-1
+#
+DEF 1775059-1 J 0 40 Y Y 1 L N
+F0 "J" -591 561 50 H V L BNN
+F1 "1775059-1" -600 -700 50 H V L BNN
+F2 "TE_1775059-1" 0 0 50 H I L BNN
+F3 "TE Connectivity" 0 0 50 H I L BNN
+F4 "SD CONN RVS PUSH-PUSH" 0 0 50 H I L BNN
+F5 "Unavailable" 0 0 50 H I L BNN
+F6 "1775059-1" 0 0 50 H I L BNN
+F7 "None" 0 0 50 H I L BNN
+F8 "https://www.te.com/usa-en/product-1775059-1.html?te_bu=Cor&te_type=disp&te_campaign=seda_glo_cor-seda-global-disp-prtnr-fy19-seda-model-bom-cta_sma-317_1&elqCampaignId=32493" 0 0 50 H I L BNN
+F9 "1775059-1" 0 0 50 H I L BNN
+F10 "None" 0 0 50 H I L BNN
+DRAW
+P 2 0 0 10 600 500 600 -600 N
+P 2 0 0 10 600 -600 -600 -600 N
+P 2 0 0 10 -600 -600 -600 500 N
+P 2 0 0 10 -600 500 600 500 N
+X DAT0 7 800 200 200 L 40 40 0 0 B 
+X DAT1 8 800 100 200 L 40 40 0 0 B 
+X DAT2 9 800 0 200 L 40 40 0 0 B 
+X CD/DAT3 1 800 -100 200 L 40 40 0 0 B 
+X VDD 4 800 400 200 L 40 40 0 0 W 
+X VSS 3 800 -500 200 L 40 40 0 0 W 
+X VSS 6 800 -500 200 L 40 40 0 0 W 
+X CMD 2 -800 200 200 R 40 40 0 0 I 
+X CLK 5 -800 300 200 R 40 40 0 0 I C
+X SWITCH SW -800 0 200 R 40 40 0 0 P 
+X DETECT_SW D_SW -800 -100 200 R 40 40 0 0 P 
+X PROTECT_SW P_SW -800 -200 200 R 40 40 0 0 P 
+X SHIELD P1 800 -300 200 L 40 40 0 0 P 
+X SHIELD P2 800 -300 200 L 40 40 0 0 P 
+X SHIELD PEG1 800 -300 200 L 40 40 0 0 P 
+X SHIELD PEG2 800 -300 200 L 40 40 0 0 P 
+ENDDRAW
+ENDDEF
+#
+# End Library
