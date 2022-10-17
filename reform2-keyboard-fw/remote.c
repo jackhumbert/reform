@@ -81,7 +81,8 @@ int remote_try_wakeup(void) {
   return 0;
 #endif
 
-  for (int i=0; i<1000; i++) {
+  empty_serial();
+  for (int i=0; i<400; i++) {
     if (i%10 == 0) {
       gfx_clear();
       sprintf(buf, "Waking up LPC... %d%%", i/4);
@@ -91,8 +92,9 @@ int remote_try_wakeup(void) {
 
     Serial_SendByte('a');
     Serial_SendByte('\r');
+    Delay_MS(25);
 
-    if (Serial_ReceiveByte()>0) {
+    if (Serial_ReceiveByte()>=0) {
       remote_receive_string(0);
       ok = 1;
       break;
@@ -321,6 +323,8 @@ int remote_turn_on_som(void) {
     // FIXME what is remote_som_power_expected_state?
     return ok;
   }
+
+  if (strncmp(response, "system: already on", 18) == 0) ok = 0;
 
   remote_som_power_expected_state = 1;
   return ok;

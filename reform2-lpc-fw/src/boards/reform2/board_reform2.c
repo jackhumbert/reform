@@ -507,7 +507,7 @@ void boardInit(void)
 
   // SPI0 connected to the main SOM (they're controller)
   ssp0Init();
-  ssp0ClockSlow();
+  ssp0ClockFast();
 
   // SPI chip select
   LPC_GPIO->DIR[1] |= (1 << 23);
@@ -627,9 +627,14 @@ void handle_commands() {
           sprintf(uartBuffer,"system: auxpwr on\r\n");
           uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
         } else {
-          turn_som_power_on();
-          sprintf(uartBuffer,"system: on\r\n");
-          uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          if (som_is_powered) {
+              sprintf(uartBuffer,"system: already on\r\n");
+              uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          } else {
+              turn_som_power_on();
+              sprintf(uartBuffer,"system: on\r\n");
+              uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
+          }
         }
       }
       else if (remote_cmd == 'x') {
@@ -957,19 +962,12 @@ void handle_spi_commands() {
 
   // Host must wait while the LPC prepares response buffer
   // If host does not read 8 bytes the previous response buffer will be stuck in here. 
-  uint8_t Dummy = Dummy;
   for (uint8_t i = 0; i < SSP0_FIFOSIZE; i++)
-  {
-    /* Move on only if TX FIFO not full. */
-    // while ((LPC_SSP0->SR & SSP0_SR_TNF_MASK) == SSP0_SR_TNF_FULL);
     LPC_SSP0->DR = spiBuf[i];
 
-    // while ( (LPC_SSP0->SR & SSP0_SR_RNE_MASK) == SSP0_SR_RNE_EMPTY );
-    /* Whenever a byte is written, MISO FIFO counter increments, Clear FIFO
-    on MISO. Otherwise, when sspReceive is called, previous data byte
-    is left in the FIFO. */
-    Dummy = LPC_SSP0->DR;
-  }
+  // Clear RX FIFO
+  for (uint8_t i = 0; i < SSP0_FIFOSIZE; i++)
+    spiBuf[i] = LPC_SSP0->DR;
 
   spi_cmd_state = ST_EXPECT_MAGIC;
   spi_command = 0;

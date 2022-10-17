@@ -67,7 +67,7 @@ void hid_report_cmd(uint8_t* data) {
   else if (command == CMD_OLED_BITMAP) {
     matrix_render_direct(data+4);
   }
-  else if (command == CMD_OLED_BITMAP) {
+  else if (command == CMD_OLED_CLEAR) {
     gfx_clear();
     gfx_flush();
   }

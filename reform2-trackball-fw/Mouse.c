@@ -317,7 +317,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(USB_ClassInfo_HID_Device_t* const HIDIn
 
   *ReportSize = sizeof(USB_WheelMouseReport_Data_t);
 
-  return true;
+  return false;
 }
 
 /** HID class driver callback function for the processing of HID reports from the host.
