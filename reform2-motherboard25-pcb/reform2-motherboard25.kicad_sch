@@ -4683,7 +4683,7 @@
     (property "Checked" "y" (id 6) (at 165.1 240.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 165.1 240.03 0)
+    (property "Distributor" "Mouser" (id 7) (at 165.1 240.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 8108ea0d-b610-439c-a73c-ea913a30a874))
@@ -4811,7 +4811,7 @@
     (property "Checked" "y" (id 6) (at 107.95 240.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 107.95 240.03 0)
+    (property "Distributor" "Mouser" (id 7) (at 107.95 240.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 99ca3b5b-5d5f-4872-963d-725c345f68cb))
@@ -4838,7 +4838,7 @@
     (property "Checked" "y" (id 6) (at 123.19 190.5 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 123.19 190.5 0)
+    (property "Distributor" "Mouser" (id 7) (at 123.19 190.5 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DNP" "y" (id 8) (at 123.19 190.5 0)
@@ -4868,7 +4868,7 @@
     (property "Checked" "y" (id 6) (at 116.84 193.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 116.84 193.04 0)
+    (property "Distributor" "Mouser" (id 7) (at 116.84 193.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DNP" "y" (id 8) (at 116.84 193.04 0)
@@ -4930,7 +4930,7 @@
     (property "Checked" "y" (id 6) (at 116.84 195.58 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 116.84 195.58 0)
+    (property "Distributor" "Mouser" (id 7) (at 116.84 195.58 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DNP" "y" (id 8) (at 116.84 195.58 0)
@@ -4960,7 +4960,7 @@
     (property "Checked" "y" (id 6) (at 123.19 198.12 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 123.19 198.12 0)
+    (property "Distributor" "Mouser" (id 7) (at 123.19 198.12 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DNP" "y" (id 8) (at 123.19 198.12 0)
@@ -4994,7 +4994,7 @@
     (property "Checked" "y" (id 6) (at 119.38 27.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 119.38 27.94 0)
+    (property "Distributor" "Mouser" (id 7) (at 119.38 27.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DNP" "y" (id 8) (at 119.38 27.94 0)
@@ -5028,7 +5028,7 @@
     (property "Checked" "y" (id 6) (at 127 27.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 127 27.94 0)
+    (property "Distributor" "Mouser" (id 7) (at 127 27.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DNP" "y" (id 8) (at 127 27.94 0)
@@ -5093,7 +5093,7 @@
     (property "Checked" "y" (id 6) (at 134.62 27.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Distributor" "" (id 7) (at 134.62 27.94 0)
+    (property "Distributor" "Mouser" (id 7) (at 134.62 27.94 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DNP" "y" (id 8) (at 134.62 27.94 0)
@@ -6643,6 +6643,9 @@
     (path "/00000000-0000-0000-0000-00005d06a2fd/485ee153-0a27-4996-a10e-11e72b097f06"
       (reference "#PWR0259") (unit 1) (value "GND") (footprint "")
     )
+    (path "/00000000-0000-0000-0000-00005cc81028/a6962170-aaca-4dae-92ab-e32d1208aa58"
+      (reference "#PWR0260") (unit 1) (value "GND") (footprint "")
+    )
     (path "/00000000-0000-0000-0000-00005cc81028/00000000-0000-0000-0000-0000616517a7/00000000-0000-0000-0000-000066ae38d8"
       (reference "BT1") (unit 1) (value "CR1220") (footprint "Battery:BatteryHolder_Keystone_3000_1x12mm")
     )
@@ -7382,7 +7385,7 @@
       (reference "J11") (unit 1) (value "48099-5701") (footprint "footprints:MOLEX_48099-5701")
     )
     (path "/00000000-0000-0000-0000-00005d06a2fd/9af1cb30-120c-4bd0-9692-20a1323b5bd7"
-      (reference "J12") (unit 1) (value "Conn_02x06_Odd_Even") (footprint "Connector_PinHeader_1.00mm:PinHeader_2x06_P1.00mm_Vertical_SMD")
+      (reference "J12") (unit 1) (value "Conn_02x08_Odd_Even") (footprint "Connector_PinHeader_1.00mm:PinHeader_2x08_P1.00mm_Vertical_SMD")
     )
     (path "/00000000-0000-0000-0000-00005cc81028/00000000-0000-0000-0000-00005f00ed51"
       (reference "J13") (unit 1) (value "BATCON1") (footprint "Connector_Molex:Molex_Pico-Lock_504050-0591_1x05-1MP_P1.50mm_Horizontal")
@@ -7736,7 +7739,7 @@
       (reference "R78") (unit 1) (value "0") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-00005cc81028/00000000-0000-0000-0000-00005d74f9c5"
-      (reference "R79") (unit 1) (value "0") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R79") (unit 1) (value "100k NTC") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-00005cc81028/00000000-0000-0000-0000-000061ec7b4b"
       (reference "R80") (unit 1) (value "47k") (footprint "Resistor_SMD:R_0603_1608Metric")
@@ -7755,6 +7758,18 @@
     )
     (path "/00000000-0000-0000-0000-00005d06a2fd/aec018ed-1b43-413a-9d8b-75c6685492e4"
       (reference "R85") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-00005cc81028/07fb6cb0-ebdc-4ba2-b22b-899fe29e117f"
+      (reference "R86") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-00005cc81028/6e154ce1-0a68-4826-b5a7-263e5ce7cb40"
+      (reference "R87") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-00005cc81028/c67aad6d-47f7-4799-bea1-dd33431c5f11"
+      (reference "R88") (unit 1) (value "0") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-00005cc81028/e27d426e-9660-4ada-8e20-4434c3ef9296"
+      (reference "R89") (unit 1) (value "0") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-00005d06a2fd/00000000-0000-0000-0000-00005d950f53"
       (reference "R90") (unit 1) (value "27") (footprint "Resistor_SMD:R_0603_1608Metric")
