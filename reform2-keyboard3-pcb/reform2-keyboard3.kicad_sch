@@ -6,9 +6,9 @@
 
   (title_block
     (title "MNT Reform 2 Keyboard")
-    (date "2022-03-03")
-    (rev "2.0R-2")
-    (company "Copyright 2017-2020 MNT Research GmbH")
+    (date "2023-01-17")
+    (rev "2.0R-3")
+    (company "Copyright 2017-2023 MNT Research GmbH")
     (comment 1 "https://mntre.com")
     (comment 2 "Engineer: Lukas F. Hartmann")
     (comment 3 "License: CERN-OHL-S 2.0")
