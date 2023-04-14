@@ -460,6 +460,22 @@ void watchdog_feed(void) {
   __enable_irq();
 }
 
+void turn_imx_tx_on() {
+  LPC_IOCON->PIO1_13 |= 0x3;
+}
+
+void turn_imx_tx_off() {
+  LPC_IOCON->PIO1_13 &= ~0x07;
+}
+
+void turn_kb_tx_on() {
+  LPC_IOCON->PIO1_27 |= 0x2;
+}
+
+void turn_kb_tx_off() {
+  LPC_IOCON->PIO1_27 &= ~0x07;
+}
+
 #define WWDT_WDMOD_WDEN             ((uint32_t) (1 << 0))
 #define WWDT_WDMOD_WDRESET          ((uint32_t) (1 << 1))
 
@@ -521,8 +537,10 @@ void boardInit(void)
 
   // only send to reform, don't receive from it
   /* Set 0.13 UART TXD */
-  LPC_IOCON->PIO1_13 &= ~0x07;
+  turn_imx_tx_off();
   imx_uart_enabled = false;
+
+  turn_kb_tx_off();
 
 #ifdef REF2_DEBUG
   sprintf(uartBuffer, "\r\nMNT Reform 2.0 MCU initialized.\r\n");
@@ -544,6 +562,11 @@ void handle_commands() {
   powersave_holdoff_cycles = POWERSAVE_HOLDOFF_CYCLES;
 
   char chr = uartRxBufferRead();
+
+  if (imx_uart_enabled) {
+    turn_imx_tx_on();
+  }
+  turn_kb_tx_on();
 
   if (cmd_echo) {
     sprintf(uartBuffer, "%c", chr);
@@ -688,21 +711,21 @@ void handle_commands() {
         if (cmd_number>0) {
           // turn i.MX UART output on
           imx_uart_enabled = true;
-          LPC_IOCON->PIO1_13 |= 0x3;
         } else {
           // turn i.MX UART output off
           imx_uart_enabled = false;
-          LPC_IOCON->PIO1_13 &= ~0x07;
         }
       }
       else if (remote_cmd == 'w') {
         // wake i.MX
         if (cmd_number>0) {
           // send a string via UART
-          LPC_IOCON->PIO1_13 |= 0x3;
+          turn_imx_tx_on();
+          turn_kb_tx_off();
           sprintf(uartBuffer,"wake!\r");
           uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-          LPC_IOCON->PIO1_13 &= ~0x07;
+          turn_imx_tx_off();
+          turn_kb_tx_on();
         } else {
           // pulse wake GPIO
           LPC_GPIO->SET[1] = (1 << 24);
@@ -783,6 +806,8 @@ void handle_commands() {
       cmd_state = ST_SYNTAX_ERROR;
     }
   }
+  turn_imx_tx_off();
+  turn_kb_tx_off();
 }
 
 unsigned char spi_cmd_state = ST_EXPECT_MAGIC;
@@ -813,7 +838,11 @@ void handle_spi_commands() {
     spiBuf[i] = LPC_SSP0->DR;
   }
 
-  if (imx_uart_enabled && len > 0) {
+  if (imx_uart_enabled) {
+    turn_imx_tx_on();
+  }
+
+  if (len > 0) {
     sprintf(uartBuffer, "spi:%X,%X,%X,%X\r\n", spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3]);
     uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
   }
@@ -851,10 +880,8 @@ void handle_spi_commands() {
     return;
   }
 
-  if (imx_uart_enabled) {
-    sprintf(uartBuffer, "spi:exec:%X,%X\r\n", spi_command, spi_arg1);
-    uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-  }
+  sprintf(uartBuffer, "spi:exec:%X,%X\r\n", spi_command, spi_arg1);
+  uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
 
   // clear recieve buffer, reuse as send buffer
   memset(spiBuf, 0, 8);
@@ -945,20 +972,16 @@ void handle_spi_commands() {
     if (spi_arg1 == 1) {
       // turn i.MX UART output on
       imx_uart_enabled = true;
-      LPC_IOCON->PIO1_13 |= 0x3;
     } else {
       // turn i.MX UART output off
       imx_uart_enabled = false;
-      LPC_IOCON->PIO1_13 &= ~0x07;
     }
   }
 
-  if (imx_uart_enabled) {
-      sprintf(uartBuffer, "spi:res: %X %X %X %X %X %X %X %X\r\n", 
-          spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3],
-          spiBuf[4], spiBuf[5], spiBuf[6], spiBuf[7]);
-      uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
-  }
+  sprintf(uartBuffer, "spi:res: %X %X %X %X %X %X %X %X\r\n", 
+    spiBuf[0], spiBuf[1], spiBuf[2], spiBuf[3],
+    spiBuf[4], spiBuf[5], spiBuf[6], spiBuf[7]);
+  uartSend((uint8_t*)uartBuffer, strlen(uartBuffer));
 
   // Host must wait while the LPC prepares response buffer
   // If host does not read 8 bytes the previous response buffer will be stuck in here. 
@@ -972,6 +995,8 @@ void handle_spi_commands() {
   spi_cmd_state = ST_EXPECT_MAGIC;
   spi_command = 0;
   spi_arg1 = 0;
+
+  turn_imx_tx_off();
 
   return;
 }
